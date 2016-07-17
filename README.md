@@ -4,5 +4,5 @@ A 2D deferred-rendered .NET game engine designed for programmers with advanced l
 Development of Celestial Engine was started in 2012 to create a simple framework to allow quick prototyping of simple game concepts for people with programming backgrounds. This project has slowly evolved over time in very short spurts as interest allowed.
 
 # Examples
-Specular lighting of 2D sprites and realtime shadows: https://gfycat.com/FluidSpiffyAmazonparrot
+Specular lighting of 2D sprites and realtime shadows: https://gfycat.com/FluidSpiffyAmazonparrot  
 Physics (powered by Farseer Physics): https://gfycat.com/CrazyPeacefulAustraliancattledog
