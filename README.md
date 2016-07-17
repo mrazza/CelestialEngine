@@ -6,3 +6,6 @@ Development of Celestial Engine was started in 2012 to create a simple framework
 # Examples
 Specular lighting of 2D sprites and realtime shadows: https://gfycat.com/FluidSpiffyAmazonparrot  
 Physics (powered by Farseer Physics): https://gfycat.com/CrazyPeacefulAustraliancattledog
+
+# License
+The engine library is licensed under LGPL v3. The examples are licensed under the MIT License.
