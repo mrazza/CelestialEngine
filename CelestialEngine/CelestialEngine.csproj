@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2784BC2C-E1C6-40E2-ABFD-6E1B5B821F0E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CelestialEngine</RootNamespace>
+    <AssemblyName>CelestialEngine</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FarseerPhysics MonoGame, Version=3.5.0.40766, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FarseerPhysics.MonoGame.Unofficial.3.5.0\lib\FarseerPhysics MonoGame.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MonoGame.Framework, Version=3.4.0.456, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\AspectRatioScaleMode.cs" />
+    <Compile Include="Core\BaseGame.cs" />
+    <Compile Include="Core\Collections\QuadTree\IQuadTreeItem.cs" />
+    <Compile Include="Core\Collections\QuadTree\QuadTree.cs" />
+    <Compile Include="Core\Collections\QuadTree\QuadTreeNode.cs" />
+    <Compile Include="Core\Collections\ResourcePool.cs" />
+    <Compile Include="Core\Collections\ThrottledCollection.cs" />
+    <Compile Include="Core\ConditionalInputBinding.cs" />
+    <Compile Include="Core\DeferredRenderSystem.cs" />
+    <Compile Include="Core\EngineContent.cs" />
+    <Compile Include="Core\ExtendedContentManager.cs" />
+    <Compile Include="Core\IComponent.cs" />
+    <Compile Include="Core\IDrawableComponent.cs" />
+    <Compile Include="Core\InputBindingSet.cs" />
+    <Compile Include="Core\InputManager.cs" />
+    <Compile Include="Core\InputState.cs" />
+    <Compile Include="Core\IntelligentSpriteBatch.cs" />
+    <Compile Include="Core\ScreenDrawableComponent.cs" />
+    <Compile Include="Core\Logger.cs" />
+    <Compile Include="Core\PostProcess\IPostProcess.cs" />
+    <Compile Include="Core\PostProcess\PostProcessComparer.cs" />
+    <Compile Include="Core\PostProcess\SimulatedLight.cs" />
+    <Compile Include="Core\PostProcess\SimulatedPostProcess.cs" />
+    <Compile Include="Core\PostProcess\StaticPostProcess.cs" />
+    <Compile Include="Core\RectangleF.cs" />
+    <Compile Include="Core\RenderTargetManager.cs" />
+    <Compile Include="Core\RenderTargetTypes.cs" />
+    <Compile Include="Core\ScreenSpriteBatch.cs" />
+    <Compile Include="Core\Shaders\MergeTargetsShader.cs" />
+    <Compile Include="Core\Shaders\OptionsMapFlagsShader.cs" />
+    <Compile Include="Core\Shaders\Shader.cs" />
+    <Compile Include="Core\SimBase.cs" />
+    <Compile Include="Core\SpriteBase.cs" />
+    <Compile Include="Core\SpriteRenderOptions.cs" />
+    <Compile Include="Core\Vector2Helper.cs" />
+    <Compile Include="Core\VertexPrimitive.cs" />
+    <Compile Include="Core\World.cs" />
+    <Compile Include="Game\AnimatedSprite.cs" />
+    <Compile Include="Game\Camera.cs" />
+    <Compile Include="Game\DebugSimulatedPostProcess.cs" />
+    <Compile Include="Game\DebugSprite.cs" />
+    <Compile Include="Game\PostProcess\Lights\AmbientLight.cs" />
+    <Compile Include="Game\PostProcess\Lights\ConeLight.cs" />
+    <Compile Include="Game\PostProcess\Lights\PointLight.cs" />
+    <Compile Include="Game\SimBaseAnchor.cs" />
+    <Compile Include="Game\SimpleShadedSprite.cs" />
+    <Compile Include="Game\SimpleSprite.cs" />
+    <Compile Include="Game\SpriteAnimation.cs" />
+    <Compile Include="Game\TiledSprite.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\CelestialEngineContent.mgcb" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Shaders\Core\MergeTargets.fx" />
+    <Content Include="Content\Shaders\Core\OptionsMapFlags.fx" />
+    <Content Include="Content\Shaders\Core\ShadowMap.fx" />
+    <Content Include="Content\Shaders\Lights\AmbientLight.fx" />
+    <Content Include="Content\Shaders\Lights\ConeLight.fx" />
+    <Content Include="Content\Shaders\Lights\PointLight.fx" />
+    <Content Include="Content\Shaders\Simple\InvertColors.fx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

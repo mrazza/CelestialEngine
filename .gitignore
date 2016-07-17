@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.user
+**/bin/Debug
+**/obj/Debug
+/CelestialDemo/packages/FarseerPhysics.MonoGame.Unofficial.3.5.0
+**/bin/*
+**/obj/*
+/CelestialDemo/packages/Newtonsoft.Json.8.0.3
+**/.suo
+/packages/**
