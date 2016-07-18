@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="IntelligentSpriteBatch.cs" company="">
-// Copyright (C) Matthew Razza
+// <copyright file="ScreenSpriteBatch.cs" company="">
+// Copyright (C) Will Graham
 // </copyright>
 // -----------------------------------------------------------------------
 
