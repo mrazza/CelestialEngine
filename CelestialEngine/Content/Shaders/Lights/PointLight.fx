@@ -65,7 +65,7 @@ struct VertexShaderOutput
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
-    float3 pos = mul(input.Position - cameraPosition, viewProjection);
+    float3 pos = mul(input.Position.xy - cameraPosition, float2x4(viewProjection[0], viewProjection[1])).xyz;
     output.Position = float4(pos, 1);
     output.TexCoord = float2((pos.x + 1) / 2.0f, (-pos.y + 1) / 2.0f);
 
@@ -102,7 +102,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
         // If we're going to render light here calculate the color and attenuation
         if (length(lightDirection) < lightRange)
-            lightColorAndAttenuation = lightColor * pow(1.0f / pow(lightRange, 2) * pow(length(lightDirection) - lightRange, 2), lightDecay);
+            lightColorAndAttenuation = (lightColor * pow(abs(1.0f / pow(lightRange, 2) * pow(length(lightDirection) - lightRange, 2)), lightDecay)).rgb;
 
         // Do specular calculations
         float amount = max(dot(normal, lightDirNorm), 0);

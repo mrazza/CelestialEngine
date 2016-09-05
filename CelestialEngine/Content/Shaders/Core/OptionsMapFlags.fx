@@ -47,7 +47,7 @@ struct VertexShaderOutput
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
-    float3 pos = mul(input.Position.xy - cameraPosition, viewProjection).xyz;
+    float3 pos = mul(input.Position.xy - cameraPosition, float2x4(viewProjection[0], viewProjection[1])).xyz;
     output.Position = float4(pos, 1);
     output.TexCoord = input.TexCoord;
 

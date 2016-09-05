@@ -26,7 +26,7 @@ GenericVertexShaderOutput GenericVertexShader(VertexShaderInput input)
 {
     GenericVertexShaderOutput output;
 
-    float3 pos = mul(input.Position - cameraPosition, viewProjection);
+    float3 pos = mul(input.Position.xy - cameraPosition, float2x4(viewProjection[0], viewProjection[1])).xyz;
     output.Position = float4(pos, 1);
 
     return output;
@@ -96,9 +96,9 @@ TextureVertexShaderOutput BoxBlurTextureVertexShader(VertexShaderInput input)
     TextureVertexShaderOutput output;
 
     float2 direction = float2(-0.707, 0.707);
-    float3 pos = mul(input.Position - cameraPosition, viewProjection);
+    float3 pos = mul(input.Position.xy - cameraPosition, float2x4(viewProjection[0], viewProjection[1])).xyz;
     output.Position = float4(pos, 1);
-    output.WorldPos = input.Position;
+    output.WorldPos = input.Position.xyz;
     output.Tap = float2((pos.x + 1) / 2.0f, (-pos.y + 1) / 2.0f);
 
     return output;
@@ -134,7 +134,7 @@ float4 PSGaussianBlur(TextureVertexShaderOutput input) : COLOR0
     color += tex2D(shadowMapSampler, input.Tap + 0.012f * direction).r * .075f;
     color += tex2D(shadowMapSampler, input.Tap - 0.012f * direction).r * .025f;
 
-    color = min(color * lightDistance + (1.0f - lightDistance) * orig, orig); // Blend result based on distance
+    color = min(color * lightDistance + (1.0f - lightDistance) * orig, orig).r; // Blend result based on distance
 
     return float4(color, 1.0f, 1.0f, 1);
 }

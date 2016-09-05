@@ -67,7 +67,7 @@ struct VertexShaderOutput
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
-    float3 pos = mul(input.Position - cameraPosition, viewProjection);
+    float3 pos = mul(input.Position.xy - cameraPosition, float2x4(viewProjection[0], viewProjection[1])).xyz;
     output.Position = float4(pos, 1);
     output.TexCoord = float2((pos.x + 1) / 2.0f, (-pos.y + 1) / 2.0f);
 
@@ -101,12 +101,12 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
         float lightDistance = length(lightDirection); // Distance from the light to the current pixel
         float3 halfVec = float3(0, 0, 1); // Found on google
 
-        float angleFromLight = acos(dot(lightDirNorm, lightFacingDirection)); // Created between the light and the current pixel and the direction the light is facing
+        float angleFromLight = acos(dot(lightDirNorm.xy, lightFacingDirection)); // Created between the light and the current pixel and the direction the light is facing
         float3 lightColorAndAttenuation = 0;
 
         // If we're going to render light here, calculate the colo and attenuation
         if (lightDistance < lightRange)
-            lightColorAndAttenuation = lightColor * min(pow(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2), lightDecay), 1.0f - angleFromLight / lightAngle);//pow(angleFromLight / lightAngle, lightDecay));
+            lightColorAndAttenuation = (lightColor * min(pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay), 1.0f - angleFromLight / lightAngle)).rgb;//pow(angleFromLight / lightAngle, lightDecay));
 
         // Do specular calculations
         float amount = max(dot(normal, lightDirNorm), 0);
