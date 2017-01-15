@@ -7,6 +7,7 @@
 namespace CelestialEngine.Core.PostProcess
 {
     using System.Collections.Generic;
+    using CelestialEngine.Core;
     using CelestialEngine.Core.Shaders;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
@@ -278,13 +279,7 @@ namespace CelestialEngine.Core.PostProcess
                                 // Loop through all the objects between the last layer index and the current index
                                 for (int clearObjIndex = lastLayerDepthIndex; clearObjIndex < objectIndex; clearObjIndex++)
                                 {
-                                    // Remove the shadow map that overlaps with the sprite (or fully cover it)
-                                    if (lastLayerDepth <= this.layerDepth)
-                                    {
-                                        this.shadowMapShader.ApplyPass(1); // Remove
-                                    }
-
-                                    renderSystem.DirectScreenPaint(objectList[clearObjIndex].SpriteWorldBounds);
+                                    this.ProcessSpriteDepthTransition(renderSystem, objectList[clearObjIndex]);
                                 }
                             }
 
@@ -298,7 +293,16 @@ namespace CelestialEngine.Core.PostProcess
                         this.shadowMapShader.ApplyPass(0);
 
                         // Construct the vertex primitive to mask with
-                        Vector2[] extrema = spriteWorldBounds.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+                        Vector2[] extrema;
+                        if (currObj.SpriteWorldShape != null)
+                        {
+                            extrema = currObj.SpriteWorldShape.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+                        }
+                        else
+                        {
+                            extrema = spriteWorldBounds.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+                        }
+
                         Vector2 widthVector = Vector2.Normalize(extrema[0] - base.Position); // Get the vector to the first extrema
                         Vector2 heightVector = Vector2.Normalize(extrema[1] - base.Position); // Get the vector to the second extrema
 
@@ -324,13 +328,7 @@ namespace CelestialEngine.Core.PostProcess
                         // Remove the shadows over the LAST shadow plane
                         for (int clearObjIndex = lastLayerDepthIndex; clearObjIndex < objectList.Count; clearObjIndex++)
                         {
-                            // Remove the shadow map that overlaps with the sprite (or fully cover it)
-                            if (objectList[clearObjIndex].LayerDepth <= this.layerDepth)
-                            {
-                                this.shadowMapShader.ApplyPass(1); // Remove
-                            }
-
-                            renderSystem.DirectScreenPaint(objectList[clearObjIndex].SpriteWorldBounds);
+                            this.ProcessSpriteDepthTransition(renderSystem, objectList[clearObjIndex]);
                         }
 
                         // Blur the shadow map if enabled
@@ -366,6 +364,32 @@ namespace CelestialEngine.Core.PostProcess
 
             renderSystem.SetRenderTargets(RenderTargetTypes.None, 0); // Resolve the render target
             renderSystem.RenderTargets.ReleaseTemporaryRenderTarget(intermediateShadowMap);
+        }
+
+        /// <summary>
+        /// Removes a shadow from sprite or fully covers the sprite in shadow, depending on the layer depth transition.
+        /// </summary>
+        /// <param name="renderSystem">The render system.</param>
+        /// <param name="sprite">The sprite.</param>
+        private void ProcessSpriteDepthTransition(DeferredRenderSystem renderSystem, SpriteBase sprite)
+        {
+            // Remove the shadow map that overlaps with the sprite (or fully cover it)
+            if (sprite.LayerDepth <= this.layerDepth)
+            {
+                this.shadowMapShader.ApplyPass(1); // Remove
+            }
+
+            if (sprite.SpriteWorldPrimitives != null)
+            {
+                foreach (var currShape in sprite.SpriteWorldPrimitives)
+                {
+                    renderSystem.DirectScreenPaint(currShape);
+                }
+            }
+            else
+            {
+                renderSystem.DirectScreenPaint(sprite.SpriteWorldBounds);
+            }
         }
         #endregion
     }

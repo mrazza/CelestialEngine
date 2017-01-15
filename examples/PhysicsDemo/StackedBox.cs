@@ -26,7 +26,7 @@ namespace PhysicsDemo
         /// <param name="world">The world object to use.</param>
         /// <param name="position">The position of this stacked box.</param>
         public StackedBox(World world, Vector2 position)
-            : base(world, "Content/panel", "Content/panel_bump")
+            : base(world, "Content/panel", "Content/panel_bump", false)
         {
             this.Position = position;
             RenderOptions = SpriteRenderOptions.IsLit;

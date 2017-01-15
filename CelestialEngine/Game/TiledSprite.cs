@@ -48,7 +48,7 @@ namespace CelestialEngine.Game
         /// <param name="velocity">The starting velocity of the object.</param>
         /// <param name="tileArea">Area (width/height) of the world to display the tiled sprite.</param>
         public TiledSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, Rectangle? spriteTextureBoundingBox, Vector2 position, Vector2 velocity, Vector2 tileArea)
-            : base(world, spriteTexturePath, spriteNormalTexturePath, spriteTextureBoundingBox, position, velocity)
+            : base(world, spriteTexturePath, spriteNormalTexturePath, spriteTextureBoundingBox, position, velocity, false)
         {
             this.tileArea = tileArea;
         }

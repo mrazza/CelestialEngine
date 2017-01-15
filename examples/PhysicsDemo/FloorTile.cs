@@ -25,7 +25,7 @@ namespace PhysicsDemo
         /// <param name="world">The world object to use.</param>
         /// <param name="position">The position of this florr tile.</param>
         public FloorTile(World world, Vector2 position)
-            : base(world, "Content/floor", null)
+            : base(world, "Content/floor", null, false)
         {
             this.Position = position;
             this.RenderOptions = SpriteRenderOptions.IsLit;

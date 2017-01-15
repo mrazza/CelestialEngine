@@ -10,8 +10,8 @@ namespace CelestialEngine.Game
     using CelestialEngine.Core;
     using CelestialEngine.Core.Shaders;
     using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Content;
     using Microsoft.Xna.Framework.Graphics;
+    using FarseerPhysics.Common;
 
     /// <summary>
     /// A simple <see cref="SpriteBase"/> implementation that renders just a color sprite.
@@ -53,6 +53,11 @@ namespace CelestialEngine.Game
         /// The color to use when rendering this sprite (default is White).
         /// </summary>
         private Color renderColor;
+
+        /// <summary>
+        /// If true, the sprite's shape is computed from its image data
+        /// </summary>
+        private bool computeSpriteShape;
         #endregion
 
         #region Constructors
@@ -62,8 +67,9 @@ namespace CelestialEngine.Game
         /// <param name="world">The <see cref="World" /> in which the instance lives.</param>
         /// <param name="spriteTexturePath">The path to the sprite texture.</param>
         /// <param name="spriteNormalTexturePath">The path to the sprite's normal texture (can be null).</param>
-        public SimpleSprite(World world, string spriteTexturePath, string spriteNormalTexturePath)
-            : this(world, spriteTexturePath, spriteNormalTexturePath, null, Vector2.Zero, Vector2.Zero)
+        /// <param name="computeSpriteShape">If true, the sprite's shape is computed based on the sprite data; otherwise, the sprite's bounding box is used.</param>
+        public SimpleSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, bool computeSpriteShape)
+            : this(world, spriteTexturePath, spriteNormalTexturePath, null, Vector2.Zero, Vector2.Zero, computeSpriteShape)
         {
         }
 
@@ -76,7 +82,8 @@ namespace CelestialEngine.Game
         /// <param name="spriteTextureBoundingBox">The bounding box of the sprite within the texture (used with sprite sheets).</param>
         /// <param name="position">The starting position of the object.</param>
         /// <param name="velocity">The starting velocity of the object.</param>
-        public SimpleSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, Rectangle? spriteTextureBoundingBox, Vector2 position, Vector2 velocity)
+        /// <param name="computeSpriteShape">If true, the sprite's shape is computed based on the sprite data; otherwise, the sprite's bounding box is used.</param>
+        public SimpleSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, Rectangle? spriteTextureBoundingBox, Vector2 position, Vector2 velocity, bool computeSpriteShape)
             : base(world, position, velocity)
         {
             if (spriteTexturePath == null)
@@ -89,6 +96,7 @@ namespace CelestialEngine.Game
             this.spriteTextureBoundingBox = spriteTextureBoundingBox;
             this.optionMapFlagsShader = new OptionsMapFlagsShader();
             this.renderColor = Color.White;
+            this.computeSpriteShape = computeSpriteShape;
         }
         #endregion
 
@@ -112,6 +120,11 @@ namespace CelestialEngine.Game
         /// <summary>
         /// Gets the sprite's image bounds (where the image appears when rendered) in world units.
         /// </summary>
+        /// <remarks>
+        /// This is an approximate bounding rectangle for the area impacted by this sprite. The actual area impacted may
+        /// be smaller than this bounding rectangle and must NEVER be greater. For more percise bounding shapes, use the
+        /// <see cref="SpriteWorldShape"/> property.
+        /// </remarks>
         public override RectangleF SpriteWorldBounds
         {
             get
@@ -189,6 +202,15 @@ namespace CelestialEngine.Game
         public override void LoadContent(ExtendedContentManager contentManager)
         {
             this.spriteTexture = contentManager.Load<Texture2D>(this.spriteTexturePath);
+            uint[] pixelData = null;
+
+            if (this.computeSpriteShape)
+            {
+                pixelData = new uint[this.spriteTexture.Width * this.spriteTexture.Height];
+                this.spriteTexture.GetData(pixelData);
+                this.spriteWorldVertices = PolygonTools.CreatePolygon(pixelData, this.spriteTexture.Width);
+            }
+
             this.optionMapFlagsShader.LoadContent(contentManager);
 
             if (this.spriteTextureBoundingBox == null)
@@ -203,16 +225,20 @@ namespace CelestialEngine.Game
             else
             {
                 this.spriteNormalTexture = new Texture2D(contentManager.Game.GraphicsDevice, this.spriteTextureBoundingBox.Value.Width, this.spriteTextureBoundingBox.Value.Height);
-                Color[] pixelData = new Color[this.spriteTexture.Width * this.spriteTexture.Height];
-                this.spriteTexture.GetData<Color>(pixelData);
+
+                if (pixelData == null)
+                {
+                    pixelData = new uint[this.spriteTexture.Width * this.spriteTexture.Height];
+                    this.spriteTexture.GetData(pixelData);
+                }
 
                 // Convert the image to black (saving Alpha channel)
                 for (int i = 0; i < pixelData.Length; i++)
                 {
-                    pixelData[i].R = pixelData[i].G = pixelData[i].B = 0;
+                    pixelData[i] = 0;
                 }
 
-                this.spriteNormalTexture.SetData<Color>(pixelData);
+                this.spriteNormalTexture.SetData(pixelData);
             }
         }
 

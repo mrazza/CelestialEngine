@@ -7,9 +7,13 @@
 namespace CelestialEngine.Core
 {
     using Collections.QuadTree;
+    using FarseerPhysics.Common;
+    using FarseerPhysics.Common.Decomposition;
     using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Base class for any object that requires simulation and 2D drawing that
@@ -19,6 +23,11 @@ namespace CelestialEngine.Core
     public abstract class SpriteBase : SimBase, IDrawableComponent, IComparable<SpriteBase>, IQuadTreeItem<SpriteBase, List<SpriteBase>>
     {
         #region Members
+        /// <summary>
+        /// Vertices of the sprite in world units.
+        /// </summary>
+        protected Vertices spriteWorldVertices;
+
         /// <summary>
         /// The change in scale from the default sprite's size.
         /// </summary>
@@ -176,9 +185,40 @@ namespace CelestialEngine.Core
         /// <summary>
         /// Gets the sprite's image bounds in world units.
         /// </summary>
+        /// <remarks>
+        /// This is an approximate bounding rectangle for the area impacted by this sprite. The actual area impacted may
+        /// be smaller than this bounding rectangle and must NEVER be greater. For more percise bounding shapes, use the
+        /// <see cref="SpriteWorldShape"/> property.
+        /// </remarks>
         public abstract RectangleF SpriteWorldBounds
         {
             get;
+        }
+
+        /// <summary>
+        /// Represents the shape of the sprite.
+        /// </summary>
+        public Vertices SpriteWorldShape
+        {
+            get
+            {
+                // TODO: Optimize this
+                return this.spriteWorldVertices == null ? null : new Vertices(this.spriteWorldVertices.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position));
+            }
+        }
+
+        public VertexPrimitive[] SpriteWorldPrimitives
+        {
+            get
+            {
+                if (this.spriteWorldVertices == null)
+                {
+                    return null;
+                }
+
+                // TODO: Optimize this
+                return Triangulate.ConvexPartition(this.SpriteWorldShape, TriangulationAlgorithm.Flipcode).Select(shape => new VertexPrimitive(PrimitiveType.TriangleStrip, shape.ToArray())).ToArray();
+            }
         }
 
         /// <summary>

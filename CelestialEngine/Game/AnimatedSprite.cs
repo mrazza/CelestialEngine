@@ -37,7 +37,7 @@ namespace CelestialEngine.Game
         /// <param name="position">The starting position of the object.</param>
         /// <param name="velocity">The starting velocity of the object.</param>
         public AnimatedSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, Rectangle? spriteTextureBoundingBox, Vector2 position, Vector2 velocity)
-            : base(world, spriteTexturePath, spriteNormalTexturePath, spriteTextureBoundingBox, position, velocity)
+            : base(world, spriteTexturePath, spriteNormalTexturePath, spriteTextureBoundingBox, position, velocity, false)
         {
         }
 

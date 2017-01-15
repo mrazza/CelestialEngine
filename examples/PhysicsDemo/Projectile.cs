@@ -27,7 +27,7 @@ namespace PhysicsDemo
         /// <param name="velocity">The velocity of the object.</param>
         /// <param name="angularVelocity">The angular velocity for the object.</param>
         public Projectile(World world, Vector2 position, Vector2 velocity, float angularVelocity)
-            : base(world, "Content/floor", "Content/floor_bump")
+            : base(world, "Content/floor", "Content/floor_bump", false)
         {
             this.Position = position;
             this.Velocity = velocity;

@@ -88,6 +88,7 @@
     <Compile Include="Core\SpriteRenderOptions.cs" />
     <Compile Include="Core\Vector2Helper.cs" />
     <Compile Include="Core\VertexPrimitive.cs" />
+    <Compile Include="Core\VerticesHelper.cs" />
     <Compile Include="Core\World.cs" />
     <Compile Include="Game\AnimatedSprite.cs" />
     <Compile Include="Game\Camera.cs" />

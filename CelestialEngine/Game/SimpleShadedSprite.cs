@@ -31,8 +31,9 @@ namespace CelestialEngine.Game
         /// <param name="spriteTexturePath">The path to the sprite texture.</param>
         /// <param name="spriteNormalTexturePath">The path to the sprite's normal texture (can be null).</param>
         /// <param name="shader">The shader to use when rendering the sprite.</param>
-        public SimpleShadedSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, Shader shader)
-            : this(world, spriteTexturePath, spriteNormalTexturePath, shader, Vector2.Zero, Vector2.Zero)
+        /// <param name="computeSpriteShape">If true, the sprite's shape is computed based on the sprite data; otherwise, the sprite's bounding box is used.</param>
+        public SimpleShadedSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, Shader shader, bool computeSpriteShape)
+            : this(world, spriteTexturePath, spriteNormalTexturePath, shader, Vector2.Zero, Vector2.Zero, computeSpriteShape)
         {
         }
 
@@ -45,8 +46,9 @@ namespace CelestialEngine.Game
         /// <param name="shader">The shader to use when rendering the sprite.</param>
         /// <param name="position">The starting position of the object.</param>
         /// <param name="velocity">The starting velocity of the object.</param>
-        public SimpleShadedSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, Shader shader, Vector2 position, Vector2 velocity)
-            : base(world, spriteTexturePath, spriteNormalTexturePath, null, position, velocity)
+        /// <param name="computeSpriteShape">If true, the sprite's shape is computed based on the sprite data; otherwise, the sprite's bounding box is used.</param>
+        public SimpleShadedSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, Shader shader, Vector2 position, Vector2 velocity, bool computeSpriteShape)
+            : base(world, spriteTexturePath, spriteNormalTexturePath, null, position, velocity, computeSpriteShape)
         {
             this.shaderAsset = shader;
         }

@@ -77,7 +77,7 @@ namespace CelestialEngine.TechDemo
                 RenderOptions = SpriteRenderOptions.IsLit
             };
 
-            SimpleSprite test = new SimpleSprite(this.GameWorld, "Content/box", null)
+            SimpleSprite test = new SimpleSprite(this.GameWorld, "Content/box", null, false)
             {
                 Position = new Vector2(8, 7),
                 RenderScale = new Vector2(0.4f, 0.4f),
@@ -95,7 +95,7 @@ namespace CelestialEngine.TechDemo
                 var x = new DebugSprite(this.GameWorld, test);
             }
 
-            SimpleSprite test2 = new SimpleSprite(this.GameWorld, "Content/box", null)
+            SimpleSprite test2 = new SimpleSprite(this.GameWorld, "Content/box", null, false)
             {
                 Position = new Vector2(10, 8),
                 Rotation = -MathHelper.PiOver2,
@@ -112,6 +112,25 @@ namespace CelestialEngine.TechDemo
             if (this.IsDebug)
             {
                 var x = new DebugSprite(this.GameWorld, test2);
+            }
+
+            SimpleSprite test3 = new SimpleSprite(this.GameWorld, "Content/gear", null, true)
+            {
+                Position = new Vector2(20, 8),
+                Rotation = -MathHelper.PiOver2,
+                RenderScale = new Vector2(0.4f, 0.4f),
+                RenderOptions = SpriteRenderOptions.CastsShadows | SpriteRenderOptions.IsLit,
+                SpecularReflectivity = 0,
+                LayerDepth = 2
+            };
+            test3.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
+            test3.Body.CollisionCategories = FarseerPhysics.Dynamics.Category.Cat1;
+            test3.Body.Friction = 0;
+            test3.Body.Restitution = 1.0f;
+
+            if (this.IsDebug)
+            {
+                var x = new DebugSprite(this.GameWorld, test3);
             }
 
             this.amLight = new AmbientLight(Color.White, 0.02f, true, 1);
@@ -141,7 +160,7 @@ namespace CelestialEngine.TechDemo
             // http://creativecommons.org/licenses/by/3.0/
             this.song = Content.Load<Song>("Content/George_Ellinas_-_Pulse_(George_Ellinas_remix)_LoopEdit");
             MediaPlayer.Volume = 0.1f;
-            MediaPlayer.Play(song);
+            //MediaPlayer.Play(song);
 
 
             base.LoadContent();

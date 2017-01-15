@@ -126,6 +126,16 @@ namespace CelestialEngine.Game
             RectangleF posRect = new RectangleF(this.targetSprite.Position.X - this.lineWidth * 2.0f, this.targetSprite.Position.Y - this.lineWidth * 2.0f, this.lineWidth * 4.0f, this.lineWidth * 4.0f);
 
             renderSystem.DrawFilledRectangle(posRect, Color.White, this.Rotation); // Draw position
+
+            // Draw shape outline if it exists
+            if (this.targetSprite.SpriteWorldShape != null)
+            {
+                for (int index = 0; index < this.targetSprite.SpriteWorldShape.Count - 1; index++)
+                {
+                    renderSystem.DrawLine(this.targetSprite.SpriteWorldShape[index], this.targetSprite.SpriteWorldShape[index + 1], Color.Red, this.lineWidth);
+                }
+            }
+
             renderSystem.DrawRectangleBorder(this.targetSprite.SpriteWorldBounds, Color.Green, this.lineWidth, 0.0f); // Draw bounding rectangle
             renderSystem.DrawLine(this.targetSprite.Position, this.targetSprite.Position + this.targetSprite.Velocity, Color.Blue, this.lineWidth); // Draw velocity line
 
