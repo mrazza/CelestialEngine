@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-// -----------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------
 // <copyright file="VerticesHelper.cs" company="">
 // Copyright (C) 2016 Matt Razza
 // </copyright>

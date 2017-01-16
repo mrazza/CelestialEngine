@@ -160,7 +160,7 @@ namespace CelestialEngine.TechDemo
             // http://creativecommons.org/licenses/by/3.0/
             this.song = Content.Load<Song>("Content/George_Ellinas_-_Pulse_(George_Ellinas_remix)_LoopEdit");
             MediaPlayer.Volume = 0.1f;
-            //MediaPlayer.Play(song);
+            MediaPlayer.Play(song);
 
 
             base.LoadContent();

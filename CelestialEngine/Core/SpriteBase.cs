@@ -207,6 +207,10 @@ namespace CelestialEngine.Core
             }
         }
 
+        /// <summary>
+        /// Gets the triangulated primitives that make up the shape of the sprite.
+        /// </summary>
+        /// <value>
         public VertexPrimitive[] SpriteWorldPrimitives
         {
             get
