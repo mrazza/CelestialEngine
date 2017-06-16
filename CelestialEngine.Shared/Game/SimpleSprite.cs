@@ -235,7 +235,7 @@ namespace CelestialEngine.Game
                 // Convert the image to black (saving Alpha channel)
                 for (int i = 0; i < pixelData.Length; i++)
                 {
-                    pixelData[i] = 0;
+                    pixelData[i] = 255U << 24 & pixelData[i];
                 }
 
                 this.spriteNormalTexture.SetData(pixelData);

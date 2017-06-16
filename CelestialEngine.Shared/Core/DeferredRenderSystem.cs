@@ -590,6 +590,7 @@ namespace CelestialEngine.Core
             }
             else
             {
+                Color clearColor = Color.Transparent;
                 RenderTarget2D source = null;
 
                 switch (this.DebugDrawMode)
@@ -605,6 +606,11 @@ namespace CelestialEngine.Core
                     case DeferredRenderSystemDebugDrawMode.LightMap:
                         source = this.RenderTargets.LightMap;
                         break;
+
+                    case DeferredRenderSystemDebugDrawMode.NormalMap:
+                        source = this.RenderTargets.NormalMap;
+                        clearColor = Color.Pink;
+                        break;
                 }
 
                 if (source == null)
@@ -612,7 +618,7 @@ namespace CelestialEngine.Core
                     throw new ArgumentNullException(nameof(this.DebugDrawMode), $"Invalid DeferredRenderSystemDebugDrawMode: {this.DebugDrawMode}");
                 }
 
-                this.GraphicsDevice.Clear(Color.Transparent);
+                this.GraphicsDevice.Clear(clearColor);
                 this.debugRenderTargets.ConfigureShader(this);
                 this.debugRenderTargets.GetParameter("renderMap").SetValue(source);
                 this.debugRenderTargets.ApplyPass(0);

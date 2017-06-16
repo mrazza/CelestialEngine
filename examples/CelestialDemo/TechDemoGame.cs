@@ -61,6 +61,7 @@ namespace CelestialEngine.TechDemo
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F3), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.ColorMap);
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F4), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.OptionsMap);
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F5), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.LightMap);
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F6), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.NormalMap);
 
             this.InputManager.AddBinding(UpdateCursorPosition);
             this.InputManager.AddConditionalBinding((s) => { return (s.IsKeyDown(Keys.LeftControl) || s.IsKeyDown(Keys.RightControl)) && s.IsLeftMouseDown(); }, SpawnNewSmallLight);
@@ -89,7 +90,7 @@ namespace CelestialEngine.TechDemo
                 Position = new Vector2(8, 7),
                 RenderScale = new Vector2(0.4f, 0.4f),
                 RenderOptions = SpriteRenderOptions.CastsShadows | SpriteRenderOptions.IsLit,
-                SpecularReflectivity = 0,
+                SpecularReflectivity = 1.0f,
                 LayerDepth = 1
             };
             test.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
@@ -108,7 +109,7 @@ namespace CelestialEngine.TechDemo
                 Rotation = -MathHelper.PiOver2,
                 RenderScale = new Vector2(0.4f, 0.4f),
                 RenderOptions = SpriteRenderOptions.CastsShadows | SpriteRenderOptions.IsLit,
-                SpecularReflectivity = 0,
+                SpecularReflectivity = 1.0f,
                 LayerDepth = 2
             };
             test2.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
