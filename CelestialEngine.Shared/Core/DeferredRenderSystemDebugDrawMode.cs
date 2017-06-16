@@ -38,8 +38,13 @@ namespace CelestialEngine.Core
         LightMap,
 
         /// <summary>
-        /// Render the the color, options, shadow, and light maps directly to the screen in a quad;
-        /// this operation is lossy and only renders 25% of pixels in each map. Quads are consecutive.
+        /// Render the normal map directly to the screen
+        /// </summary>
+        NormalMap,
+
+        /// <summary>
+        /// Render all maps directly to the screen in a quad; this operation is lossy and only renders 25% of pixels in each map. 
+        /// Quads are consecutive.
         /// </summary>
         All
     }
