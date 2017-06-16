@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>0c719f65-df2d-4dfd-9845-94552aa4be95</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>CelestialEngine.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Core\AspectRatioScaleMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\BaseGame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Collections\QuadTree\IQuadTreeItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Collections\QuadTree\QuadTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Collections\QuadTree\QuadTreeNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Collections\ResourcePool.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Collections\ThrottledCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ConditionalInputBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\DeferredRenderSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\EngineContent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ExtendedContentManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\IComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\IDrawableComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\InputBindingSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\InputManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\InputState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\IntelligentSpriteBatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\PostProcess\IPostProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\PostProcess\PostProcessComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\PostProcess\SimulatedLight.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\PostProcess\SimulatedPostProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\PostProcess\StaticPostProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\RectangleF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\RenderTargetManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\RenderTargetTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ScreenDrawableComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ScreenSpriteBatch.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Shaders\MergeTargetsShader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Shaders\OptionsMapFlagsShader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Shaders\Shader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\SimBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\SpriteBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\SpriteRenderOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Vector2Helper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\VertexPrimitive.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\VerticesHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\World.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\AnimatedSprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\Camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\DebugSimulatedPostProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\DebugSprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\AmbientLight.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\ConeLight.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\PointLight.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\SimBaseAnchor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\SimpleShadedSprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\SimpleSprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\SpriteAnimation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\TiledSprite.cs" />
+  </ItemGroup>
+</Project>

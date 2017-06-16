@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata minClientVersion="3.3">
+    <id>$id$</id>
+    <version>$version$</version>
+    <description>A 2D deferred-rendered .NET game engine designed for programmers with advanced lighting, shadows, and physics.</description>
+    <authors>mrazza,wgraham17</authors>
+    <title>Celestial Engine - MonoGame (.NET Full 4.5)</title>
+    <projectUrl>https://github.com/mrazza/CelestialEngine</projectUrl>
+    <licenseUrl>https://raw.githubusercontent.com/mrazza/CelestialEngine/master/LICENSE</licenseUrl>
+    <tags>monogame game engine xna 2d deferred rendering</tags>
+    <dependencies>
+        <dependency id="MonoGame.Framework.WindowsDX" version="3.6.0.1625" />
+        <dependency id="FarseerPhysics.MonoGame.Unofficial" version="3.5.0" />
+    </dependencies>
+    <contentFiles>
+      <files include="Content\CelestialEngineContent.mgcb" buildAction="MonoGameContentReference" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="readme.txt" target="" />
+    <file src="Content\CelestialEngineContent.mgcb" target="contentFiles\any\any\Content" />
+  </files>
+</package>
