@@ -55,6 +55,13 @@ namespace CelestialEngine.TechDemo
             this.InputManager.AddConditionalBinding((s) => { return s.IsRightMouseClick(); }, SpawnNewRotatingLight);
             this.InputManager.AddConditionalBinding((s) => { return s.IsScrollWheelChanged(); }, PerformZoom);
             this.InputManager.AddConditionalBinding((s) => { return s.IsFirstKeyPress(Keys.B); }, (s) => mouseLight.MinShadowBlurDistance = mouseLight.MinShadowBlurDistance == float.PositiveInfinity ? 0.5f / 64.0f : float.PositiveInfinity);
+
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F1), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.Disabled);
+            //this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F2), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.All);
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F3), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.ColorMap);
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F4), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.OptionsMap);
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F5), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.LightMap);
+
             this.InputManager.AddBinding(UpdateCursorPosition);
             this.InputManager.AddConditionalBinding((s) => { return (s.IsKeyDown(Keys.LeftControl) || s.IsKeyDown(Keys.RightControl)) && s.IsLeftMouseDown(); }, SpawnNewSmallLight);
             this.IsMouseVisible = true;
