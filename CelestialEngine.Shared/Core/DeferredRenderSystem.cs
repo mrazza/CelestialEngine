@@ -71,6 +71,11 @@ namespace CelestialEngine.Core
         private MergeTargetsShader mergeRenderTargets;
 
         /// <summary>
+        /// Shader used when merging render targets.
+        /// </summary>
+        private DebugTargetsShader debugRenderTargets;
+
+        /// <summary>
         /// Represents a single white pixel.
         /// </summary>
         private Texture2D singlePixel;
@@ -101,6 +106,7 @@ namespace CelestialEngine.Core
             this.postProcessingEffects = new ThrottledCollection<SortedSet<IPostProcess>, IPostProcess>(new SortedSet<IPostProcess>());
             this.simulatedPostProcessEffects = new ThrottledCollection<QuadTree<SimulatedPostProcess, List<SimulatedPostProcess>>, SimulatedPostProcess>(new QuadTree<SimulatedPostProcess, List<SimulatedPostProcess>>(this.gameWorld.Bounds, 4));
             this.mergeRenderTargets = new MergeTargetsShader();
+            this.debugRenderTargets = new DebugTargetsShader();
             this.disablePostProcesses = false;
             this.parentGame = parentGame;
         }
@@ -152,6 +158,18 @@ namespace CelestialEngine.Core
                 this.disablePostProcesses = value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating which render targets to paint directly to the screen (if any).
+        /// </summary>
+        /// <remarks>
+        /// If this is set to a value, the specified map will be rendered directly to the screen.
+        /// 
+        /// If this is set to <c>All</c>, all maps will be rendered in a quad on screen.
+        /// 
+        /// This defaults to <c>Disabled</c>.
+        /// </remarks>
+        public DeferredRenderSystemDebugDrawMode DebugDrawMode { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="World"/> instance that contains the scene we are rendering.
@@ -548,17 +566,58 @@ namespace CelestialEngine.Core
                 this.GraphicsDevice.SetRenderTarget(null); // Resolve the render target
             }
 
-            // Merge render targets
-            this.GraphicsDevice.Clear(Color.Transparent);
-            this.mergeRenderTargets.ConfigureShader(this);
-            this.mergeRenderTargets.ApplyPass(0);
-            this.DirectScreenPaint();
+            if (this.DebugDrawMode == DeferredRenderSystemDebugDrawMode.Disabled)
+            {
+                // Merge render targets
+                this.GraphicsDevice.Clear(Color.Transparent);
+                this.mergeRenderTargets.ConfigureShader(this);
+                this.mergeRenderTargets.ApplyPass(0);
+                this.DirectScreenPaint();
 
-            // TODO: Draw any non-lit textures
-            var rsdSpriteBatch = new ScreenSpriteBatch(this);
-            rsdSpriteBatch.Begin();
-            this.gameWorld.DrawScreenDrawableComponents(gameTime, rsdSpriteBatch);
-            rsdSpriteBatch.End();
+                // TODO: Draw any non-lit textures
+                var rsdSpriteBatch = new ScreenSpriteBatch(this);
+                rsdSpriteBatch.Begin();
+                this.gameWorld.DrawScreenDrawableComponents(gameTime, rsdSpriteBatch);
+                rsdSpriteBatch.End();
+            }
+            else if (this.DebugDrawMode == DeferredRenderSystemDebugDrawMode.All)
+            {
+                this.GraphicsDevice.Clear(Color.Transparent);
+                this.debugRenderTargets.ConfigureShader(this);
+                this.debugRenderTargets.ApplyPass(1);
+                this.DirectScreenPaint();
+                //debugRenderTargets
+            }
+            else
+            {
+                RenderTarget2D source = null;
+
+                switch (this.DebugDrawMode)
+                {
+                    case DeferredRenderSystemDebugDrawMode.ColorMap:
+                        source = this.RenderTargets.ColorMap;
+                        break;
+
+                    case DeferredRenderSystemDebugDrawMode.OptionsMap:
+                        source = this.RenderTargets.OptionsMap;
+                        break;
+
+                    case DeferredRenderSystemDebugDrawMode.LightMap:
+                        source = this.RenderTargets.LightMap;
+                        break;
+                }
+
+                if (source == null)
+                {
+                    throw new ArgumentNullException(nameof(this.DebugDrawMode), $"Invalid DeferredRenderSystemDebugDrawMode: {this.DebugDrawMode}");
+                }
+
+                this.GraphicsDevice.Clear(Color.Transparent);
+                this.debugRenderTargets.ConfigureShader(this);
+                this.debugRenderTargets.GetParameter("renderMap").SetValue(source);
+                this.debugRenderTargets.ApplyPass(0);
+                this.DirectScreenPaint();
+            }
 
             base.Draw(gameTime);
         }
@@ -574,6 +633,7 @@ namespace CelestialEngine.Core
             this.spriteBatch = new IntelligentSpriteBatch(this);
             this.renderTargets = new RenderTargetManager(this.GraphicsDevice);
             this.mergeRenderTargets.LoadContent(this.parentGame.Content);
+            this.debugRenderTargets.LoadContent(this.parentGame.Content);
 
             // Create the SinglePixel instance
             this.singlePixel = new Texture2D(this.GraphicsDevice, 1, 1);

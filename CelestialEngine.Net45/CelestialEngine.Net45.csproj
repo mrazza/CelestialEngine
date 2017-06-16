@@ -51,10 +51,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\CelestialEngineContent.mgcb" />
+    <MonoGameContentReference Include="Content\CelestialEngineContent.mgcb" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Shaders\Core\DebugTargets.fx" />
     <Content Include="Content\Shaders\Core\MergeTargets.fx" />
     <Content Include="Content\Shaders\Core\OptionsMapFlags.fx" />
     <Content Include="Content\Shaders\Core\ShadowMap.fx" />
