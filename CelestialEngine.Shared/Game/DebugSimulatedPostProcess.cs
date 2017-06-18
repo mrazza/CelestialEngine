@@ -45,7 +45,7 @@ namespace CelestialEngine.Game
             this.targetPostProcess = targetPostProcess;
             this.lineWidth = this.World.GetWorldFromPixel(1.0f); // Default to 1 pixel in width
             this.optionMapFlagsShader = new OptionsMapFlagsShader();
-            this.LayerDepth = float.MaxValue; // Arbitrarily large layer depth
+            this.LayerDepth = byte.MaxValue; // Arbitrarily large layer depth
         }
         #endregion
 

@@ -200,6 +200,7 @@ namespace CelestialEngine.Game.PostProcess.Lights
             this.PostProcessEffect.GetParameter("normalMap").SetValue(renderSystem.RenderTargets.NormalMap);
             this.PostProcessEffect.GetParameter("optionsMap").SetValue(renderSystem.RenderTargets.OptionsMap);
             this.PostProcessEffect.GetParameter("shadowMap").SetValue(shadowMap);
+            this.PostProcessEffect.GetParameter("layerDepth").SetValue(this.LayerDepth / 255.0f);
 
             // Render
             this.PostProcessEffect.ApplyPass(0);

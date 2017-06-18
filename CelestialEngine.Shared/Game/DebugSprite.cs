@@ -110,7 +110,7 @@ namespace CelestialEngine.Game
         /// <param name="gameTime">Time elapsed since the last call to Update.</param>
         public override void Update(GameTime gameTime)
         {
-            this.LayerDepth = this.targetSprite.LayerDepth + 1;
+            this.LayerDepth = (byte)(this.targetSprite.LayerDepth + 1);
         }
 
         /// <summary>

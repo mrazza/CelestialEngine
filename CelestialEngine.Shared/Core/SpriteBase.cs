@@ -32,11 +32,6 @@ namespace CelestialEngine.Core
         /// The change in scale from the default sprite's size.
         /// </summary>
         private Vector2 renderScale;
-        
-        /// <summary>
-        /// Depth used for ordering when rendering.
-        /// </summary>
-        private float layerDepth;
 
         /// <summary>
         /// Specifies whether or not the object is visible in the scene.
@@ -76,7 +71,6 @@ namespace CelestialEngine.Core
         {
             this.renderScale = Vector2.One;
             this.isVisible = true;
-            this.layerDepth = 0;
             this.specularReflectivity = 0.5f;
             this.World.AddSpriteObject(this);
         }
@@ -127,20 +121,10 @@ namespace CelestialEngine.Core
         /// <value>
         /// The layer depth used when rendering.
         /// </value>
-        public float LayerDepth
+        public byte LayerDepth
         {
-            get
-            {
-                return this.layerDepth;
-            }
-
-            set
-            {
-                if (this.layerDepth != value)
-                {
-                    this.layerDepth = value;
-                }
-            }
+            get;
+            set;
         }
 
         /// <summary>
