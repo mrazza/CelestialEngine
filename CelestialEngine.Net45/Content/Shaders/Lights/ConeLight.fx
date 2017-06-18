@@ -107,7 +107,9 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
         // If we're going to render light here, calculate the colo and attenuation
         if (lightDistance < lightRange)
-            lightColorAndAttenuation = (lightColor * min(pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay), 1.0f - angleFromLight / lightAngle)).rgb;//pow(angleFromLight / lightAngle, lightDecay));
+        {
+            lightColorAndAttenuation = (lightColor * min(pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay), 1.0f - angleFromLight / lightAngle)).rgb;
+        }
 
         // Do specular calculations
         float amount = max(dot(normal, lightDirNorm), 0);
