@@ -13,13 +13,14 @@
 /// ------------------------------------------------------------
 /// RED Channel    | [---------Sprite Render Options----------]    Bits 1-8
 /// GREEN Channel  | [------------Specular Reflect------------]    Bits 1-8
-/// BLUE Channel   | 
-/// ALPHA Channel  |
+/// BLUE Channel   | [---------------Layer Depth--------------]    Bits 1-8
+/// ALPHA Channel  |               The Alpha Channel
 /// </remarks>
 float pixelOptions;
 float specularReflectivity;
 float4x4 viewProjection;
 float2 cameraPosition;
+float layerDepth;
 
 texture spriteTexture;
 sampler spriteTextureSample = sampler_state
@@ -59,14 +60,16 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
     float4 pixelColor = tex2D(spriteTextureSample, input.TexCoord);
     float redChannel = pixelOptions;
     float greenChannel = specularReflectivity;
+    float blueChannel = layerDepth;
 
     if (pixelColor.a == 0.0f)
     {
         redChannel = 0.0f;
         greenChannel = 0.0f;
+        blueChannel = 0.0f;
     }
 
-    return float4(redChannel, greenChannel, 0, pixelColor.a);
+    return float4(redChannel, greenChannel, blueChannel, pixelColor.a);
 }
 
 technique ApplyFlagsToOptionsMap

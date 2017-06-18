@@ -9,6 +9,7 @@
 /// </summary>
 float4x4 viewProjection;
 float2 cameraPosition;
+float layerDepth;
 
 struct VertexShaderInput
 {
@@ -35,13 +36,13 @@ GenericVertexShaderOutput GenericVertexShader(VertexShaderInput input)
 // Pixel shader that will mask the rendered area as in shadow
 float4 PSMaskShadow(GenericVertexShaderOutput input) : COLOR0
 {
-    return float4(0.0f, 1.0f, 1.0f, 1.0f);
+    return float4(0.0f, 1.0f, layerDepth, 1.0f);
 }
 
 // Pixel shader that will unmask the rendered area so as to not be in shadow
 float4 PSUnmaskShadow(GenericVertexShaderOutput input) : COLOR0
 {
-    return float4(1.0f, 0.0f, 1.0f, 1.0f);
+    return float4(1.0f, 0.0f, layerDepth, 1.0f);
 }
 
 technique ShadowMap
@@ -107,11 +108,11 @@ TextureVertexShaderOutput BoxBlurTextureVertexShader(VertexShaderInput input)
 // This pixel shader performs a gaussian blur
 float4 PSGaussianBlur(TextureVertexShaderOutput input) : COLOR0
 {
-    float2 origShadow = tex2D(shadowMapSampler, input.Tap).rg;
+    float3 origShadow = tex2D(shadowMapSampler, input.Tap).rgb;
 
     if (origShadow.g == 0.0f)
     {
-        return float4(origShadow, 1.0f, 1.0f);
+        return float4(origShadow, 1.0f);
     }
 
     float2 lightDistance = sqrt(saturate((distance(input.WorldPos.xy, lightPosition) - minBlurDistance) / maxBlurDistance));
@@ -136,7 +137,7 @@ float4 PSGaussianBlur(TextureVertexShaderOutput input) : COLOR0
 
     color = min(color * lightDistance + (1.0f - lightDistance) * orig, orig).r; // Blend result based on distance
 
-    return float4(color, 1.0f, 1.0f, 1);
+    return float4(color, 1.0f, origShadow.b, 1);
 }
 
 technique SoftenShadowMap

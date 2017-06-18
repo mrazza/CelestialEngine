@@ -50,11 +50,6 @@ namespace CelestialEngine.Core.PostProcess
         /// </summary>
         /// <remarks>A value of float.PositiveInfinity means no shadow blur enabled</remarks>
         private float minShadowBlurDistance;
-
-        /// <summary>
-        /// The layer depth for this light (used for shadows)
-        /// </summary>
-        private float layerDepth;
         #endregion
 
         #region Constructors
@@ -186,17 +181,10 @@ namespace CelestialEngine.Core.PostProcess
         /// <value>
         /// The layer depth.
         /// </value>
-        public float LayerDepth
+        public byte LayerDepth
         {
-            get
-            {
-                return this.layerDepth;
-            }
-
-            set
-            {
-                this.layerDepth = value;
-            }
+            get;
+            set;
         }
         #endregion
 
@@ -249,18 +237,14 @@ namespace CelestialEngine.Core.PostProcess
 
                 if (objectList.Count > 0)
                 {
-                    int lastLayerDepth = 0;
-                    int lastLayerDepthIndex = 0;
-                    bool renderedShadow = false; // This is used so that we don't bother occluding objects if we didn't even render anything
-
-                    lastLayerDepth = (int)objectList[0].LayerDepth;
-
+                    bool renderedShadow = false;
+                    
                     for (int objectIndex = 0; objectIndex < objectList.Count; objectIndex++)
                     {
                         SpriteBase currObj = objectList[objectIndex];
                         RectangleF spriteWorldBounds = currObj.SpriteWorldBounds;
 
-                        // If the object we found doesn't cast shadows (or we're inside it), skip it
+                        // If we're inside the object, skip it
                         if (spriteWorldBounds.Contains(base.Position))
                         {
                             continue;
@@ -269,25 +253,7 @@ namespace CelestialEngine.Core.PostProcess
                         this.shadowMapShader.ConfigureShader(renderSystem); // Configure the shader
                         this.shadowMapShader.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
                         this.shadowMapShader.GetParameter("cameraPosition").SetValue(renderSystem.GameCamera.PixelPosition);
-
-                        // If we switched light planes remove occlusion from all previous objects
-                        if (lastLayerDepth != (int)currObj.LayerDepth)
-                        {
-                            // Only occlude if we actually rendered something
-                            if (renderedShadow)
-                            {
-                                // Loop through all the objects between the last layer index and the current index
-                                for (int clearObjIndex = lastLayerDepthIndex; clearObjIndex < objectIndex; clearObjIndex++)
-                                {
-                                    this.ProcessSpriteDepthTransition(renderSystem, objectList[clearObjIndex]);
-                                }
-                            }
-
-                            // Save the last values
-                            lastLayerDepth = (int)currObj.LayerDepth;
-                            lastLayerDepthIndex = objectIndex;
-                            renderedShadow = false; // Reset this
-                        }
+                        this.shadowMapShader.GetParameter("layerDepth").SetValue(currObj.LayerDepth / 255.0f);
 
                         // Create the shadow map caused by the current sprite
                         this.shadowMapShader.ApplyPass(0);
@@ -325,12 +291,6 @@ namespace CelestialEngine.Core.PostProcess
                     // Loop through all the objects between the last layer index and the current index
                     if (renderedShadow)
                     {
-                        // Remove the shadows over the LAST shadow plane
-                        for (int clearObjIndex = lastLayerDepthIndex; clearObjIndex < objectList.Count; clearObjIndex++)
-                        {
-                            this.ProcessSpriteDepthTransition(renderSystem, objectList[clearObjIndex]);
-                        }
-
                         // Blur the shadow map if enabled
                         if (!float.IsPositiveInfinity(this.minShadowBlurDistance))
                         {
@@ -364,32 +324,6 @@ namespace CelestialEngine.Core.PostProcess
 
             renderSystem.SetRenderTargets(RenderTargetTypes.None, 0); // Resolve the render target
             renderSystem.RenderTargets.ReleaseTemporaryRenderTarget(intermediateShadowMap);
-        }
-
-        /// <summary>
-        /// Removes a shadow from sprite or fully covers the sprite in shadow, depending on the layer depth transition.
-        /// </summary>
-        /// <param name="renderSystem">The render system.</param>
-        /// <param name="sprite">The sprite.</param>
-        private void ProcessSpriteDepthTransition(DeferredRenderSystem renderSystem, SpriteBase sprite)
-        {
-            // Remove the shadow map that overlaps with the sprite (or fully cover it)
-            if (sprite.LayerDepth <= this.layerDepth)
-            {
-                this.shadowMapShader.ApplyPass(1); // Remove
-            }
-
-            if (sprite.SpriteWorldPrimitives != null)
-            {
-                foreach (var currShape in sprite.SpriteWorldPrimitives)
-                {
-                    renderSystem.DirectScreenPaint(currShape);
-                }
-            }
-            else
-            {
-                renderSystem.DirectScreenPaint(sprite.SpriteWorldBounds);
-            }
         }
         #endregion
     }

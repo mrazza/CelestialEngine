@@ -17,6 +17,7 @@ float4 lightColor;
 float specularStrength;
 float lightAngle;
 float2 lightFacingDirection;
+float layerDepth;
 
 Texture normalMap;
 sampler normalMapSampler = sampler_state
@@ -77,7 +78,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-    float shadow = tex2D(shadowMapSampler, input.TexCoord).r;
+    float2 shadow = tex2D(shadowMapSampler, input.TexCoord).rb;
     float4 options = tex2D(optionsMapSampler, input.TexCoord);
     int flag = (int)ceil(options.r * 255.0f);
     bool light = fmod(flag, 2) == 1;
@@ -86,7 +87,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     {
         return float4(1, 1, 1, 0);
     }
-    else if (shadow == 0.0f)
+    else if ((shadow.x == 0.0f && shadow.y > options.b) || options.b > layerDepth) // Only accept shadows onto you from objects higher than yourself... or if you're way above the light you tricky pixel.
     {
         return float4(0, 0, 0, 0);
     }
@@ -113,7 +114,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
         float3 reflect = normalize(2 * amount * normal - lightDirNorm);
         float specular = min(pow(saturate(dot(reflect, halfVec)), 10), amount);
 
-        return float4(saturate(lightColorAndAttenuation * lightPower + specular * lightColorAndAttenuation * specularStrength * specularReflectivity).rgb * shadow, 0);
+        return float4(saturate(lightColorAndAttenuation * lightPower + specular * lightColorAndAttenuation * specularStrength * specularReflectivity).rgb, 0);
     }
 }
 
@@ -126,7 +127,7 @@ technique SpecularConeLight
         SrcBlend = One;
         DestBlend = One;
 
-        VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
-        PixelShader = compile ps_4_0_level_9_1 PixelShaderFunction();
+        VertexShader = compile vs_4_0_level_9_3 VertexShaderFunction();
+        PixelShader = compile ps_4_0_level_9_3 PixelShaderFunction();
     }
 }

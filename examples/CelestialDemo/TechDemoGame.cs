@@ -129,7 +129,7 @@ namespace CelestialEngine.TechDemo
                 RenderScale = new Vector2(0.4f, 0.4f),
                 RenderOptions = SpriteRenderOptions.CastsShadows | SpriteRenderOptions.IsLit,
                 SpecularReflectivity = 0,
-                LayerDepth = 2
+                LayerDepth = 1
             };
             test3.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
             test3.Body.CollisionCategories = FarseerPhysics.Dynamics.Category.Cat1;
@@ -152,7 +152,8 @@ namespace CelestialEngine.TechDemo
                 SpecularStrength = 4.75f,
                 CastsShadows = true,
                 MinShadowBlurDistance = .5f,
-                MaxShadowBlurDistance = 1.5f
+                MaxShadowBlurDistance = 1.5f,
+                LayerDepth = 1
             };
             lightCount++;
 
