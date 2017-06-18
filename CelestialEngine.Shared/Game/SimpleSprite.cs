@@ -202,22 +202,23 @@ namespace CelestialEngine.Game
         public override void LoadContent(ExtendedContentManager contentManager)
         {
             this.spriteTexture = contentManager.Load<Texture2D>(this.spriteTexturePath);
-            uint[] pixelData = null;
-
-            if (this.computeSpriteShape)
-            {
-                pixelData = new uint[this.spriteTexture.Width * this.spriteTexture.Height];
-                this.spriteTexture.GetData(pixelData);
-                this.spriteWorldVertices = PolygonTools.CreatePolygon(pixelData, this.spriteTexture.Width);
-            }
-
-            this.optionMapFlagsShader.LoadContent(contentManager);
 
             if (this.spriteTextureBoundingBox == null)
             {
                 this.spriteTextureBoundingBox = this.spriteTexture.Bounds;
             }
 
+            uint[] pixelData = null;
+
+            if (this.computeSpriteShape)
+            {
+                pixelData = new uint[this.spriteTextureBoundingBox.Value.Width * this.spriteTextureBoundingBox.Value.Height];
+                this.spriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
+                this.spriteWorldVertices = PolygonTools.CreatePolygon(pixelData, this.spriteTextureBoundingBox.Value.Width);
+            }
+
+            this.optionMapFlagsShader.LoadContent(contentManager);
+            
             if (this.spriteNormalTexturePath != null)
             {
                 this.spriteNormalTexture = contentManager.Load<Texture2D>(this.spriteNormalTexturePath);
@@ -228,8 +229,8 @@ namespace CelestialEngine.Game
 
                 if (pixelData == null)
                 {
-                    pixelData = new uint[this.spriteTexture.Width * this.spriteTexture.Height];
-                    this.spriteTexture.GetData(pixelData);
+                    pixelData = new uint[this.spriteTextureBoundingBox.Value.Width * this.spriteTextureBoundingBox.Value.Height];
+                    this.spriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
                 }
 
                 // Convert the image to black (saving Alpha channel)
