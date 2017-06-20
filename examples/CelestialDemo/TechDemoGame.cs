@@ -221,7 +221,21 @@ namespace CelestialEngine.TechDemo
         /// <param name="state">The state.</param>
         private void PerformZoom(InputState state)
         {
-            this.GameCamera.CameraZoom = state.CurrentMouseState.ScrollWheelValue / 120.0f;
+            var zoom = state.CurrentMouseState.ScrollWheelValue / 120.0f;
+            if (zoom == 0)
+            {
+                zoom = 1;
+            }
+            else if (zoom < 0)
+            {
+                zoom = 1 / -(zoom - 1);
+            }
+            else
+            {
+                zoom += 1;
+            }
+
+            this.GameCamera.CameraZoom = zoom;
             RectangleF bounds = this.RenderSystem.GetCameraRenderBounds();
             this.background.Position = bounds.Position;
             this.background.TileArea = bounds.AreaBounds;
