@@ -203,24 +203,8 @@ namespace CelestialEngine.Core
                     return null;
                 }
 
-                return Triangulate.ConvexPartition(this.SpriteWorldVertices, TriangulationAlgorithm.Flipcode);
-            }
-        }
-
-        /// <summary>
-        ///A collection of triangulated convex primitives that make up the shape of the sprite.
-        /// </summary>
-        public VertexPrimitive[] SpriteWorldPrimitives
-        {
-            get
-            {
-                if (this.spriteWorldVertices == null)
-                {
-                    return null;
-                }
-
                 // TODO: Optimize this
-                return this.SpriteWorldShapes.Select(shape => new VertexPrimitive(PrimitiveType.TriangleStrip, shape.ToArray())).ToArray();
+                return Triangulate.ConvexPartition(this.SpriteWorldVertices, TriangulationAlgorithm.Flipcode);
             }
         }
 
