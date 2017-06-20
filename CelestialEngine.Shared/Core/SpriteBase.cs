@@ -172,7 +172,7 @@ namespace CelestialEngine.Core
         /// <remarks>
         /// This is an approximate bounding rectangle for the area impacted by this sprite. The actual area impacted may
         /// be smaller than this bounding rectangle and must NEVER be greater. For more percise bounding shapes, use the
-        /// <see cref="SpriteWorldShape"/> property.
+        /// <see cref="SpriteWorldVertices"/> property.
         /// </remarks>
         public abstract RectangleF SpriteWorldBounds
         {
@@ -180,9 +180,9 @@ namespace CelestialEngine.Core
         }
 
         /// <summary>
-        /// Represents the shape of the sprite.
+        /// A collection of vertices that represent the shape of the sprite.
         /// </summary>
-        public Vertices SpriteWorldShape
+        public Vertices SpriteWorldVertices
         {
             get
             {
@@ -192,9 +192,24 @@ namespace CelestialEngine.Core
         }
 
         /// <summary>
-        /// Gets the triangulated primitives that make up the shape of the sprite.
+        /// A collection of triangulated convex polygons whose union represents the shape of the sprite.
         /// </summary>
-        /// <value>
+        public IEnumerable<Vertices> SpriteWorldShapes
+        {
+            get
+            {
+                if (this.spriteWorldVertices == null)
+                {
+                    return null;
+                }
+
+                return Triangulate.ConvexPartition(this.SpriteWorldVertices, TriangulationAlgorithm.Flipcode);
+            }
+        }
+
+        /// <summary>
+        ///A collection of triangulated convex primitives that make up the shape of the sprite.
+        /// </summary>
         public VertexPrimitive[] SpriteWorldPrimitives
         {
             get
@@ -205,7 +220,7 @@ namespace CelestialEngine.Core
                 }
 
                 // TODO: Optimize this
-                return Triangulate.ConvexPartition(this.SpriteWorldShape, TriangulationAlgorithm.Flipcode).Select(shape => new VertexPrimitive(PrimitiveType.TriangleStrip, shape.ToArray())).ToArray();
+                return this.SpriteWorldShapes.Select(shape => new VertexPrimitive(PrimitiveType.TriangleStrip, shape.ToArray())).ToArray();
             }
         }
 

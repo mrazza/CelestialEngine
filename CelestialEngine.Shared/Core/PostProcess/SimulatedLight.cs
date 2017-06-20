@@ -303,19 +303,17 @@ namespace CelestialEngine.Core.PostProcess
 
             // Construct the vertex primitive to mask with
             Vector2[] extrema;
-            if (castingSprite.SpriteWorldShape != null)
+            if (castingSprite.SpriteWorldVertices != null)
             {
-                if (castingSprite.SpriteWorldShape.IsConvex())
+                if (castingSprite.SpriteWorldVertices.IsConvex())
                 {
-                    extrema = castingSprite.SpriteWorldShape.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+                    extrema = castingSprite.SpriteWorldVertices.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
                 }
                 else
                 {
-                    foreach (var curr in castingSprite.SpriteWorldPrimitives)
+                    foreach (var curr in castingSprite.SpriteWorldShapes)
                     {
-                        FarseerPhysics.Common.Vertices verts = new FarseerPhysics.Common.Vertices(curr.GetVertexData().Select(v => new Vector2(v.Position.X, v.Position.Y)));
-
-                        extrema = verts.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+                        extrema = curr.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
                         this.RenderShadow(renderSystem, lightDrawBounds, extrema);
                     }
                     return;
@@ -328,14 +326,14 @@ namespace CelestialEngine.Core.PostProcess
 
             this.RenderShadow(renderSystem, lightDrawBounds, extrema);
 
-            if (castingSprite.SpriteWorldShape != null && !castingSprite.SpriteWorldShape.IsConvex())
+            if (castingSprite.SpriteWorldVertices != null && !castingSprite.SpriteWorldVertices.IsConvex())
             {
                 while (true)
                 {
                     float distance1 = Vector2.DistanceSquared(base.Position, extrema[0]);
                     float distance2 = Vector2.DistanceSquared(base.Position, extrema[1]);
                     float distance = MathHelper.Max(distance1, distance2);
-                    FarseerPhysics.Common.Vertices remaining = new FarseerPhysics.Common.Vertices(castingSprite.SpriteWorldShape.Where(vert => Vector2.DistanceSquared(base.Position, vert) < distance));
+                    FarseerPhysics.Common.Vertices remaining = new FarseerPhysics.Common.Vertices(castingSprite.SpriteWorldVertices.Where(vert => Vector2.DistanceSquared(base.Position, vert) < distance));
 
                     if (remaining.Count == 0)
                     {
