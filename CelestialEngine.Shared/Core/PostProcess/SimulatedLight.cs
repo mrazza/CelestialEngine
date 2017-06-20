@@ -242,53 +242,18 @@ namespace CelestialEngine.Core.PostProcess
                     for (int objectIndex = 0; objectIndex < objectList.Count; objectIndex++)
                     {
                         SpriteBase currObj = objectList[objectIndex];
-                        RectangleF spriteWorldBounds = currObj.SpriteWorldBounds;
 
                         // If we're inside the object, skip it
-                        if (spriteWorldBounds.Contains(base.Position))
+                        if (currObj.SpriteWorldBounds.Contains(base.Position))
                         {
                             continue;
                         }
 
-                        this.shadowMapShader.ConfigureShader(renderSystem); // Configure the shader
-                        this.shadowMapShader.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
-                        this.shadowMapShader.GetParameter("cameraPosition").SetValue(renderSystem.GameCamera.PixelPosition);
-                        this.shadowMapShader.GetParameter("layerDepth").SetValue(currObj.LayerDepth / 255.0f);
+                        this.RenderShadow(renderSystem, currObj, lightDrawBounds);
 
-                        // Create the shadow map caused by the current sprite
-                        this.shadowMapShader.ApplyPass(0);
-
-                        // Construct the vertex primitive to mask with
-                        Vector2[] extrema;
-                        if (currObj.SpriteWorldShape != null)
-                        {
-                            extrema = currObj.SpriteWorldShape.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
-                        }
-                        else
-                        {
-                            extrema = spriteWorldBounds.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
-                        }
-
-                        Vector2 widthVector = Vector2.Normalize(extrema[0] - base.Position); // Get the vector to the first extrema
-                        Vector2 heightVector = Vector2.Normalize(extrema[1] - base.Position); // Get the vector to the second extrema
-
-                        VertexPrimitive shadowArea = new VertexPrimitive(PrimitiveType.TriangleStrip, 4);
-                        shadowArea.Add(extrema[0]);
-                        shadowArea.Add(extrema[1]);
-
-                        // Let's extend the shadow vector until it hits the edge of the draw bounds
-                        shadowArea.Add(lightDrawBounds.CastInternalRay(extrema[0], widthVector));
-                        shadowArea.Add(lightDrawBounds.CastInternalRay(extrema[1], heightVector));
-
-                        // Let's get the remaining verts that might exist to finish up the rect
-                        List<Vector2> interiorVerts = lightDrawBounds.GetInteriorVertices(base.Position, widthVector, heightVector);
-                        shadowArea.Add(interiorVerts); // Add the interior verts (if any exist)
-
-                        renderSystem.DirectScreenPaint(shadowArea); // Render the shadow
                         renderedShadow = true; // We just rendered a shadow; keep track of that
                     }
                     
-                    // Loop through all the objects between the last layer index and the current index
                     if (renderedShadow)
                     {
                         // Blur the shadow map if enabled
@@ -324,6 +289,84 @@ namespace CelestialEngine.Core.PostProcess
 
             renderSystem.SetRenderTargets(RenderTargetTypes.None, 0); // Resolve the render target
             renderSystem.RenderTargets.ReleaseTemporaryRenderTarget(intermediateShadowMap);
+        }
+
+        protected void RenderShadow(DeferredRenderSystem renderSystem, SpriteBase castingSprite, RectangleF lightDrawBounds)
+        {
+            this.shadowMapShader.ConfigureShader(renderSystem); // Configure the shader
+            this.shadowMapShader.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
+            this.shadowMapShader.GetParameter("cameraPosition").SetValue(renderSystem.GameCamera.PixelPosition);
+            this.shadowMapShader.GetParameter("layerDepth").SetValue(castingSprite.LayerDepth / 255.0f);
+
+            // Create the shadow map caused by the current sprite
+            this.shadowMapShader.ApplyPass(0);
+
+            // Construct the vertex primitive to mask with
+            Vector2[] extrema;
+            if (castingSprite.SpriteWorldShape != null)
+            {
+                if (castingSprite.SpriteWorldShape.IsConvex())
+                {
+                    extrema = castingSprite.SpriteWorldShape.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+                }
+                else
+                {
+                    foreach (var curr in castingSprite.SpriteWorldPrimitives)
+                    {
+                        FarseerPhysics.Common.Vertices verts = new FarseerPhysics.Common.Vertices(curr.GetVertexData().Select(v => new Vector2(v.Position.X, v.Position.Y)));
+
+                        extrema = verts.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+                        this.RenderShadow(renderSystem, lightDrawBounds, extrema);
+                    }
+                    return;
+                }
+            }
+            else
+            {
+                extrema = castingSprite.SpriteWorldBounds.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+            }
+
+            this.RenderShadow(renderSystem, lightDrawBounds, extrema);
+
+            if (castingSprite.SpriteWorldShape != null && !castingSprite.SpriteWorldShape.IsConvex())
+            {
+                while (true)
+                {
+                    float distance1 = Vector2.DistanceSquared(base.Position, extrema[0]);
+                    float distance2 = Vector2.DistanceSquared(base.Position, extrema[1]);
+                    float distance = MathHelper.Max(distance1, distance2);
+                    FarseerPhysics.Common.Vertices remaining = new FarseerPhysics.Common.Vertices(castingSprite.SpriteWorldShape.Where(vert => Vector2.DistanceSquared(base.Position, vert) < distance));
+
+                    if (remaining.Count == 0)
+                    {
+                        break;
+                    }
+
+                    extrema = remaining.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+
+                    this.RenderShadow(renderSystem, lightDrawBounds, extrema);
+                }
+            }
+        }
+
+        protected void RenderShadow(DeferredRenderSystem renderSystem, RectangleF lightDrawBounds, Vector2[] extrema)
+        {
+            Vector2 widthVector = Vector2.Normalize(extrema[0] - base.Position); // Get the vector to the first extrema
+            Vector2 heightVector = Vector2.Normalize(extrema[1] - base.Position); // Get the vector to the second extrema
+
+            VertexPrimitive shadowArea = new VertexPrimitive(PrimitiveType.TriangleStrip, 4);
+            shadowArea.Add(extrema[0]);
+            shadowArea.Add(extrema[1]);
+
+            // Let's extend the shadow vector until it hits the edge of the draw bounds
+            shadowArea.Add(lightDrawBounds.CastInternalRay(extrema[0], widthVector));
+            shadowArea.Add(lightDrawBounds.CastInternalRay(extrema[1], heightVector));
+
+            // Let's get the remaining verts that might exist to finish up the rect
+            List<Vector2> interiorVerts = lightDrawBounds.GetInteriorVertices(base.Position, widthVector, heightVector);
+            shadowArea.Add(interiorVerts); // Add the interior verts (if any exist)
+
+            renderSystem.DirectScreenPaint(shadowArea); // Render the shadow
         }
         #endregion
     }

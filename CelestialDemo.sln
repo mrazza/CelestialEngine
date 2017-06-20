@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{CD309A64-0CC6-4316-AA65-B203BAB88176}"
 EndProject
@@ -26,9 +26,11 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0272540F-D454-4633-9F67-B3EB1392D2C7}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0272540F-D454-4633-9F67-B3EB1392D2C7}.Debug|Any CPU.Build.0 = Debug|x86
 		{0272540F-D454-4633-9F67-B3EB1392D2C7}.Debug|x86.ActiveCfg = Debug|x86
 		{0272540F-D454-4633-9F67-B3EB1392D2C7}.Debug|x86.Build.0 = Debug|x86
 		{0272540F-D454-4633-9F67-B3EB1392D2C7}.Release|Any CPU.ActiveCfg = Release|x86
+		{0272540F-D454-4633-9F67-B3EB1392D2C7}.Release|Any CPU.Build.0 = Release|x86
 		{0272540F-D454-4633-9F67-B3EB1392D2C7}.Release|x86.ActiveCfg = Release|x86
 		{0272540F-D454-4633-9F67-B3EB1392D2C7}.Release|x86.Build.0 = Release|x86
 		{5DA09037-9BDF-4DE6-8928-29FD47B35230}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
