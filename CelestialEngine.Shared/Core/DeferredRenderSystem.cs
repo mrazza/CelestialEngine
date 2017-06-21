@@ -522,7 +522,7 @@ namespace CelestialEngine.Core
         public override void Draw(GameTime gameTime)
         {
             // Get the items that need rendering
-            var spritesToDraw = this.gameWorld.GetSpriteObjectsInArea(this.GetCameraRenderBounds()).OrderBy(s => s.LayerDepth);
+            var spritesToDraw = this.gameWorld.GetSpriteObjectsInArea(this.GetCameraRenderBounds()).OrderBy(s => s.LayerDepth).ToArray();
 
             if (!this.disablePostProcesses)
             {
