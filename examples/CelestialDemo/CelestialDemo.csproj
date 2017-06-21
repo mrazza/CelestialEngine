@@ -109,6 +109,7 @@
     <Content Include="Content\floortile.jpg" />
     <Content Include="Content\floortilenormal.jpg" />
     <Content Include="Content\George_Ellinas_-_Pulse_%28George_Ellinas_remix%29_LoopEdit.wav" />
+    <Content Include="Content\moon.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

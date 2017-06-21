@@ -141,6 +141,25 @@ namespace CelestialEngine.TechDemo
                 var x = new DebugSprite(this.GameWorld, test3);
             }
 
+            SimpleSprite test4 = new SimpleSprite(this.GameWorld, "Content/moon", null, true)
+            {
+                Position = new Vector2(15, 18),
+                Rotation = -MathHelper.PiOver2,
+                RenderScale = new Vector2(0.4f, 0.4f),
+                RenderOptions = SpriteRenderOptions.CastsShadows | SpriteRenderOptions.IsLit,
+                SpecularReflectivity = 0,
+                LayerDepth = 1
+            };
+            test3.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
+            test3.Body.CollisionCategories = FarseerPhysics.Dynamics.Category.Cat1;
+            test3.Body.Friction = 0;
+            test3.Body.Restitution = 1.0f;
+
+            if (this.IsDebug)
+            {
+                var x = new DebugSprite(this.GameWorld, test4);
+            }
+
             this.amLight = new AmbientLight(Color.White, 0.02f, true, 1);
             this.RenderSystem.AddPostProcessEffect(this.amLight);
 
@@ -202,7 +221,21 @@ namespace CelestialEngine.TechDemo
         /// <param name="state">The state.</param>
         private void PerformZoom(InputState state)
         {
-            this.GameCamera.CameraZoom = state.CurrentMouseState.ScrollWheelValue / 120.0f;
+            var zoom = state.CurrentMouseState.ScrollWheelValue / 120.0f;
+            if (zoom == 0)
+            {
+                zoom = 1;
+            }
+            else if (zoom < 0)
+            {
+                zoom = 1 / -(zoom - 1);
+            }
+            else
+            {
+                zoom += 1;
+            }
+
+            this.GameCamera.CameraZoom = zoom;
             RectangleF bounds = this.RenderSystem.GetCameraRenderBounds();
             this.background.Position = bounds.Position;
             this.background.TileArea = bounds.AreaBounds;

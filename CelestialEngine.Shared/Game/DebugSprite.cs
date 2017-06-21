@@ -128,11 +128,11 @@ namespace CelestialEngine.Game
             renderSystem.DrawFilledRectangle(posRect, Color.White, this.Rotation); // Draw position
 
             // Draw shape outline if it exists
-            if (this.targetSprite.SpriteWorldShape != null)
+            if (this.targetSprite.SpriteWorldVertices != null)
             {
-                for (int index = 0; index < this.targetSprite.SpriteWorldShape.Count - 1; index++)
+                for (int index = 0; index < this.targetSprite.SpriteWorldVertices.Count - 1; index++)
                 {
-                    renderSystem.DrawLine(this.targetSprite.SpriteWorldShape[index], this.targetSprite.SpriteWorldShape[index + 1], Color.Red, this.lineWidth);
+                    renderSystem.DrawLine(this.targetSprite.SpriteWorldVertices[index], this.targetSprite.SpriteWorldVertices[index + 1], Color.Red, this.lineWidth);
                 }
             }
 
