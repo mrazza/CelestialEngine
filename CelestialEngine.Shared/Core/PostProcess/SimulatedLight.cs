@@ -249,7 +249,7 @@ namespace CelestialEngine.Core.PostProcess
                             continue;
                         }
 
-                        this.RenderShadow(renderSystem, currObj, lightDrawBounds);
+                        this.RenderShadowForSprite(renderSystem, currObj, lightDrawBounds);
 
                         renderedShadow = true; // We just rendered a shadow; keep track of that
                     }
@@ -291,7 +291,13 @@ namespace CelestialEngine.Core.PostProcess
             renderSystem.RenderTargets.ReleaseTemporaryRenderTarget(intermediateShadowMap);
         }
 
-        protected void RenderShadow(DeferredRenderSystem renderSystem, SpriteBase castingSprite, RectangleF lightDrawBounds)
+        /// <summary>
+        /// Renders a shadow for the specified sprite.
+        /// </summary>
+        /// <param name="renderSystem">The render system to render with.</param>
+        /// <param name="castingSprite">The sprite that is casting the shadow.</param>
+        /// <param name="lightDrawBounds">The area possibly impacted by the light casting the shadow.</param>
+        protected void RenderShadowForSprite(DeferredRenderSystem renderSystem, SpriteBase castingSprite, RectangleF lightDrawBounds)
         {
             this.shadowMapShader.ConfigureShader(renderSystem); // Configure the shader
             this.shadowMapShader.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
@@ -302,51 +308,33 @@ namespace CelestialEngine.Core.PostProcess
             this.shadowMapShader.ApplyPass(0);
 
             // Construct the vertex primitive to mask with
-            Vector2[] extrema;
             if (castingSprite.SpriteWorldVertices != null)
             {
                 if (castingSprite.SpriteWorldVertices.IsConvex())
                 {
-                    extrema = castingSprite.SpriteWorldVertices.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
+                    this.RenderShadow(renderSystem, lightDrawBounds, castingSprite.SpriteWorldVertices.GetRelativeExtrema(base.Position));
                 }
                 else
                 {
+                    // For concave shapes, we need to render a shadow for each convex part.
                     foreach (var curr in castingSprite.SpriteWorldShapes)
                     {
-                        extrema = curr.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
-                        this.RenderShadow(renderSystem, lightDrawBounds, extrema);
+                        this.RenderShadow(renderSystem, lightDrawBounds, curr.GetRelativeExtrema(base.Position));
                     }
-                    return;
                 }
             }
             else
             {
-                extrema = castingSprite.SpriteWorldBounds.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
-            }
-
-            this.RenderShadow(renderSystem, lightDrawBounds, extrema);
-
-            if (castingSprite.SpriteWorldVertices != null && !castingSprite.SpriteWorldVertices.IsConvex())
-            {
-                while (true)
-                {
-                    float distance1 = Vector2.DistanceSquared(base.Position, extrema[0]);
-                    float distance2 = Vector2.DistanceSquared(base.Position, extrema[1]);
-                    float distance = MathHelper.Max(distance1, distance2);
-                    FarseerPhysics.Common.Vertices remaining = new FarseerPhysics.Common.Vertices(castingSprite.SpriteWorldVertices.Where(vert => Vector2.DistanceSquared(base.Position, vert) < distance));
-
-                    if (remaining.Count == 0)
-                    {
-                        break;
-                    }
-
-                    extrema = remaining.GetRelativeExtrema(base.Position); // Get the extrema that cause the shadow
-
-                    this.RenderShadow(renderSystem, lightDrawBounds, extrema);
-                }
+                this.RenderShadow(renderSystem, lightDrawBounds, castingSprite.SpriteWorldBounds.GetRelativeExtrema(base.Position));
             }
         }
 
+        /// <summary>
+        /// Renders a single shadow from the specified extrema to the end of the visible light.
+        /// </summary>
+        /// <param name="renderSystem">The render system to render with.</param>
+        /// <param name="lightDrawBounds">The area possibly impacted by the light casting the shadow.</param>
+        /// <param name="extrema">Array of two extrema representing the start of the shadow.</param>
         protected void RenderShadow(DeferredRenderSystem renderSystem, RectangleF lightDrawBounds, Vector2[] extrema)
         {
             Vector2 widthVector = Vector2.Normalize(extrema[0] - base.Position); // Get the vector to the first extrema
