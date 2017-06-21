@@ -238,22 +238,12 @@ namespace CelestialEngine.Core.PostProcess
                 if (objectList.Count > 0)
                 {
                     bool renderedShadow = false;
-                    
+
                     for (int objectIndex = 0; objectIndex < objectList.Count; objectIndex++)
                     {
-                        SpriteBase currObj = objectList[objectIndex];
-
-                        // If we're inside the object, skip it
-                        if (currObj.SpriteWorldBounds.Contains(base.Position))
-                        {
-                            continue;
-                        }
-
-                        this.RenderShadowForSprite(renderSystem, currObj, lightDrawBounds);
-
-                        renderedShadow = true; // We just rendered a shadow; keep track of that
+                        renderedShadow |= this.RenderShadowForSprite(renderSystem, objectList[objectIndex], lightDrawBounds);
                     }
-                    
+
                     if (renderedShadow)
                     {
                         // Blur the shadow map if enabled
@@ -297,36 +287,49 @@ namespace CelestialEngine.Core.PostProcess
         /// <param name="renderSystem">The render system to render with.</param>
         /// <param name="castingSprite">The sprite that is casting the shadow.</param>
         /// <param name="lightDrawBounds">The area possibly impacted by the light casting the shadow.</param>
-        protected void RenderShadowForSprite(DeferredRenderSystem renderSystem, SpriteBase castingSprite, RectangleF lightDrawBounds)
+        /// <returns>True if a shadow was rendered; otherwise, false.</returns>
+        protected bool RenderShadowForSprite(DeferredRenderSystem renderSystem, SpriteBase castingSprite, RectangleF lightDrawBounds)
         {
-            this.shadowMapShader.ConfigureShader(renderSystem); // Configure the shader
-            this.shadowMapShader.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
-            this.shadowMapShader.GetParameter("cameraPosition").SetValue(renderSystem.GameCamera.PixelPosition);
-            this.shadowMapShader.GetParameter("layerDepth").SetValue(castingSprite.LayerDepth / 255.0f);
-
-            // Create the shadow map caused by the current sprite
-            this.shadowMapShader.ApplyPass(0);
-
             // Construct the vertex primitive to mask with
             if (castingSprite.SpriteWorldVertices != null)
             {
+                // If we're inside the object, skip it
+                if (castingSprite.SpriteWorldBounds.Contains(base.Position))
+                {
+                    Vector2 position = base.Position;
+                    // For complex sprites we need to check if the point is within the polygon.
+                    // PointInPolygon() returns -1 for outside, 0 for on the edge, and 1 for inside.
+                    if (castingSprite.SpriteWorldVertices.PointInPolygon(ref position) >= 0)
+                    {
+                        return false;
+                    }
+                }
+
                 if (castingSprite.SpriteWorldVertices.IsConvex())
                 {
-                    this.RenderShadow(renderSystem, lightDrawBounds, castingSprite.SpriteWorldVertices.GetRelativeExtrema(base.Position));
+                    this.RenderShadow(renderSystem, lightDrawBounds, castingSprite.SpriteWorldVertices.GetRelativeExtrema(base.Position), castingSprite.LayerDepth);
                 }
                 else
                 {
                     // For concave shapes, we need to render a shadow for each convex part.
                     foreach (var curr in castingSprite.SpriteWorldShapes)
                     {
-                        this.RenderShadow(renderSystem, lightDrawBounds, curr.GetRelativeExtrema(base.Position));
+                        this.RenderShadow(renderSystem, lightDrawBounds, curr.GetRelativeExtrema(base.Position), castingSprite.LayerDepth);
                     }
                 }
             }
             else
             {
-                this.RenderShadow(renderSystem, lightDrawBounds, castingSprite.SpriteWorldBounds.GetRelativeExtrema(base.Position));
+                // If we're inside the object, skip it
+                if (castingSprite.SpriteWorldBounds.Contains(base.Position))
+                {
+                    return false;
+                }
+
+                this.RenderShadow(renderSystem, lightDrawBounds, castingSprite.SpriteWorldBounds.GetRelativeExtrema(base.Position), castingSprite.LayerDepth);
             }
+
+            return true;
         }
 
         /// <summary>
@@ -335,8 +338,16 @@ namespace CelestialEngine.Core.PostProcess
         /// <param name="renderSystem">The render system to render with.</param>
         /// <param name="lightDrawBounds">The area possibly impacted by the light casting the shadow.</param>
         /// <param name="extrema">Array of two extrema representing the start of the shadow.</param>
-        protected void RenderShadow(DeferredRenderSystem renderSystem, RectangleF lightDrawBounds, Vector2[] extrema)
+        protected void RenderShadow(DeferredRenderSystem renderSystem, RectangleF lightDrawBounds, Vector2[] extrema, byte layerDepth)
         {
+            this.shadowMapShader.ConfigureShader(renderSystem); // Configure the shader
+            this.shadowMapShader.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
+            this.shadowMapShader.GetParameter("cameraPosition").SetValue(renderSystem.GameCamera.PixelPosition);
+            this.shadowMapShader.GetParameter("layerDepth").SetValue(layerDepth / 255.0f);
+
+            // Create the shadow map caused by the current sprite
+            this.shadowMapShader.ApplyPass(0);
+
             Vector2 widthVector = Vector2.Normalize(extrema[0] - base.Position); // Get the vector to the first extrema
             Vector2 heightVector = Vector2.Normalize(extrema[1] - base.Position); // Get the vector to the second extrema
 
