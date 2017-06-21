@@ -244,7 +244,7 @@ namespace CelestialEngine.Core
 
             if (this.spriteShapes != null)
             {
-                this.SpriteWorldShapes = this.spriteShapes.Select(shape => new Vertices(shape.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position))).ToList();
+                this.SpriteWorldShapes = this.spriteShapes.Select(shape => new Vertices(shape.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position)));
             }
         }
         #endregion
