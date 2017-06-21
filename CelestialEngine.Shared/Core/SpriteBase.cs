@@ -8,9 +8,7 @@ namespace CelestialEngine.Core
 {
     using Collections.QuadTree;
     using FarseerPhysics.Common;
-    using FarseerPhysics.Common.Decomposition;
     using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -26,7 +24,12 @@ namespace CelestialEngine.Core
         /// <summary>
         /// Vertices of the sprite in world units.
         /// </summary>
-        protected Vertices spriteWorldVertices;
+        protected Vertices spriteVertices;
+
+        /// <summary>
+        /// Collection of convex shapes containing vertices that make up this sprite.
+        /// </summary>
+        protected List<Vertices> spriteShapes;
 
         /// <summary>
         /// The change in scale from the default sprite's size.
@@ -184,11 +187,8 @@ namespace CelestialEngine.Core
         /// </summary>
         public Vertices SpriteWorldVertices
         {
-            get
-            {
-                // TODO: Optimize this
-                return this.spriteWorldVertices == null ? null : new Vertices(this.spriteWorldVertices.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position));
-            }
+            get;
+            protected set;
         }
 
         /// <summary>
@@ -196,16 +196,8 @@ namespace CelestialEngine.Core
         /// </summary>
         public IEnumerable<Vertices> SpriteWorldShapes
         {
-            get
-            {
-                if (this.spriteWorldVertices == null)
-                {
-                    return null;
-                }
-
-                // TODO: Optimize this
-                return Triangulate.ConvexPartition(this.SpriteWorldVertices, TriangulationAlgorithm.Flipcode);
-            }
+            get;
+            protected set;
         }
 
         /// <summary>
@@ -232,6 +224,28 @@ namespace CelestialEngine.Core
         {
             get;
             set;
+        }
+        #endregion
+
+        #region SimBase Methods
+        /// <summary>
+        /// Called when the GameComponent needs to be updated. Override this method with component-specific update code.
+        /// </summary>
+        /// <param name="gameTime">Time elapsed since the last call to Update.</param>
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            // TODO: Optimize this.
+            if (this.spriteVertices != null)
+            {
+                this.SpriteWorldVertices = new Vertices(this.spriteVertices.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position));
+            }
+
+            if (this.spriteShapes != null)
+            {
+                this.SpriteWorldShapes = this.spriteShapes.Select(shape => new Vertices(shape.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position))).ToList();
+            }
         }
         #endregion
 

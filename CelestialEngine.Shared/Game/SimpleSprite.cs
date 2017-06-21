@@ -12,6 +12,7 @@ namespace CelestialEngine.Game
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using FarseerPhysics.Common;
+    using FarseerPhysics.Common.Decomposition;
 
     /// <summary>
     /// A simple <see cref="SpriteBase"/> implementation that renders just a color sprite.
@@ -214,7 +215,10 @@ namespace CelestialEngine.Game
             {
                 pixelData = new uint[this.spriteTextureBoundingBox.Value.Width * this.spriteTextureBoundingBox.Value.Height];
                 this.spriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
-                this.spriteWorldVertices = PolygonTools.CreatePolygon(pixelData, this.spriteTextureBoundingBox.Value.Width);
+                this.spriteVertices = PolygonTools.CreatePolygon(pixelData, this.spriteTextureBoundingBox.Value.Width);
+                this.SpriteWorldVertices = this.spriteVertices;
+                this.spriteShapes = Triangulate.ConvexPartition(this.SpriteWorldVertices, TriangulationAlgorithm.Flipcode);
+                this.SpriteWorldShapes = this.spriteShapes;
             }
 
             this.optionMapFlagsShader.LoadContent(contentManager);
