@@ -46,6 +46,11 @@ namespace CelestialEngine.Core
         private IntelligentSpriteBatch spriteBatch;
 
         /// <summary>
+        /// The <see cref="ScreenSpriteBatch"/> instance used to perform rendering of screen-wide objects.
+        /// </summary>
+        private ScreenSpriteBatch screenSpriteBatch;
+
+        /// <summary>
         /// <see cref="World"/> instance that contains the scene we are rendering.
         /// </summary>
         private World gameWorld;
@@ -574,11 +579,10 @@ namespace CelestialEngine.Core
                 this.mergeRenderTargets.ApplyPass(0);
                 this.DirectScreenPaint();
 
-                // TODO: Draw any non-lit textures
-                var rsdSpriteBatch = new ScreenSpriteBatch(this);
-                rsdSpriteBatch.Begin();
-                this.gameWorld.DrawScreenDrawableComponents(gameTime, rsdSpriteBatch);
-                rsdSpriteBatch.End();
+                // Draw ScreenDrawableComponents
+                this.screenSpriteBatch.Begin();
+                this.gameWorld.DrawScreenDrawableComponents(gameTime, this.screenSpriteBatch);
+                this.screenSpriteBatch.End();
             }
             else if (this.DebugDrawMode == DeferredRenderSystemDebugDrawMode.All)
             {
@@ -586,7 +590,6 @@ namespace CelestialEngine.Core
                 this.debugRenderTargets.ConfigureShader(this);
                 this.debugRenderTargets.ApplyPass(1);
                 this.DirectScreenPaint();
-                //debugRenderTargets
             }
             else
             {
@@ -637,6 +640,7 @@ namespace CelestialEngine.Core
 
             this.GraphicsDevice.PresentationParameters.DepthStencilFormat = DepthFormat.None;
             this.spriteBatch = new IntelligentSpriteBatch(this);
+            this.screenSpriteBatch = new ScreenSpriteBatch(this);
             this.renderTargets = new RenderTargetManager(this.GraphicsDevice);
             this.mergeRenderTargets.LoadContent(this.parentGame.Content);
             this.debugRenderTargets.LoadContent(this.parentGame.Content);

@@ -6,6 +6,7 @@
 
 namespace CelestialEngine.Core
 {
+    using System;
     using System.Text;
     using CelestialEngine.Core.Shaders;
     using Microsoft.Xna.Framework;
@@ -15,7 +16,7 @@ namespace CelestialEngine.Core
     /// This class manages <see cref="SpriteBatch"/> so that calls to Begin() and End() will not result in 
     /// InvalidOperation exceptions caused by illegal call sequences. 
     /// </summary>
-    public sealed class ScreenSpriteBatch
+    public sealed class ScreenSpriteBatch : IDisposable
     {
         #region Members
         /// <summary>
@@ -145,6 +146,17 @@ namespace CelestialEngine.Core
         public void DrawString(SpriteFont spriteFont, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects)
         {
             this.spriteBatch.DrawString(spriteFont, text, position, color, rotation, origin, scale, effects, 0);
+        }
+        #endregion
+
+        #region IDisposable Overrides
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        //  unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.spriteBatch.Dispose();
         }
         #endregion
     }

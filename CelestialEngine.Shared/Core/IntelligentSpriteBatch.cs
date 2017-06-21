@@ -6,6 +6,7 @@
 
 namespace CelestialEngine.Core
 {
+    using System;
     using System.Text;
     using CelestialEngine.Core.Shaders;
     using Microsoft.Xna.Framework;
@@ -16,7 +17,7 @@ namespace CelestialEngine.Core
     /// result in InvalidOperation exceptions caused by illegal call sequences. It also converts from world to
     /// pixel-space before rendering.
     /// </summary>
-    internal sealed class IntelligentSpriteBatch
+    internal sealed class IntelligentSpriteBatch : IDisposable
     {
         #region Members
         /// <summary>
@@ -146,6 +147,17 @@ namespace CelestialEngine.Core
         public void DrawString(SpriteFont spriteFont, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects)
         {
             this.spriteBatch.DrawString(spriteFont, text, this.renderSystem.GameWorld.GetPixelFromWorld(position), color, rotation, origin, scale, effects, 0);
+        }
+        #endregion
+
+        #region IDisposable Overrides
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        //  unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.spriteBatch.Dispose();
         }
         #endregion
     }
