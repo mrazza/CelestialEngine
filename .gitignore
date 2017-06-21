@@ -14,3 +14,4 @@
 /.vs
 /CelestialEngine.Net45/.vs
 *.nupkg
+/CelestialEngine.Net45/nuget.exe
