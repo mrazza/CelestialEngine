@@ -1,5 +1,5 @@
 !! IMPORTANT !!
-Due to a bug in NuGet packaging, please change the Build Action of "Content\CelestialEngineContent.mgcb" to "MonoGameContentReference".
+Add the shader files in Content/Shaders/Core, Content/Shaders/Lights, and Content/Shaders/Simple to your MonoGame Content Builder project.
 
 **
 **

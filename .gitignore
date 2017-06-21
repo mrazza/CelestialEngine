@@ -13,3 +13,4 @@
 /packages/**
 /.vs
 /CelestialEngine.Net45/.vs
+*.nupkg
