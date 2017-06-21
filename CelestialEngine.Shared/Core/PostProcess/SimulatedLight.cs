@@ -338,12 +338,13 @@ namespace CelestialEngine.Core.PostProcess
         /// <param name="renderSystem">The render system to render with.</param>
         /// <param name="lightDrawBounds">The area possibly impacted by the light casting the shadow.</param>
         /// <param name="extrema">Array of two extrema representing the start of the shadow.</param>
-        protected void RenderShadow(DeferredRenderSystem renderSystem, RectangleF lightDrawBounds, Vector2[] extrema, byte layerDepth)
+        /// <param name="spriteLayerDepth">The layer depth of the sprite casting the shadow.</param>
+        protected void RenderShadow(DeferredRenderSystem renderSystem, RectangleF lightDrawBounds, Vector2[] extrema, byte spriteLayerDepth)
         {
             this.shadowMapShader.ConfigureShader(renderSystem); // Configure the shader
             this.shadowMapShader.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
             this.shadowMapShader.GetParameter("cameraPosition").SetValue(renderSystem.GameCamera.PixelPosition);
-            this.shadowMapShader.GetParameter("layerDepth").SetValue(layerDepth / 255.0f);
+            this.shadowMapShader.GetParameter("layerDepth").SetValue(spriteLayerDepth / 255.0f);
 
             // Create the shadow map caused by the current sprite
             this.shadowMapShader.ApplyPass(0);
