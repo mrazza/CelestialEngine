@@ -54,7 +54,6 @@ namespace CelestialEngine.TechDemo
             this.InputManager.AddConditionalBinding((s) => { return s.IsLeftMouseClick() && !s.IsKeyDown(Keys.LeftShift); }, SpawnNewLight); 
             this.InputManager.AddConditionalBinding((s) => { return s.IsRightMouseClick(); }, SpawnNewRotatingLight);
             this.InputManager.AddConditionalBinding((s) => { return s.IsScrollWheelChanged(); }, PerformZoom);
-            this.InputManager.AddConditionalBinding((s) => { return s.IsFirstKeyPress(Keys.B); }, (s) => mouseLight.MinShadowBlurDistance = mouseLight.MinShadowBlurDistance == float.PositiveInfinity ? 0.5f / 64.0f : float.PositiveInfinity);
 
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F1), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.Disabled);
             //this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F2), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.All);
@@ -170,8 +169,6 @@ namespace CelestialEngine.TechDemo
                 Range = 8,
                 SpecularStrength = 4.75f,
                 CastsShadows = true,
-                MinShadowBlurDistance = .5f,
-                MaxShadowBlurDistance = 1.5f,
                 LayerDepth = 1
             };
             lightCount++;
@@ -267,8 +264,6 @@ namespace CelestialEngine.TechDemo
                 SpecularStrength = 4.75f,
                 AngularVelocity = this.prng.Next(40, 90) / 100.0f,
                 LightAngle = MathHelper.PiOver2,
-                MinShadowBlurDistance = .5f,
-                MaxShadowBlurDistance = 2f,
                 CastsShadows = true
             };
             lightCount++;
@@ -296,8 +291,6 @@ namespace CelestialEngine.TechDemo
                 Power = .5f,
                 SpecularStrength = 4.75f,
                 CastsShadows = true,
-                MinShadowBlurDistance = .5f,
-                MaxShadowBlurDistance = 2f
             };
             lightCount++;
             newLight.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
@@ -327,9 +320,7 @@ namespace CelestialEngine.TechDemo
                 Range = 8,
                 Power = .5f,
                 SpecularStrength = 4.75f,
-                CastsShadows = true,
-                MinShadowBlurDistance = .5f,
-                MaxShadowBlurDistance = 2f
+                CastsShadows = true
             };
             lightCount++;
             newLight.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
@@ -360,8 +351,6 @@ namespace CelestialEngine.TechDemo
                 Power = 0.25f,
                 Range = this.prng.Next(300, 500) / 100.0f,
                 SpecularStrength = 2.75f,
-                MinShadowBlurDistance = .5f,
-                MaxShadowBlurDistance = 2f,
                 CastsShadows = true
             };
             lightCount++;

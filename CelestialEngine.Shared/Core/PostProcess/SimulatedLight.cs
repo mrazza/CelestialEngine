@@ -39,17 +39,6 @@ namespace CelestialEngine.Core.PostProcess
         /// If true this light will cast shadows; otherwise the light will ignore shadow casting sprites
         /// </summary>
         private bool castsShadows;
-
-        /// <summary>
-        /// The distance, in world units, until the shadow edge is fully blurred
-        /// </summary>
-        private float maxShadowBlurDistance;
-
-        /// <summary>
-        /// The distance, in world units, until the shadow edge starts blurring
-        /// </summary>
-        /// <remarks>A value of float.PositiveInfinity means no shadow blur enabled</remarks>
-        private float minShadowBlurDistance;
         #endregion
 
         #region Constructors
@@ -63,48 +52,10 @@ namespace CelestialEngine.Core.PostProcess
         {
             this.lightPosition = Vector3.Zero;
             this.shadowMapShader = new Shader(Content.Shaders.Core.ShadowMap);
-            this.maxShadowBlurDistance = float.PositiveInfinity;
-            this.minShadowBlurDistance = float.PositiveInfinity;
         }
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Gets or sets the distance from the light source until the shadow edge is fully blurred.
-        /// </summary>
-        /// <remarks>To disable soft shadow edges, set MinShadowBlurDistance to float.PositiveInfinity.</remarks>
-        /// <value>The shadow blur distance.</value>
-        public float MaxShadowBlurDistance
-        {
-            get
-            {
-                return this.maxShadowBlurDistance;
-            }
-
-            set
-            {
-                this.maxShadowBlurDistance = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the distance, in world units, from the light source until the shadow begins to blur. To disable soft shadow edges, set to float.PositiveInfinity.
-        /// <seealso cref="MaxShadowBlurDistance"/>
-        /// </summary>
-        /// <value>The distance from the light source until bluring begins</value>
-        public float MinShadowBlurDistance
-        {
-            get
-            {
-                return this.minShadowBlurDistance;
-            }
-
-            set
-            {
-                this.minShadowBlurDistance = value;
-            }
-        }
-
         /// <summary>
         /// Gets or sets the <see cref="Vector3"/> calculated position of the object in absolute 2D world space.
         /// </summary>
@@ -234,46 +185,10 @@ namespace CelestialEngine.Core.PostProcess
             {
                 // Render the shadow caused by each object within the lights range
                 List<SpriteBase> objectList = this.World.GetSpriteObjectsInArea(lightDrawBounds).Where(currObj => (currObj.RenderOptions & SpriteRenderOptions.CastsShadows) != 0).OrderBy(s => s.LayerDepth).ToList();
-
-                if (objectList.Count > 0)
+                
+                for (int objectIndex = 0; objectIndex < objectList.Count; objectIndex++)
                 {
-                    bool renderedShadow = false;
-
-                    for (int objectIndex = 0; objectIndex < objectList.Count; objectIndex++)
-                    {
-                        renderedShadow |= this.RenderShadowForSprite(renderSystem, objectList[objectIndex], lightDrawBounds);
-                    }
-
-                    if (renderedShadow)
-                    {
-                        // Blur the shadow map if enabled
-                        if (!float.IsPositiveInfinity(this.minShadowBlurDistance))
-                        {
-                            renderSystem.GraphicsDevice.SetRenderTarget(intermediateShadowMap); // We need to render to a temp target
-
-                            // Configure the shader
-                            this.shadowMapShader.ConfigureShader(renderSystem, 1);
-
-                            // Set parameters
-                            this.shadowMapShader.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
-                            this.shadowMapShader.GetParameter("cameraPosition").SetValue(renderSystem.GameCamera.PixelPosition);
-                            this.shadowMapShader.GetParameter("lightPosition").SetValue(base.PixelPosition);
-                            this.shadowMapShader.GetParameter("maxBlurDistance").SetValue(this.World.GetPixelFromWorld(this.maxShadowBlurDistance));
-                            this.shadowMapShader.GetParameter("minBlurDistance").SetValue(this.World.GetPixelFromWorld(this.maxShadowBlurDistance));
-                            this.shadowMapShader.GetParameter("shadowMap").SetValue(shadowMap);
-
-                            this.shadowMapShader.ApplyPass(0);
-                            renderSystem.DirectScreenPaint(lightDrawBounds); // Render the shadow
-
-                            renderSystem.GraphicsDevice.SetRenderTarget(shadowMap); // Set the shadow map for final render
-
-                            // Update shadow map
-                            this.shadowMapShader.GetParameter("shadowMap").SetValue(intermediateShadowMap);
-
-                            this.shadowMapShader.ApplyPass(0);
-                            renderSystem.DirectScreenPaint(lightDrawBounds); // Render
-                        }
-                    }
+                    this.RenderShadowForSprite(renderSystem, objectList[objectIndex], lightDrawBounds);
                 }
             }
 
