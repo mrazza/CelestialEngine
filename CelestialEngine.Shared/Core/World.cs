@@ -72,7 +72,7 @@ namespace CelestialEngine.Core
             : base(parentGame)
         {
             this.Bounds = bounds;
-            this.worldSpriteObjects = new ThrottledCollection<QuadTree<SpriteBase, List<SpriteBase>>, SpriteBase>(new QuadTree<SpriteBase, List<SpriteBase>>(bounds, 4));
+            this.worldSpriteObjects = new ThrottledCollection<QuadTree<SpriteBase, List<SpriteBase>>, SpriteBase>(new QuadTree<SpriteBase, List<SpriteBase>>(bounds, 32));
             this.worldSimObjects = new ThrottledCollection<SortedSet<SimBase>, SimBase>(new SortedSet<SimBase>());
             this.screenDrawableComponents = new ThrottledCollection<SortedSet<ScreenDrawableComponent>, ScreenDrawableComponent>(new SortedSet<ScreenDrawableComponent>());
             this.physicsWorld = new FarseerPhysics.Dynamics.World(gravity);
@@ -136,6 +136,28 @@ namespace CelestialEngine.Core
             set
             {
                 this.worldPerPixelRatio = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the total number of <see cref="SimBase"/>s in the world.
+        /// </summary>
+        public int SimObjectCount
+        {
+            get
+            {
+                return this.worldSimObjects.Count;
+            }
+        }
+
+        /// <summary>
+        /// Gets the total number of <see cref="SpriteBase"/>s in the world.
+        /// </summary>
+        public int SpriteObjectCount
+        {
+            get
+            {
+                return this.worldSpriteObjects.Count;
             }
         }
         #endregion

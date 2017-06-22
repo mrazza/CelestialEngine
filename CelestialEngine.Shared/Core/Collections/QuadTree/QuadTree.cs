@@ -149,13 +149,7 @@ namespace CelestialEngine.Core.Collections.QuadTree
             {
                 var newBounds = item.WorldBounds;
 
-                if (containingNode.Contains(newBounds))
-                {
-                    // It still fits where it is
-                    containingNode.AttemptImprovement(item);
-                    return true;
-                }
-                else
+                if (!containingNode.Contains(newBounds))
                 {
                     // It doesn't fit where it is
                     containingNode.RemoveFromSelf(item);

@@ -69,6 +69,11 @@ namespace CelestialEngine.Core
         /// <returns>The new rotated point.</returns>
         public static Vector2 RotateAbout(this Vector2 targetPoint, Vector2 rotationPoint, float rotation)
         {
+            if (rotation == 0)
+            {
+                return targetPoint;
+            }
+
             Vector2 difference = targetPoint - rotationPoint; // Center the point of rotation at the origin
 
             if (difference == Vector2.Zero)
