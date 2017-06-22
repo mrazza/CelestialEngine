@@ -78,10 +78,7 @@ namespace CelestialEngine.Core
 
                 this.End();
             }
-
-            Effect shaderAsset = shader != null ? shader.ShaderAsset : null;
-
-            // TODO: I changed this from Immediate to deferred? Is this okay?
+            
             this.spriteBatch.Begin(effect: this.currentShader?.ShaderAsset);
             this.isBegin = true;
             this.currentShader = shader;

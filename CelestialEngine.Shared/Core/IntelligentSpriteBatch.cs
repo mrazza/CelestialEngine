@@ -79,11 +79,9 @@ namespace CelestialEngine.Core
 
                 this.End();
             }
-
-            Effect shaderAsset = shader != null ? shader.ShaderAsset : null;
-
+            
             // TODO: I changed this from Immediate to deferred? Is this okay?
-            this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, shaderAsset, this.renderSystem.GameCamera.GetViewMatrix(this.renderSystem));
+            this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null, null, shader?.ShaderAsset, this.renderSystem.GameCamera.GetViewMatrix(this.renderSystem));
             this.isBegin = true;
             this.currentShader = shader;
         }
