@@ -274,14 +274,10 @@ namespace CelestialEngine.Core
             }
             else
             {
-                // We can't use the special case
-                // We need to use the seperating axis theorem
-                // Get the normals to test
-                Vector2[] myNormals = this.GetSATNormals();
-                Vector2[] theirNormals = otherRectangle.GetSATNormals();
+                // We can't use the special case here, we need to use the seperating axis theorem.
 
                 // Test my normals
-                foreach (Vector2 currNormal in myNormals)
+                foreach (Vector2 currNormal in this.GetSATNormals())
                 {
                     // Get the projections
                     Vector2 myProj = this.Project(currNormal);
@@ -295,7 +291,7 @@ namespace CelestialEngine.Core
                 }
 
                 // Test their normals
-                foreach (Vector2 currNormal in theirNormals)
+                foreach (Vector2 currNormal in otherRectangle.GetSATNormals())
                 {
                     // Get the projections
                     Vector2 myProj = this.Project(currNormal);
@@ -361,13 +357,10 @@ namespace CelestialEngine.Core
             }
             else
             {
-                // We can't use the special case
-                // We need to use a modified version of the seperating axis theorem
-                // Get the normals to test
-                Vector2[] myNormals = this.GetSATNormals();
+                // We can't use the special case, we need to use a modified version of the seperating axis theorem.
 
                 // Test my normals
-                foreach (Vector2 currNormal in myNormals)
+                foreach (Vector2 currNormal in this.GetSATNormals())
                 {
                     // Get the projections
                     Vector2 myProj = this.Project(currNormal);
@@ -636,15 +629,12 @@ namespace CelestialEngine.Core
         /// <remarks>
         /// The array only contains the top and right normals as the bottom and left normals are the same (just rotated 180 degrees).
         /// </remarks>
-        /// <returns>Array of normal vectors.</returns>
-        private Vector2[] GetSATNormals()
+        /// <returns>IEnumerable of normal vectors.</returns>
+        private IEnumerable<Vector2> GetSATNormals()
         {
-            Vector2[] normalVectors = new Vector2[4];
-
-            normalVectors[0] = Vector2Helper.VectorFromRotation(this.Rotation);
-            normalVectors[1] = normalVectors[0].Rotate(MathHelper.PiOver2);
-
-            return normalVectors;
+            Vector2 normal = Vector2Helper.VectorFromRotation(this.Rotation);
+            yield return normal;
+            yield return normal.Rotate(MathHelper.PiOver2);
         }
         #endregion
     }
