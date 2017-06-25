@@ -19,7 +19,7 @@ namespace CelestialEngine.Core.Shaders
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="NormalMapShader"/> class.
-        /// </summaryNormalMapShader
+        /// </summary>
         public NormalMapShader()
             : base(Content.Shaders.Core.NormalMapShader)
         {
