@@ -301,7 +301,7 @@ namespace CelestialEngine.Game
         protected void DrawColorMap(GameTime gameTime, DeferredRenderSystem renderSystem, Rectangle drawBoundingBox)
         {
             renderSystem.BeginRender();
-            renderSystem.DrawSprite(this.spriteTexture, this.Position, drawBoundingBox, this.renderColor, this.Rotation, Vector2.Zero, this.RenderScale, SpriteEffects.None);
+            renderSystem.DrawSprite(this.spriteTexture, this.Position, drawBoundingBox, this.renderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
 
@@ -316,7 +316,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender(this.NormalMapShader);
             this.NormalMapShader.ConfigureShaderAndApplyPass(renderSystem, this);
-            renderSystem.DrawSprite(this.spriteNormalTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, SpriteEffects.None);
+            renderSystem.DrawSprite(this.spriteNormalTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
 
@@ -331,7 +331,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender(this.optionMapFlagsShader);
             this.optionMapFlagsShader.ConfigureShaderAndApplyPass(renderSystem, this);
-            renderSystem.DrawSprite(this.spriteTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, SpriteEffects.None);
+            renderSystem.DrawSprite(this.spriteTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
         #endregion

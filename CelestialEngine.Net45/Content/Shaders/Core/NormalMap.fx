@@ -7,7 +7,7 @@
 /// <summary>
 /// This shader renders the normal map.
 /// </summary>
-float3x3 spriteRotationMatrix;
+float3x3 normalTransformationMatrix;
 float4x4 viewProjection;
 float2 cameraPosition;
 
@@ -47,7 +47,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
 {
     float4 pixelColor = tex2D(spriteTextureSample, input.TexCoord);
-    float3 normalVector = mul(2.0f * pixelColor.rgb - 1.0, spriteRotationMatrix);
+    float3 normalVector = mul(2.0f * pixelColor.rgb - 1.0, normalTransformationMatrix);
 
     return float4((normalVector + 1.0) / 2.0f, pixelColor.a);
 }

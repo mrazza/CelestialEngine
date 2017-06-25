@@ -36,7 +36,20 @@ namespace CelestialEngine.Core.Shaders
         {
             base.ConfigureShader(renderSystem, "RenderNormalMap");
 
-            this.ShaderAsset.Parameters["spriteRotationMatrix"].SetValue(Matrix.CreateRotationZ(sprite.Rotation));
+            Matrix transformMatrix = Matrix.CreateRotationZ(sprite.Rotation);
+
+            switch (sprite.SpriteMirroring)
+            {
+                case SpriteEffects.FlipHorizontally:
+                    transformMatrix *= Matrix.CreateScale(-1, 1, 1);
+                    break;
+
+                case SpriteEffects.FlipVertically:
+                    transformMatrix *= Matrix.CreateScale(1, -1, 1);
+                    break;
+            }
+
+            this.ShaderAsset.Parameters["normalTransformationMatrix"].SetValue(transformMatrix);
             this.ApplyPass(0);
         }
         #endregion

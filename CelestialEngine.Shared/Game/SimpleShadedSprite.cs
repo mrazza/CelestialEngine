@@ -77,7 +77,7 @@ namespace CelestialEngine.Game
             renderSystem.BeginRender(this.shaderAsset);
             this.shaderAsset.ConfigureShader(renderSystem);
             this.shaderAsset.ApplyPass(0);
-            renderSystem.DrawSprite(this.SpriteTexture, this.Position, null, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, SpriteEffects.None);
+            renderSystem.DrawSprite(this.SpriteTexture, this.Position, null, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
         #endregion

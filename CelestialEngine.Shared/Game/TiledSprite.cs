@@ -97,7 +97,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender();
 
-            this.ForEachTile((pos, rect) => renderSystem.DrawSprite(this.SpriteTexture, pos, rect, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, SpriteEffects.None));
+            this.ForEachTile((pos, rect) => renderSystem.DrawSprite(this.SpriteTexture, pos, rect, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring));
             
             renderSystem.EndRender();
         }
@@ -113,7 +113,7 @@ namespace CelestialEngine.Game
             renderSystem.BeginRender(this.NormalMapShader);
             this.NormalMapShader.ConfigureShaderAndApplyPass(renderSystem, this);
 
-            this.ForEachTile((pos, rect) => renderSystem.DrawSprite(this.SpriteNormalTexture, pos, rect, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, SpriteEffects.None));
+            this.ForEachTile((pos, rect) => renderSystem.DrawSprite(this.SpriteNormalTexture, pos, rect, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring));
 
             renderSystem.EndRender();
         }
@@ -129,7 +129,7 @@ namespace CelestialEngine.Game
             renderSystem.BeginRender(this.OptionMapFlagsShader);
             this.OptionMapFlagsShader.ConfigureShaderAndApplyPass(renderSystem, this);
 
-            this.ForEachTile((pos, rect) => renderSystem.DrawSprite(this.SpriteTexture, pos, rect, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, SpriteEffects.None));
+            this.ForEachTile((pos, rect) => renderSystem.DrawSprite(this.SpriteTexture, pos, rect, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring));
 
             renderSystem.EndRender();
         }

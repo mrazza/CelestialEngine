@@ -9,6 +9,7 @@ namespace CelestialEngine.Core
     using Collections.QuadTree;
     using FarseerPhysics.Common;
     using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -75,11 +76,21 @@ namespace CelestialEngine.Core
             this.renderScale = Vector2.One;
             this.isVisible = true;
             this.specularReflectivity = 0.5f;
+            this.SpriteMirroring = SpriteEffects.None;
             this.World.AddSpriteObject(this);
         }
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Gets or sets a value that specifies sprite visual mirroring.
+        /// </summary>
+        public SpriteEffects SpriteMirroring
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Gets or sets the render scale from the default shape's size.
         /// </summary>
