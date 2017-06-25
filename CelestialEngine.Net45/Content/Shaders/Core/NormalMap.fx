@@ -58,7 +58,7 @@ technique RenderNormalMap
     {
         AlphaBlendEnable = true;
         BlendOp = Add;
-        SrcBlend = One;
+        SrcBlend = SrcAlpha;
         DestBlend = InvSrcAlpha;
 
         VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
