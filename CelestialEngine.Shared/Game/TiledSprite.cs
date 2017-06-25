@@ -110,7 +110,8 @@ namespace CelestialEngine.Game
         /// <param name="renderSystem"><see cref="DeferredRenderSystem"/> to render with.</param>
         public override void DrawNormalMap(GameTime gameTime, DeferredRenderSystem renderSystem)
         {
-            renderSystem.BeginRender();
+            renderSystem.BeginRender(this.NormalMapShader);
+            this.NormalMapShader.ConfigureShaderAndApplyPass(renderSystem, this);
 
             this.ForEachTile((pos, rect) => renderSystem.DrawSprite(this.SpriteNormalTexture, pos, rect, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, SpriteEffects.None));
 

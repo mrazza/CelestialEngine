@@ -24,6 +24,11 @@ namespace CelestialEngine.Content
             public const string DebugTargets = @"Content\Shaders\Core\DebugTargets";
 
             /// <summary>
+            /// The content path for the normal map shader.
+            /// </summary>
+            public const string NormalMapShader = @"Content\Shaders\Core\NormalMap";
+
+            /// <summary>
             /// The content path for the options map flags shader.
             /// </summary>
             public const string OptionsMapFlags = @"Content\Shaders\Core\OptionsMapFlags";

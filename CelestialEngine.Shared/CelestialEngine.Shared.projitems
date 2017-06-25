@@ -40,6 +40,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\ScreenSpriteBatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Shaders\DebugTargetsShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Shaders\MergeTargetsShader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Shaders\NormalMapShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Shaders\OptionsMapFlagsShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Shaders\Shader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\SimBase.cs" />

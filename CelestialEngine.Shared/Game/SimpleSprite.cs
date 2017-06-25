@@ -96,6 +96,7 @@ namespace CelestialEngine.Game
             this.spriteNormalTexturePath = spriteNormalTexturePath;
             this.spriteTextureBoundingBox = spriteTextureBoundingBox;
             this.optionMapFlagsShader = new OptionsMapFlagsShader();
+            this.NormalMapShader = new NormalMapShader();
             this.renderColor = Color.White;
             this.computeSpriteShape = computeSpriteShape;
         }
@@ -194,6 +195,15 @@ namespace CelestialEngine.Game
                 return this.optionMapFlagsShader;
             }
         }
+
+        /// <summary>
+        /// Gets the normal map shader.
+        /// </summary>
+        protected NormalMapShader NormalMapShader
+        {
+            get;
+            set;
+        }
         #endregion
 
         #region SpriteBase Overrides
@@ -222,7 +232,8 @@ namespace CelestialEngine.Game
             }
 
             this.optionMapFlagsShader.LoadContent(contentManager);
-            
+            this.NormalMapShader.LoadContent(contentManager);
+
             if (this.spriteNormalTexturePath != null)
             {
                 this.spriteNormalTexture = contentManager.Load<Texture2D>(this.spriteNormalTexturePath);
@@ -303,7 +314,8 @@ namespace CelestialEngine.Game
         /// <param name="drawBoundingBox">The bounding box of the sprite within the texture.</param>
         protected void DrawNormalMap(GameTime gameTime, DeferredRenderSystem renderSystem, Rectangle drawBoundingBox)
         {
-            renderSystem.BeginRender();
+            renderSystem.BeginRender(this.NormalMapShader);
+            this.NormalMapShader.ConfigureShaderAndApplyPass(renderSystem, this);
             renderSystem.DrawSprite(this.spriteNormalTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, SpriteEffects.None);
             renderSystem.EndRender();
         }

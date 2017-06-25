@@ -57,6 +57,7 @@
   <ItemGroup>
     <Content Include="Content\Shaders\Core\DebugTargets.fx" />
     <Content Include="Content\Shaders\Core\MergeTargets.fx" />
+    <Content Include="Content\Shaders\Core\NormalMap.fx" />
     <Content Include="Content\Shaders\Core\OptionsMapFlags.fx" />
     <Content Include="Content\Shaders\Core\ShadowMap.fx" />
     <Content Include="Content\Shaders\Lights\AmbientLight.fx" />
