@@ -13,6 +13,8 @@ namespace CelestialEngine.Game
     using Microsoft.Xna.Framework.Graphics;
     using FarseerPhysics.Common;
     using FarseerPhysics.Common.Decomposition;
+    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// A simple <see cref="SpriteBase"/> implementation that renders just a color sprite.
@@ -59,6 +61,16 @@ namespace CelestialEngine.Game
         /// If true, the sprite's shape is computed from its image data
         /// </summary>
         private bool computeSpriteShape;
+
+        /// <summary>
+        /// Vertices of the sprite in world units.
+        /// </summary>
+        protected Vertices spriteVertices;
+
+        /// <summary>
+        /// Collection of convex shapes containing vertices that make up this sprite.
+        /// </summary>
+        protected List<Vertices> spriteShapes;
         #endregion
 
         #region Constructors
@@ -87,12 +99,7 @@ namespace CelestialEngine.Game
         public SimpleSprite(World world, string spriteTexturePath, string spriteNormalTexturePath, Rectangle? spriteTextureBoundingBox, Vector2 position, Vector2 velocity, bool computeSpriteShape)
             : base(world, position, velocity)
         {
-            if (spriteTexturePath == null)
-            {
-                throw new ArgumentNullException("spriteTexturePath", "You must specify the texture to render.");
-            }
-
-            this.spriteTexturePath = spriteTexturePath;
+            this.spriteTexturePath = spriteTexturePath ?? throw new ArgumentNullException("spriteTexturePath", "You must specify the texture to render.");
             this.spriteNormalTexturePath = spriteNormalTexturePath;
             this.spriteTextureBoundingBox = spriteTextureBoundingBox;
             this.optionMapFlagsShader = new OptionsMapFlagsShader();
@@ -203,6 +210,24 @@ namespace CelestialEngine.Game
         {
             get;
             set;
+        }
+        #endregion
+
+        #region SimBase Overrides
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            // TODO: Optimize this.
+            if (this.spriteVertices != null)
+            {
+                this.SpriteWorldVertices = new Vertices(this.spriteVertices.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position));
+            }
+
+            if (this.spriteShapes != null)
+            {
+                this.SpriteWorldShapes = this.spriteShapes.Select(shape => new Vertices(shape.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position)));
+            }
         }
         #endregion
 

@@ -12,7 +12,6 @@ namespace CelestialEngine.Core
     using Microsoft.Xna.Framework.Graphics;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// Base class for any object that requires simulation and 2D drawing that
@@ -22,31 +21,6 @@ namespace CelestialEngine.Core
     public abstract class SpriteBase : SimBase, IDrawableComponent, IComparable<SpriteBase>, IQuadTreeItem<SpriteBase, List<SpriteBase>>
     {
         #region Members
-        /// <summary>
-        /// Vertices of the sprite in world units.
-        /// </summary>
-        protected Vertices spriteVertices;
-
-        /// <summary>
-        /// Collection of convex shapes containing vertices that make up this sprite.
-        /// </summary>
-        protected List<Vertices> spriteShapes;
-
-        /// <summary>
-        /// The change in scale from the default sprite's size.
-        /// </summary>
-        private Vector2 renderScale;
-
-        /// <summary>
-        /// Specifies whether or not the object is visible in the scene.
-        /// </summary>
-        private bool isVisible;
-
-        /// <summary>
-        /// Specifies the <see cref="SpriteRenderOptions"/> flags that will be applied to the sprite on rendering.
-        /// </summary>
-        private SpriteRenderOptions renderOptions;
-
         /// <summary>
         /// A float value that ranges between [0, 1] that represents what percentage of specular effects cast on
         /// the sprite reflect off to the camera. Default is 0.5.
@@ -73,9 +47,9 @@ namespace CelestialEngine.Core
         public SpriteBase(World world, Vector2 position, Vector2 velocity)
             : base(world, position, velocity)
         {
-            this.renderScale = Vector2.One;
-            this.isVisible = true;
-            this.specularReflectivity = 0.5f;
+            this.RenderScale = Vector2.One;
+            this.IsVisible = true;
+            this.SpecularReflectivity = 0.5f;
             this.SpriteMirroring = SpriteEffects.None;
             this.World.AddSpriteObject(this);
         }
@@ -83,7 +57,7 @@ namespace CelestialEngine.Core
 
         #region Properties
         /// <summary>
-        /// Gets or sets a value that specifies sprite visual mirroring.
+        /// Gets or sets a value that specifies sprite visual mirroring (if any).
         /// </summary>
         public SpriteEffects SpriteMirroring
         {
@@ -99,15 +73,8 @@ namespace CelestialEngine.Core
         /// </value>
         public Vector2 RenderScale
         {
-            get
-            {
-                return this.renderScale;
-            }
-
-            set
-            {
-                this.renderScale = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -118,15 +85,8 @@ namespace CelestialEngine.Core
         /// </value>
         public bool IsVisible
         {
-            get
-            {
-                return this.isVisible;
-            }
-
-            set
-            {
-                this.isVisible = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -149,15 +109,8 @@ namespace CelestialEngine.Core
         /// </value>
         public SpriteRenderOptions RenderOptions
         {
-            get
-            {
-                return this.renderOptions;
-            }
-
-            set
-            {
-                this.renderOptions = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -196,7 +149,7 @@ namespace CelestialEngine.Core
         /// <summary>
         /// A collection of vertices that represent the shape of the sprite.
         /// </summary>
-        public Vertices SpriteWorldVertices
+        public virtual Vertices SpriteWorldVertices
         {
             get;
             protected set;
@@ -205,7 +158,7 @@ namespace CelestialEngine.Core
         /// <summary>
         /// A collection of triangulated convex polygons whose union represents the shape of the sprite.
         /// </summary>
-        public IEnumerable<Vertices> SpriteWorldShapes
+        public virtual IEnumerable<Vertices> SpriteWorldShapes
         {
             get;
             protected set;
@@ -235,28 +188,6 @@ namespace CelestialEngine.Core
         {
             get;
             set;
-        }
-        #endregion
-
-        #region SimBase Methods
-        /// <summary>
-        /// Called when the GameComponent needs to be updated. Override this method with component-specific update code.
-        /// </summary>
-        /// <param name="gameTime">Time elapsed since the last call to Update.</param>
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-
-            // TODO: Optimize this.
-            if (this.spriteVertices != null)
-            {
-                this.SpriteWorldVertices = new Vertices(this.spriteVertices.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position));
-            }
-
-            if (this.spriteShapes != null)
-            {
-                this.SpriteWorldShapes = this.spriteShapes.Select(shape => new Vertices(shape.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position)));
-            }
         }
         #endregion
 
