@@ -48,6 +48,11 @@ namespace CelestialEngine.Game
         private Rectangle? spriteTextureBoundingBox;
 
         /// <summary>
+        /// The dimensions, in world space, of the sprite's texture bound box.
+        /// </summary>
+        private Vector2 spriteTextureWorldDimensions;
+
+        /// <summary>
         /// The shader used to apply pixel options to the option map.
         /// </summary>
         private OptionsMapFlagsShader optionMapFlagsShader;
@@ -138,11 +143,13 @@ namespace CelestialEngine.Game
         {
             get
             {
+                Transform spriteTransform;
+                this.Body.GetTransform(out spriteTransform);
                 if (this.spriteTextureBoundingBox == null)
                 {
                     return new RectangleF(
-                        this.Position.X,
-                        this.Position.Y,
+                        spriteTransform.p.X,
+                        spriteTransform.p.Y,
                         0,
                         0,
                         this.Rotation);
@@ -150,10 +157,10 @@ namespace CelestialEngine.Game
                 else
                 {
                     return new RectangleF(
-                        this.Position.X,
-                        this.Position.Y,
-                        this.World.GetWorldFromPixel(this.spriteTextureBoundingBox.Value.Width) * this.RenderScale.X,
-                        this.World.GetWorldFromPixel(this.spriteTextureBoundingBox.Value.Height) * this.RenderScale.Y,
+                        spriteTransform.p.X,
+                        spriteTransform.p.Y,
+                        this.spriteTextureWorldDimensions.X * this.RenderScale.X,
+                        this.spriteTextureWorldDimensions.Y * this.RenderScale.Y,
                         this.Rotation);
                 }
             }
@@ -243,6 +250,8 @@ namespace CelestialEngine.Game
             {
                 this.spriteTextureBoundingBox = this.spriteTexture.Bounds;
             }
+
+            this.spriteTextureWorldDimensions = new Vector2(this.World.GetWorldFromPixel(this.spriteTextureBoundingBox.Value.Width), this.World.GetWorldFromPixel(this.spriteTextureBoundingBox.Value.Height));
 
             uint[] pixelData = null;
 

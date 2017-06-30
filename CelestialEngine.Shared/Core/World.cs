@@ -249,7 +249,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public float GetWorldFromPixel(float pixels)
         {
-            return pixels / this.PixelPerWorldRatio;
+            return pixels * this.WorldPerPixelRatio;
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public Vector2 GetWorldFromPixel(Vector2 pixels)
         {
-            return pixels / this.PixelPerWorldRatio;
+            return pixels * this.WorldPerPixelRatio;
         }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public Vector3 GetWorldFromPixel(Vector3 pixel)
         {
-            return pixel / this.PixelPerWorldRatio;
+            return pixel * this.WorldPerPixelRatio;
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public RectangleF GetWorldFromPixel(Rectangle pixel)
         {
-            return new RectangleF(pixel.X / this.PixelPerWorldRatio, pixel.Y / this.PixelPerWorldRatio, pixel.Width / this.PixelPerWorldRatio, pixel.Height / this.PixelPerWorldRatio);
+            return new RectangleF(pixel.X * this.WorldPerPixelRatio, pixel.Y * this.WorldPerPixelRatio, pixel.Width * this.WorldPerPixelRatio, pixel.Height * this.WorldPerPixelRatio);
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public RectangleF GetWorldFromPixel(RectangleF pixel)
         {
-            return new RectangleF(pixel.X / this.PixelPerWorldRatio, pixel.Y / this.PixelPerWorldRatio, pixel.Width / this.PixelPerWorldRatio, pixel.Height / this.PixelPerWorldRatio);
+            return new RectangleF(pixel.X * this.WorldPerPixelRatio, pixel.Y * this.WorldPerPixelRatio, pixel.Width * this.WorldPerPixelRatio, pixel.Height * this.WorldPerPixelRatio);
         }
 
         /// <summary>

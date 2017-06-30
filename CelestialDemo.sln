@@ -13,6 +13,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CelestialEngine.Shared", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CelestialEngine.Net45", "CelestialEngine.Net45\CelestialEngine.Net45.csproj", "{50831F80-9950-4ABC-B1B9-C922504D9F22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoxerGame", "examples\VoxerGame\VoxerGame.csproj", "{D86F8B19-54A1-4D24-90FC-FAFC06888729}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		CelestialEngine.Shared\CelestialEngine.Shared.projitems*{0c719f65-df2d-4dfd-9845-94552aa4be95}*SharedItemsImports = 13
@@ -49,6 +51,14 @@ Global
 		{50831F80-9950-4ABC-B1B9-C922504D9F22}.Release|Any CPU.Build.0 = Release|Any CPU
 		{50831F80-9950-4ABC-B1B9-C922504D9F22}.Release|x86.ActiveCfg = Release|Any CPU
 		{50831F80-9950-4ABC-B1B9-C922504D9F22}.Release|x86.Build.0 = Release|Any CPU
+		{D86F8B19-54A1-4D24-90FC-FAFC06888729}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{D86F8B19-54A1-4D24-90FC-FAFC06888729}.Debug|Any CPU.Build.0 = Debug|x86
+		{D86F8B19-54A1-4D24-90FC-FAFC06888729}.Debug|x86.ActiveCfg = Debug|x86
+		{D86F8B19-54A1-4D24-90FC-FAFC06888729}.Debug|x86.Build.0 = Debug|x86
+		{D86F8B19-54A1-4D24-90FC-FAFC06888729}.Release|Any CPU.ActiveCfg = Release|x86
+		{D86F8B19-54A1-4D24-90FC-FAFC06888729}.Release|Any CPU.Build.0 = Release|x86
+		{D86F8B19-54A1-4D24-90FC-FAFC06888729}.Release|x86.ActiveCfg = Release|x86
+		{D86F8B19-54A1-4D24-90FC-FAFC06888729}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,5 +66,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0272540F-D454-4633-9F67-B3EB1392D2C7} = {CD309A64-0CC6-4316-AA65-B203BAB88176}
 		{5DA09037-9BDF-4DE6-8928-29FD47B35230} = {CD309A64-0CC6-4316-AA65-B203BAB88176}
+		{D86F8B19-54A1-4D24-90FC-FAFC06888729} = {CD309A64-0CC6-4316-AA65-B203BAB88176}
 	EndGlobalSection
 EndGlobal
