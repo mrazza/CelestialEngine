@@ -174,6 +174,15 @@ namespace CelestialEngine.Core
         }
 
         /// <summary>
+        /// Gets all the screen drawable components in the world.
+        /// </summary>
+        /// <returns>An IEnumerable of <see cref="ScreenDrawableComponent"/>s.</returns>
+        public IEnumerable<ScreenDrawableComponent> GetScreenDrawableComponents()
+        {
+            return this.screenDrawableComponents;
+        }
+
+        /// <summary>
         /// Requests for the specified object's content to be loaded.
         /// </summary>
         /// <param name="obj">Object to load content for.</param>
@@ -249,7 +258,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public float GetWorldFromPixel(float pixels)
         {
-            return pixels / this.PixelPerWorldRatio;
+            return pixels * this.WorldPerPixelRatio;
         }
 
         /// <summary>
@@ -259,7 +268,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public Vector2 GetWorldFromPixel(Vector2 pixels)
         {
-            return pixels / this.PixelPerWorldRatio;
+            return pixels * this.WorldPerPixelRatio;
         }
 
         /// <summary>
@@ -269,7 +278,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public Vector3 GetWorldFromPixel(Vector3 pixel)
         {
-            return pixel / this.PixelPerWorldRatio;
+            return pixel * this.WorldPerPixelRatio;
         }
 
         /// <summary>
@@ -279,7 +288,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public RectangleF GetWorldFromPixel(Rectangle pixel)
         {
-            return new RectangleF(pixel.X / this.PixelPerWorldRatio, pixel.Y / this.PixelPerWorldRatio, pixel.Width / this.PixelPerWorldRatio, pixel.Height / this.PixelPerWorldRatio);
+            return new RectangleF(pixel.X * this.WorldPerPixelRatio, pixel.Y * this.WorldPerPixelRatio, pixel.Width * this.WorldPerPixelRatio, pixel.Height * this.WorldPerPixelRatio);
         }
 
         /// <summary>
@@ -289,7 +298,7 @@ namespace CelestialEngine.Core
         /// <returns>The world unit version of the pixel value.</returns>
         public RectangleF GetWorldFromPixel(RectangleF pixel)
         {
-            return new RectangleF(pixel.X / this.PixelPerWorldRatio, pixel.Y / this.PixelPerWorldRatio, pixel.Width / this.PixelPerWorldRatio, pixel.Height / this.PixelPerWorldRatio);
+            return new RectangleF(pixel.X * this.WorldPerPixelRatio, pixel.Y * this.WorldPerPixelRatio, pixel.Width * this.WorldPerPixelRatio, pixel.Height * this.WorldPerPixelRatio);
         }
 
         /// <summary>
@@ -393,68 +402,6 @@ namespace CelestialEngine.Core
             }
 
             base.Update(gameTime);
-        }
-
-        /// <summary>
-        /// Requests that each sprite render its color map.
-        /// </summary>
-        /// <param name="sprites">The sprites to render.</param>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="renderSystem">The render system to render with.</param>
-        internal void DrawSpriteColor(IEnumerable<SpriteBase> sprites, GameTime gameTime, DeferredRenderSystem renderSystem)
-        {
-            foreach (SpriteBase curr in sprites)
-            {
-                if (curr.IsVisible)
-                {
-                    curr.DrawColorMap(gameTime, renderSystem);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Requests that each sprite render its normal map.
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="renderSystem">The render system to render with.</param>
-        internal void DrawSpriteNormal(IEnumerable<SpriteBase> sprites, GameTime gameTime, DeferredRenderSystem renderSystem)
-        {
-            foreach (SpriteBase curr in sprites)
-            {
-                if (curr.IsVisible)
-                {
-                    curr.DrawNormalMap(gameTime, renderSystem);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Requests that each sprite render its options map.
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="renderSystem">The render system to render with.</param>
-        internal void DrawSpriteOptions(IEnumerable<SpriteBase> sprites, GameTime gameTime, DeferredRenderSystem renderSystem)
-        {
-            foreach (SpriteBase curr in sprites)
-            {
-                if (curr.IsVisible)
-                {
-                    curr.DrawOptionsMap(gameTime, renderSystem);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Requests that each screen drawable component render.
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="spriteBatch">The <see cref="ScreenSpriteBatch"/> to render with.</param>
-        internal void DrawScreenDrawableComponents(GameTime gameTime, ScreenSpriteBatch spriteBatch)
-        {
-            foreach (var curr in this.screenDrawableComponents)
-            {
-                curr.Draw(gameTime, spriteBatch);
-            }
         }
         #endregion
     }

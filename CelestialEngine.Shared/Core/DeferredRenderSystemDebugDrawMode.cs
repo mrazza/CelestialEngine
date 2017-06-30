@@ -28,11 +28,6 @@ namespace CelestialEngine.Core
         OptionsMap,
 
         /// <summary>
-        /// Render the shadow map directly to the screen
-        /// </summary>
-        ShadowMap,
-
-        /// <summary>
         /// Render the light map directly to the screen
         /// </summary>
         LightMap,
@@ -40,12 +35,6 @@ namespace CelestialEngine.Core
         /// <summary>
         /// Render the normal map directly to the screen
         /// </summary>
-        NormalMap,
-
-        /// <summary>
-        /// Render all maps directly to the screen in a quad; this operation is lossy and only renders 25% of pixels in each map. 
-        /// Quads are consecutive.
-        /// </summary>
-        All
+        NormalMap
     }
 }

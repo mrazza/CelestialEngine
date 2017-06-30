@@ -19,24 +19,9 @@ namespace CelestialEngine.Core
     {
         #region Members
         /// <summary>
-        /// The body representing this sim base object.
-        /// </summary>
-        private Body body;
-
-        /// <summary>
         /// The update order of the SimBase.
         /// </summary>
         private int updateOrder;
-
-        /// <summary>
-        /// Indicates whether IComponent.Update should be called when Game.Update is called.
-        /// </summary>
-        private bool enabled;
-
-        /// <summary>
-        /// The world in which this SimBase lives.
-        /// </summary>
-        private World world;
         #endregion
 
         #region Constructors
@@ -57,13 +42,12 @@ namespace CelestialEngine.Core
         /// <param name="velocity">The starting velocity of the object.</param>
         public SimBase(World world, Vector2 position, Vector2 velocity)
         {
-            this.enabled = true;
-            this.world = world;
-            this.body = new Body(world.PhysicsWorld);
-            this.body.BodyType = BodyType.Kinematic;
-            this.Position = position;
+            this.Enabled = true;
+            this.World = world;
+            this.Body = new Body(this.World.PhysicsWorld, position);
+            this.Body.BodyType = BodyType.Kinematic;
             this.Velocity = velocity;
-            this.world.AddSimObject(this);
+            this.World.AddSimObject(this);
         }
         #endregion
 
@@ -86,12 +70,12 @@ namespace CelestialEngine.Core
         {
             get
             {
-                return this.body.Position;
+                return this.Body.Position;
             }
 
             set
             {
-                this.body.Position = value;
+                this.Body.Position = value;
             }
         }
 
@@ -141,12 +125,12 @@ namespace CelestialEngine.Core
         {
             get
             {
-                return this.body.LinearVelocity;
+                return this.Body.LinearVelocity;
             }
 
             set
             {
-                this.body.LinearVelocity = value;
+                this.Body.LinearVelocity = value;
             }
         }
         #endregion
@@ -162,13 +146,12 @@ namespace CelestialEngine.Core
         {
             get
             {
-                return this.body.Rotation;
+                return this.Body.Rotation;
             }
 
             set
             {
-                this.body.Rotation = value;
-                //this.NormalizeRotation(); // Make sure we're still within acceptable bounds
+                this.Body.Rotation = value;
             }
         }
 
@@ -201,12 +184,12 @@ namespace CelestialEngine.Core
         {
             get
             {
-                return this.body.AngularVelocity;
+                return this.Body.AngularVelocity;
             }
 
             set
             {
-                this.body.AngularVelocity = value;
+                this.Body.AngularVelocity = value;
             }
         }
         #endregion
@@ -216,10 +199,8 @@ namespace CelestialEngine.Core
         /// </summary>
         public Body Body
         {
-            get
-            {
-                return this.body;
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -227,10 +208,8 @@ namespace CelestialEngine.Core
         /// </summary>
         public World World
         {
-            get
-            {
-                return this.world;
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -267,21 +246,15 @@ namespace CelestialEngine.Core
         }
 
         /// <summary>
-        /// Indicates whether IComponent.Update should be called when Game.Update is called.
+        /// Gets or sets a value indicating whether IComponent.Update should be called when Game.Update is called.
         /// </summary>
         /// <value>
         /// <c>true</c> if IComponent.Update should be called; <c>false</c> otherwise.
         /// </value>
         public bool Enabled
         {
-            get
-            {
-                return this.enabled;
-            }
-            set
-            {
-                this.enabled = value;
-            }
+            get;
+            set;
         }
         #endregion
 
@@ -368,14 +341,6 @@ namespace CelestialEngine.Core
         public virtual void Update(GameTime gameTime)
         {
         }
-
-        /// <summary>
-        /// Normalizes the rotation values so they do not fall outside the bounds [0, 2Pi].
-        /// </summary>
-        protected void NormalizeRotation()
-        {
-            this.Rotation %= MathHelper.TwoPi;
-        }
         #endregion
 
         #region IDisposable Implementation
@@ -384,9 +349,8 @@ namespace CelestialEngine.Core
         /// </summary>
         public virtual void Dispose()
         {
-            this.body.Dispose();
-            this.world.RemoveSimObject(this);
-            GC.SuppressFinalize(this);
+            this.Body.Dispose();
+            this.World.RemoveSimObject(this);
         }
         #endregion
     }

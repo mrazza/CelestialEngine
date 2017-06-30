@@ -90,7 +90,8 @@ namespace CelestialEngine.TechDemo
                 RenderScale = new Vector2(0.4f, 0.4f),
                 RenderOptions = SpriteRenderOptions.CastsShadows | SpriteRenderOptions.IsLit,
                 SpecularReflectivity = 1.0f,
-                LayerDepth = 1
+                LayerDepth = 1,
+                SpriteMirroring = SpriteEffects.FlipHorizontally
             };
             test.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
             test.Body.CollisionCategories = FarseerPhysics.Dynamics.Category.Cat1;
@@ -185,7 +186,7 @@ namespace CelestialEngine.TechDemo
             // http://creativecommons.org/licenses/by/3.0/
             this.song = Content.Load<Song>("Content/George_Ellinas_-_Pulse_(George_Ellinas_remix)_LoopEdit");
             MediaPlayer.Volume = 0.1f;
-            MediaPlayer.Play(song);
+            //MediaPlayer.Play(song);
 
 
             base.LoadContent();

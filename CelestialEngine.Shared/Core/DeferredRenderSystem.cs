@@ -530,7 +530,7 @@ namespace CelestialEngine.Core
                 this.GraphicsDevice.SetRenderTarget(this.renderTargets.OptionsMap); // Set the correct render target
                 this.GraphicsDevice.Clear(Color.Transparent); // Initialize the render target
 
-                this.gameWorld.DrawSpriteOptions(spritesToDraw, gameTime, this); // Render on options map
+                this.DrawSpriteOptions(spritesToDraw, gameTime); // Render on options map
                 this.spriteBatch.End();
 
                 this.GraphicsDevice.SetRenderTarget(null); // Resolve the render target
@@ -540,7 +540,7 @@ namespace CelestialEngine.Core
             this.GraphicsDevice.SetRenderTarget(this.renderTargets.ColorMap); // Set the correct render target
             this.GraphicsDevice.Clear(Color.Transparent); // Initialize the render target
 
-            this.gameWorld.DrawSpriteColor(spritesToDraw, gameTime, this); // Render on color map
+            this.DrawSpriteColor(spritesToDraw, gameTime); // Render on color map
             this.spriteBatch.End();
 
             this.GraphicsDevice.SetRenderTarget(null); // Resolve the render target
@@ -551,7 +551,7 @@ namespace CelestialEngine.Core
                 this.GraphicsDevice.SetRenderTarget(this.renderTargets.NormalMap); // Set the correct render target
                 this.GraphicsDevice.Clear(Color.Transparent); // Initialize the render target
 
-                this.gameWorld.DrawSpriteNormal(spritesToDraw, gameTime, this); // Render on normal map
+                this.DrawSpriteNormal(spritesToDraw, gameTime); // Render on normal map
                 this.spriteBatch.End();
 
                 this.GraphicsDevice.SetRenderTarget(null); // Resolve the render target
@@ -581,18 +581,12 @@ namespace CelestialEngine.Core
 
                 // Draw ScreenDrawableComponents
                 this.screenSpriteBatch.Begin();
-                this.gameWorld.DrawScreenDrawableComponents(gameTime, this.screenSpriteBatch);
+                this.DrawScreenDrawableComponents(gameTime);
                 this.screenSpriteBatch.End();
-            }
-            else if (this.DebugDrawMode == DeferredRenderSystemDebugDrawMode.All)
-            {
-                this.GraphicsDevice.Clear(Color.Transparent);
-                this.debugRenderTargets.ConfigureShader(this);
-                this.debugRenderTargets.ApplyPass(1);
-                this.DirectScreenPaint();
             }
             else
             {
+                // TODO: Should this logic go into DebugRenderTargetsShader::ConfigureShader?
                 Color clearColor = Color.Transparent;
                 RenderTarget2D source = null;
 
@@ -647,7 +641,7 @@ namespace CelestialEngine.Core
 
             // Create the SinglePixel instance
             this.singlePixel = new Texture2D(this.GraphicsDevice, 1, 1);
-            this.singlePixel.SetData<Color>(new Color[] { Color.White });
+            this.singlePixel.SetData(new Color[] { Color.White });
         }
 
         /// <summary>
@@ -662,14 +656,76 @@ namespace CelestialEngine.Core
 
         #region Private Methods
         /// <summary>
+        /// Requests that each sprite render its color map.
+        /// </summary>
+        /// <param name="sprites">The sprites to render.</param>
+        /// <param name="gameTime">The game time.</param>
+        private void DrawSpriteColor(IEnumerable<SpriteBase> sprites, GameTime gameTime)
+        {
+            foreach (SpriteBase curr in sprites)
+            {
+                if (curr.IsVisible)
+                {
+                    curr.DrawColorMap(gameTime, this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Requests that each sprite render its normal map.
+        /// </summary>
+        /// <param name="sprites">The sprites to render.</param>
+        /// <param name="gameTime">The game time.</param>
+        private void DrawSpriteNormal(IEnumerable<SpriteBase> sprites, GameTime gameTime)
+        {
+            foreach (SpriteBase curr in sprites)
+            {
+                if (curr.IsVisible)
+                {
+                    curr.DrawNormalMap(gameTime, this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Requests that each sprite render its options map.
+        /// </summary>
+        /// <param name="sprites">The sprites to render.</param>
+        /// <param name="gameTime">The game time.</param>
+        private void DrawSpriteOptions(IEnumerable<SpriteBase> sprites, GameTime gameTime)
+        {
+            foreach (SpriteBase curr in sprites)
+            {
+                if (curr.IsVisible)
+                {
+                    curr.DrawOptionsMap(gameTime, this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Requests that each screen drawable component render.
+        /// </summary>
+        /// <param name="gameTime">The game time.</param>
+        private void DrawScreenDrawableComponents(GameTime gameTime)
+        {
+            foreach (var curr in this.gameWorld.GetScreenDrawableComponents())
+            {
+                curr.Draw(gameTime, this.screenSpriteBatch);
+            }
+        }
+
+        /// <summary>
         /// Executes draw calls on all the loaded, enabled, post process effects
         /// </summary>
         /// <param name="gameTime">Time passed since the last call to RenderPostProcesses.</param>
         private void RenderPostProcesses(GameTime gameTime)
         {
             foreach (IPostProcess curr in this.postProcessingEffects.Union(
-                                          this.simulatedPostProcessEffects.GetBackingCollection().GetItemsInBounds(this.GetCameraRenderBounds()))
-                                          .OrderBy(p => p.RenderPriority))
+                                                this.simulatedPostProcessEffects
+                                                    .GetBackingCollection()
+                                                    .GetItemsInBounds(this.GetCameraRenderBounds()))
+                                                .OrderBy(p => p.RenderPriority))
             {
                 if (curr.IsEnabled)
                 {

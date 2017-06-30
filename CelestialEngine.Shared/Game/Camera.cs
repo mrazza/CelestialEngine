@@ -42,7 +42,7 @@ namespace CelestialEngine.Game
         public Camera(World world, float cameraZoom)
             : base(world)
         {
-            this.cameraZoom = cameraZoom;
+            this.CameraZoom = cameraZoom;
         }
         #endregion
 
@@ -62,7 +62,7 @@ namespace CelestialEngine.Game
 
             set
             {
-                if (value >= 0)
+                if (value > 0)
                 {
                     this.cameraZoom = value;
                 }
