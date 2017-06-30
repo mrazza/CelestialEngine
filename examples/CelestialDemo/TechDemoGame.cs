@@ -84,7 +84,7 @@ namespace CelestialEngine.TechDemo
                 RenderOptions = SpriteRenderOptions.IsLit
             };
 
-            SimpleSprite test = new SimpleSprite(this.GameWorld, "Content/floortile", "Content/floortilenormal", false)
+            SimpleSprite test = new SimpleSprite(this.GameWorld, "Content/box", null, false)
             {
                 Position = new Vector2(8, 7),
                 RenderScale = new Vector2(0.4f, 0.4f),
