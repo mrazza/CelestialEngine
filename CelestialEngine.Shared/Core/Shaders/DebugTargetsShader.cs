@@ -23,22 +23,5 @@ namespace CelestialEngine.Core.Shaders
         {
         }
         #endregion
-
-        #region Shader Overrides
-        /// <summary>
-        /// Called when the shader parameters are to be configured before rendering.
-        /// </summary>
-        /// <param name="renderSystem">Instance of the <see cref="DeferredRenderSystem"/> we are using to render</param>
-        /// <param name="technique">Technique to use (can be null)</param>
-        protected override void ConfigureShader(DeferredRenderSystem renderSystem, EffectTechnique technique)
-        {
-            base.ConfigureShader(renderSystem, technique);
-
-            this.ShaderAsset.Parameters["colorMap"].SetValue(renderSystem.RenderTargets.ColorMap);
-            this.ShaderAsset.Parameters["optionsMap"].SetValue(renderSystem.RenderTargets.OptionsMap);
-            //this.ShaderAsset.Parameters["shadowMap"].SetValue(renderSystem.RenderTargets.Shad);
-            this.ShaderAsset.Parameters["lightMap"].SetValue(renderSystem.RenderTargets.LightMap);
-        }
-        #endregion
     }
 }
