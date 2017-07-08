@@ -6,6 +6,7 @@
 
 namespace CelestialEngine.Core
 {
+    using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Input;
 
     /// <summary>
@@ -14,6 +15,11 @@ namespace CelestialEngine.Core
     public class InputState
     {
         #region Private Members
+        /// <summary>
+        /// The elapsed game time for the current Update.
+        /// </summary>
+        private GameTime gameTime;
+
         /// <summary>
         /// The state of the keyboard as of the previous update.
         /// </summary>
@@ -188,8 +194,10 @@ namespace CelestialEngine.Core
         /// <summary>
         /// Updates the state of input devices.
         /// </summary>
-        internal void Update()
+        internal void Update(GameTime gameTime)
         {
+            this.gameTime = gameTime;
+
             this.lastKeyboardState = this.currentKeyboardState;
             this.currentKeyboardState = Keyboard.GetState();
 

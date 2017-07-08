@@ -97,7 +97,7 @@ namespace CelestialEngine.Core
         public override void Update(GameTime gameTime)
         {
             this.childInputBindingSets.ProcessUpdates();
-            this.inputState.Update();
+            this.inputState.Update(gameTime);
 
             foreach (var set in this.childInputBindingSets)
             {
