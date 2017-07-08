@@ -38,5 +38,5 @@ using System.Runtime.InteropServices;
 
 internal class VersionString
 {
-    public const string Value = "0.1.6";
+    public const string Value = "0.1.7";
 }
