@@ -14,33 +14,6 @@ namespace CelestialEngine.Core
     /// </summary>
     public class InputState
     {
-        #region Private Members
-        /// <summary>
-        /// The elapsed game time for the current Update.
-        /// </summary>
-        private GameTime gameTime;
-
-        /// <summary>
-        /// The state of the keyboard as of the previous update.
-        /// </summary>
-        private KeyboardState lastKeyboardState;
-
-        /// <summary>
-        /// The state of the keyboard as of the current update.
-        /// </summary>
-        private KeyboardState currentKeyboardState;
-
-        /// <summary>
-        /// The state of the mouse as of the previous update.
-        /// </summary>
-        private MouseState lastMouseState;
-
-        /// <summary>
-        /// The state of the mouse as of the current update.
-        /// </summary>
-        private MouseState currentMouseState;
-        #endregion
-
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="InputState"/> class.
@@ -52,6 +25,15 @@ namespace CelestialEngine.Core
 
         #region Properties
         /// <summary>
+        /// Gets or sets the elapsed game time for the current Update.
+        /// </summary>
+        public GameTime GameTime
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Gets the current state of the mouse.
         /// </summary>
         /// <value>
@@ -59,10 +41,8 @@ namespace CelestialEngine.Core
         /// </value>
         public MouseState CurrentMouseState
         {
-            get
-            {
-                return this.currentMouseState;
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -73,10 +53,8 @@ namespace CelestialEngine.Core
         /// </value>
         public MouseState LastMouseState
         {
-            get
-            {
-                return this.lastMouseState;
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -87,10 +65,8 @@ namespace CelestialEngine.Core
         /// </value>
         public KeyboardState CurrentKeyboardState
         {
-            get
-            {
-                return this.currentKeyboardState;
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -101,10 +77,8 @@ namespace CelestialEngine.Core
         /// </value>
         public KeyboardState LastKeyboardState
         {
-            get
-            {
-                return this.lastKeyboardState;
-            }
+            get;
+            private set;
         }
         #endregion
 
@@ -118,7 +92,7 @@ namespace CelestialEngine.Core
         /// </returns>
         public bool IsKeyDown(Keys key)
         {
-            return this.currentKeyboardState.IsKeyDown(key);
+            return this.CurrentKeyboardState.IsKeyDown(key);
         }
 
         /// <summary>
@@ -131,7 +105,7 @@ namespace CelestialEngine.Core
         /// </returns>
         public bool IsFirstKeyPress(Keys key)
         {
-            return this.currentKeyboardState.IsKeyDown(key) && this.lastKeyboardState.IsKeyUp(key);
+            return this.CurrentKeyboardState.IsKeyDown(key) && this.LastKeyboardState.IsKeyUp(key);
         }
 
         /// <summary>
@@ -142,7 +116,7 @@ namespace CelestialEngine.Core
         /// </returns>
         public bool IsLeftMouseDown()
         {
-            return this.currentMouseState.LeftButton == ButtonState.Pressed;
+            return this.CurrentMouseState.LeftButton == ButtonState.Pressed;
         }
 
         /// <summary>
@@ -153,7 +127,7 @@ namespace CelestialEngine.Core
         /// </returns>
         public bool IsLeftMouseClick()
         {
-            return this.currentMouseState.LeftButton == ButtonState.Pressed && this.lastMouseState.LeftButton == ButtonState.Released;
+            return this.CurrentMouseState.LeftButton == ButtonState.Pressed && this.LastMouseState.LeftButton == ButtonState.Released;
         }
 
         /// <summary>
@@ -164,7 +138,7 @@ namespace CelestialEngine.Core
         /// </returns>
         public bool IsRightMouseDown()
         {
-            return this.currentMouseState.LeftButton == ButtonState.Pressed;
+            return this.CurrentMouseState.LeftButton == ButtonState.Pressed;
         }
 
         /// <summary>
@@ -175,7 +149,7 @@ namespace CelestialEngine.Core
         /// </returns>
         public bool IsRightMouseClick()
         {
-            return this.currentMouseState.RightButton == ButtonState.Pressed && this.lastMouseState.RightButton == ButtonState.Released;
+            return this.CurrentMouseState.RightButton == ButtonState.Pressed && this.LastMouseState.RightButton == ButtonState.Released;
         }
 
         /// <summary>
@@ -186,7 +160,7 @@ namespace CelestialEngine.Core
         /// </returns>
         public bool IsScrollWheelChanged()
         {
-            return this.currentMouseState.ScrollWheelValue != this.lastMouseState.ScrollWheelValue;
+            return this.CurrentMouseState.ScrollWheelValue != this.LastMouseState.ScrollWheelValue;
         }
         #endregion
 
@@ -196,13 +170,13 @@ namespace CelestialEngine.Core
         /// </summary>
         internal void Update(GameTime gameTime)
         {
-            this.gameTime = gameTime;
+            this.GameTime = gameTime;
 
-            this.lastKeyboardState = this.currentKeyboardState;
-            this.currentKeyboardState = Keyboard.GetState();
+            this.LastKeyboardState = this.CurrentKeyboardState;
+            this.CurrentKeyboardState = Keyboard.GetState();
 
-            this.lastMouseState = this.currentMouseState;
-            this.currentMouseState = Mouse.GetState();
+            this.LastMouseState = this.CurrentMouseState;
+            this.CurrentMouseState = Mouse.GetState();
         }
         #endregion
     }
