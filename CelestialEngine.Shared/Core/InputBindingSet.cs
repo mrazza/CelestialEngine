@@ -35,7 +35,7 @@ namespace CelestialEngine.Core
         /// <returns>Returns the conditional binding instance.</returns>
         public ConditionalInputBinding AddBinding(Action<InputState> action)
         {
-            ConditionalInputBinding binding = new ConditionalInputBinding((s) => { return true; }, action);
+            ConditionalInputBinding binding = new ConditionalInputBinding(this, (s) => { return true; }, action);
             this.inputBindings.Add(binding);
             return binding;
         }
@@ -48,7 +48,7 @@ namespace CelestialEngine.Core
         /// <returns>Returns the conditional binding instance.</returns>
         public ConditionalInputBinding AddConditionalBinding(Func<InputState, bool> condition, Action<InputState> action)
         {
-            ConditionalInputBinding binding = new ConditionalInputBinding(condition, action);
+            ConditionalInputBinding binding = new ConditionalInputBinding(this, condition, action);
             this.inputBindings.Add(binding);
             return binding;
         }
@@ -68,6 +68,15 @@ namespace CelestialEngine.Core
                     binding.Action(inputState);
                 }
             }
+        }
+
+        /// <summary>
+        /// Removes a conditional binding from the set.
+        /// </summary>
+        /// <param name="binding">The binding instance to remove.</param>
+        internal void Remove(ConditionalInputBinding binding)
+        {
+            this.inputBindings.Remove(binding);
         }
     }
 }

@@ -11,9 +11,14 @@ namespace CelestialEngine.Core
     /// <summary>
     /// Represents a binding to input state that is invoked only upon satisfaction of the given condition.
     /// </summary>
-    public class ConditionalInputBinding
+    public class ConditionalInputBinding : IDisposable
     {
         #region Private Members
+        /// <summary>
+        /// The Input Binding Set that owns this binding.
+        /// </summary>
+        private InputBindingSet inputBindingSet;
+
         /// <summary>
         /// The condition upon which the action will be invoked.
         /// </summary>
@@ -31,8 +36,9 @@ namespace CelestialEngine.Core
         /// </summary>
         /// <param name="condition">The condition upon which the action will be invoked.</param>
         /// <param name="action">The action to invoke.</param>
-        internal ConditionalInputBinding(Func<InputState, bool> condition, Action<InputState> action)
+        internal ConditionalInputBinding(InputBindingSet inputBindingSet, Func<InputState, bool> condition, Action<InputState> action)
         {
+            this.inputBindingSet = inputBindingSet;
             this.condition = condition;
             this.action = action;
         }
@@ -59,6 +65,14 @@ namespace CelestialEngine.Core
             {
                 return this.action;
             }
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.inputBindingSet.Remove(this);
         }
         #endregion
     }
