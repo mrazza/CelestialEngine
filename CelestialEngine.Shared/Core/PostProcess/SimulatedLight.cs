@@ -206,9 +206,9 @@ namespace CelestialEngine.Core.PostProcess
                 
                 for (int objectIndex = 0; objectIndex < objectList.Count; objectIndex++)
                 {
-                    foreach (var x in this.GetShadowPrimitives(objectList[objectIndex], lightDrawBounds))
+                    foreach (var primitives in this.GetShadowPrimitives(objectList[objectIndex], lightDrawBounds))
                     {
-                        this.RenderShadow(renderSystem, x, objectList[objectIndex].LayerDepth);
+                        this.RenderShadow(renderSystem, primitives, objectList[objectIndex].LayerDepth);
                     }
                 }
             }
@@ -220,8 +220,7 @@ namespace CelestialEngine.Core.PostProcess
         /// Renders a single shadow from the specified extrema to the end of the visible light.
         /// </summary>
         /// <param name="renderSystem">The render system to render with.</param>
-        /// <param name="lightDrawBounds">The area possibly impacted by the light casting the shadow.</param>
-        /// <param name="extrema">Array of two extrema representing the start of the shadow.</param>
+        /// <param name="shadowShape">A VertexPrimitive representing the shape of the shadow.</param>
         /// <param name="spriteLayerDepth">The layer depth of the sprite casting the shadow.</param>
         protected void RenderShadow(DeferredRenderSystem renderSystem, VertexPrimitive shadowShape, byte spriteLayerDepth)
         {
@@ -237,11 +236,11 @@ namespace CelestialEngine.Core.PostProcess
         }
 
         /// <summary>
-        /// Makes 
+        /// Makes a <see cref="VertexPrimitive"/> representing the shape of the shadow cast from this light onto the extrema.
         /// </summary>
-        /// <param name="extrema"></param>
-        /// <param name="lightDrawBounds"></param>
-        /// <returns></returns>
+        /// <param name="extrema">The extrema of the shape casting the shadow.</param>
+        /// <param name="lightDrawBounds">The draw bounds of the light.</param>
+        /// <returns>A <see cref="VertexPrimitive"/> for the shadow.</returns>
         protected VertexPrimitive MakeShadowShape(Vector2[] extrema, RectangleF lightDrawBounds)
         {
             Vector2 widthVector = Vector2.Normalize(extrema[0] - base.Position); // Get the vector to the first extrema
