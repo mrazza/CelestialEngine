@@ -261,7 +261,7 @@ namespace CelestialEngine.Game
                 this.spriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
                 this.spriteVertices = PolygonTools.CreatePolygon(pixelData, this.spriteTextureBoundingBox.Value.Width);
                 this.SpriteWorldVertices = this.spriteVertices;
-                this.spriteShapes = Triangulate.ConvexPartition(this.SpriteWorldVertices, TriangulationAlgorithm.Flipcode);
+                this.spriteShapes = Triangulate.ConvexPartition(this.SpriteWorldVertices, TriangulationAlgorithm.Bayazit);
                 this.SpriteWorldShapes = this.spriteShapes;
             }
 
