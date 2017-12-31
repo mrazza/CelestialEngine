@@ -267,7 +267,7 @@ namespace CelestialEngine.Core.PostProcess
         /// <param name="castingSprite">The sprite casting the shadow.</param>
         /// <param name="lightDrawBounds">The draw bounds of the light.</param>
         /// <returns>A collection of <see cref="VertexPrimitive"/>s that make up the shadow mask.</returns>
-        public List<VertexPrimitive> GetShadowPrimitives(SpriteBase castingSprite, RectangleF lightDrawBounds)
+        protected List<VertexPrimitive> GetShadowPrimitives(SpriteBase castingSprite, RectangleF lightDrawBounds)
         {
             List<VertexPrimitive> result = new List<VertexPrimitive>();
 

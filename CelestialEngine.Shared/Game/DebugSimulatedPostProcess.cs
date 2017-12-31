@@ -18,19 +18,19 @@ namespace CelestialEngine.Game
     {
         #region Members
         /// <summary>
-        /// The SimulatedPostProcess that we're drawing debug information for.
-        /// </summary>
-        private SimulatedPostProcess targetPostProcess;
-
-        /// <summary>
         /// The width of the line (in world units) to use when rendering.
         /// </summary>
-        private float lineWidth;
+        protected float lineWidth;
 
         /// <summary>
         /// The shader used to apply pixel options to the option map.
         /// </summary>
-        private OptionsMapFlagsShader optionMapFlagsShader;
+        protected OptionsMapFlagsShader optionMapFlagsShader;
+
+        /// <summary>
+        /// The SimulatedPostProcess that we're drawing debug information for.
+        /// </summary>
+        private SimulatedPostProcess targetPostProcess;
         #endregion
 
         #region Constructors

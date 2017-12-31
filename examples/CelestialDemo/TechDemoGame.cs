@@ -260,7 +260,7 @@ namespace CelestialEngine.TechDemo
                 Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 0.15f),
                 Velocity = this.GetRandomVelocity(),
                 Color = this.GetRandomColor(),
-                Power = 0.5f,
+                Power = 0.8f,
                 Range = this.prng.Next(400, 600) / 100.0f,
                 SpecularStrength = 4.75f,
                 AngularVelocity = this.prng.Next(40, 90) / 100.0f,

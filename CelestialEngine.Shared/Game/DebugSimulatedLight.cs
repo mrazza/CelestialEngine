@@ -32,6 +32,28 @@ namespace CelestialEngine.Game
             : base(world, targetLight)
         {
             this.targetLight = targetLight;
+            this.RenderShadowMapBounds = true;
+            this.ShadowMapBoundsLineColor = Color.Red;
+        }
+        #endregion
+
+        #region Properties
+        /// <summary>
+        /// Gets or sets a value indicating whether or not to render the bounds of the shadow map used when lighting.
+        /// </summary>
+        public bool RenderShadowMapBounds
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the line <see cref="Color"/> to use when rendering the shadow map boundaries.
+        /// </summary>
+        public Color ShadowMapBoundsLineColor
+        {
+            get;
+            set;
         }
         #endregion
 
@@ -46,18 +68,21 @@ namespace CelestialEngine.Game
         {
             base.DrawColorMap(gameTime, renderSystem);
 
-            renderSystem.BeginRender();
-            var shadowAreas = targetLight.GetAllShadowPrimitives();
-            foreach (var shadowArea in shadowAreas)
+            // Render the lines around all the triangles in the primitive triangle strips
+            if (this.RenderShadowMapBounds)
             {
-                for (int index = 0; index < shadowArea.Count - 2; index++)
+                renderSystem.BeginRender();
+                foreach (var shadowArea in targetLight.GetAllShadowPrimitives())
                 {
-                    renderSystem.DrawLine(shadowArea[index], shadowArea[index + 1], Color.Red, 0.05f);
-                    renderSystem.DrawLine(shadowArea[index + 2], shadowArea[index + 1], Color.Red, 0.05f);
-                    renderSystem.DrawLine(shadowArea[index], shadowArea[index + 2], Color.Red, 0.05f);
+                    for (int index = 0; index < shadowArea.Count - 2; index++)
+                    {
+                        renderSystem.DrawLine(shadowArea[index], shadowArea[index + 1], this.ShadowMapBoundsLineColor, this.lineWidth);
+                        renderSystem.DrawLine(shadowArea[index + 2], shadowArea[index + 1], this.ShadowMapBoundsLineColor, this.lineWidth);
+                        renderSystem.DrawLine(shadowArea[index], shadowArea[index + 2], this.ShadowMapBoundsLineColor, this.lineWidth);
+                    }
                 }
+                renderSystem.EndRender();
             }
-            renderSystem.EndRender();
         }
 
         /// <summary>
@@ -70,18 +95,22 @@ namespace CelestialEngine.Game
         {
             base.DrawOptionsMap(gameTime, renderSystem);
 
-            renderSystem.BeginRender();
-            var shadowAreas = targetLight.GetAllShadowPrimitives();
-            foreach (var shadowArea in shadowAreas)
+            // Turn off lighting for the lines around all the triangles in the primitive triangle strips
+            if (this.RenderShadowMapBounds)
             {
-                for (int index = 0; index < shadowArea.Count - 2; index++)
+                renderSystem.BeginRender(this.optionMapFlagsShader);
+                this.optionMapFlagsShader.ConfigureShaderAndApplyPass(renderSystem, this);
+                foreach (var shadowArea in targetLight.GetAllShadowPrimitives())
                 {
-                    renderSystem.DrawLine(shadowArea[index], shadowArea[index + 1], Color.Black, 0.05f);
-                    renderSystem.DrawLine(shadowArea[index + 2], shadowArea[index + 1], Color.Black, 0.05f);
-                    renderSystem.DrawLine(shadowArea[index], shadowArea[index + 2], Color.Black, 0.05f);
+                    for (int index = 0; index < shadowArea.Count - 2; index++)
+                    {
+                        renderSystem.DrawLine(shadowArea[index], shadowArea[index + 1], Color.Black, this.lineWidth);
+                        renderSystem.DrawLine(shadowArea[index + 2], shadowArea[index + 1], Color.Black, this.lineWidth);
+                        renderSystem.DrawLine(shadowArea[index], shadowArea[index + 2], Color.Black, this.lineWidth);
+                    }
                 }
+                renderSystem.EndRender();
             }
-            renderSystem.EndRender();
         }
         #endregion
     }
