@@ -9,6 +9,7 @@ namespace CelestialEngine.Core
     using System.Collections.Generic;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
+    using System;
 
     /// <summary>
     /// Defines a floating point rectangle.
@@ -465,8 +466,13 @@ namespace CelestialEngine.Core
             float minAngle = 0;
             float maxAngle = firstVector.AngleBetween(secondVector);
 
+            if (maxAngle > MathHelper.Pi)
+            {
+                throw new ArgumentException("Angle created by the two vectors must be acute.", nameof(secondVector));
+            }
+
             // Init the collection
-            List<Vector2> vectorCollection = new List<Vector2>(3); // There can not be more than 3
+            List<Vector2> vectorCollection = new List<Vector2>(4); // There can not be more than 4
 
             // Go through each vertex that make up this rectangle
             foreach (Vector2 currVert in this.Vertices)

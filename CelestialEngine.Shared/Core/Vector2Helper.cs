@@ -108,22 +108,26 @@ namespace CelestialEngine.Core
         /// <summary>
         /// Gets the angle (in radians) between this vector instance and the other specified vector.
         /// </summary>
-        /// <remarks>This function always returns values between 0 and 2Pi.</remarks>
-        /// <param name="targetVector">This <see cref="Vector2"/> instance.</param>
-        /// <param name="fromVector">Vector to find the rotation between.</param>
-        /// <returns>The angle between the two vectors.</returns>
-        public static float AngleBetween(this Vector2 targetVector, Vector2 fromVector)
+        /// <remarks>This function always returns values between -Pi and Pi.</remarks>
+        /// <param name="fromVector">This <see cref="Vector2"/> instance.</param>
+        /// <param name="targetVector">Vector to find the rotation between.</param>
+        /// <returns>The angle between the two vectors. A positive angle denotes that the target vector is clockwise relative to the source; otherwise, counter-clockwise.</returns>
+        public static float AngleBetween(this Vector2 fromVector, Vector2 targetVector)
         {
+            // As we want to encode direction in the response, it's cheaper to use Rotation() rather than Acos(Dot(A, B)).
             if (targetVector == Vector2.Zero || fromVector == Vector2.Zero)
             {
                 return 0.0f;
             }
 
-            float angle = targetVector.Rotation() - fromVector.Rotation();
-
-            if (angle < 0)
+            float angle = fromVector.Rotation() - targetVector.Rotation();
+            if (angle < -MathHelper.Pi)
             {
                 angle += MathHelper.Pi * 2.0f;
+            }
+            else if (angle > MathHelper.Pi)
+            {
+                angle -= MathHelper.Pi * 2.0f;
             }
 
             return angle;

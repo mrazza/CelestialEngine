@@ -52,6 +52,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\World.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\AnimatedSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\Camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\DebugSimulatedLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\DebugSimulatedPostProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\DebugSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\AmbientLight.cs" />

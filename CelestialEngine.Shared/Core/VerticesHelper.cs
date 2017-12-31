@@ -26,16 +26,6 @@ namespace CelestialEngine.Core
             Vector2 centerVector = relativePoint - verts.GetCentroid();
             float angle = centerVector.AngleBetween(relativePoint - verts[0]);
 
-            // Because AngleBetween(), place within -Pi -> Pi
-            if (angle > MathHelper.Pi)
-            {
-                angle = (-MathHelper.Pi * 2.0f) + angle;
-            }
-            else if (angle < -MathHelper.Pi)
-            {
-                angle = (MathHelper.Pi * 2.0f) + angle;
-            }
-
             float minAngle = angle;
             float maxAngle = minAngle;
             Vector2 minVert = verts[0];
@@ -45,17 +35,6 @@ namespace CelestialEngine.Core
             for (int currVertIndex = 1; currVertIndex < verts.Count; currVertIndex++)
             {
                 angle = centerVector.AngleBetween(relativePoint - verts[currVertIndex]);
-
-                // Because AngleBetween(), place within -Pi -> Pi
-                if (angle > MathHelper.Pi)
-                {
-                    angle = (-MathHelper.Pi * 2.0f) + angle;
-                }
-                else if (angle < -MathHelper.Pi)
-                {
-                    angle = (MathHelper.Pi * 2.0f) + angle;
-                }
-
                 if (angle < minAngle)
                 {
                     minAngle = angle;

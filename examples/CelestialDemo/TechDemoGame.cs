@@ -160,7 +160,7 @@ namespace CelestialEngine.TechDemo
                 var x = new DebugSprite(this.GameWorld, test4);
             }
 
-            this.amLight = new AmbientLight(Color.White, 0.02f, true, 1);
+            this.amLight = new AmbientLight(Color.White, 0.2f, true, 1);
             this.RenderSystem.AddPostProcessEffect(this.amLight);
 
             mouseLight = new PointLight(this.GameWorld)
@@ -176,7 +176,7 @@ namespace CelestialEngine.TechDemo
 
             if (this.IsDebug)
             {
-                DebugSimulatedPostProcess y = new DebugSimulatedPostProcess(this.GameWorld, mouseLight);
+                DebugSimulatedLight y = new DebugSimulatedLight(this.GameWorld, mouseLight);
             }
 
             this.RenderSystem.AddPostProcessEffect(mouseLight);
@@ -271,7 +271,7 @@ namespace CelestialEngine.TechDemo
 
             if (this.IsDebug)
             {
-                var x = new DebugSimulatedPostProcess(this.GameWorld, newLight);
+                var x = new DebugSimulatedLight(this.GameWorld, newLight);
             }
 
             this.RenderSystem.AddPostProcessEffect(newLight);
@@ -302,7 +302,7 @@ namespace CelestialEngine.TechDemo
 
             if (this.IsDebug)
             {
-                DebugSimulatedPostProcess z = new DebugSimulatedPostProcess(this.GameWorld, newLight);
+                DebugSimulatedLight z = new DebugSimulatedLight(this.GameWorld, newLight);
             }
 
             this.RenderSystem.AddPostProcessEffect(newLight);
@@ -332,7 +332,7 @@ namespace CelestialEngine.TechDemo
 
             if (this.IsDebug)
             {
-                DebugSimulatedPostProcess z = new DebugSimulatedPostProcess(this.GameWorld, newLight);
+                DebugSimulatedLight z = new DebugSimulatedLight(this.GameWorld, newLight);
             }
 
             this.RenderSystem.AddPostProcessEffect(newLight);
@@ -358,7 +358,7 @@ namespace CelestialEngine.TechDemo
 
             if (this.IsDebug)
             {
-                DebugSimulatedPostProcess l = new DebugSimulatedPostProcess(this.GameWorld, newLight);
+                DebugSimulatedLight l = new DebugSimulatedLight(this.GameWorld, newLight);
             }
 
             this.RenderSystem.AddPostProcessEffect(newLight);
