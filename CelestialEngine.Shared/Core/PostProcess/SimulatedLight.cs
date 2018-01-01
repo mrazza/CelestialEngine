@@ -173,15 +173,8 @@ namespace CelestialEngine.Core.PostProcess
         public List<VertexPrimitive> GetAllShadowPrimitives()
         {
             RectangleF lightDrawBounds = this.GetWorldDrawBounds();
-            List<VertexPrimitive> result = new List<VertexPrimitive>();
-            List<SpriteBase> objectList = this.World.GetSpriteObjectsInArea(lightDrawBounds).Where(currObj => (currObj.RenderOptions & SpriteRenderOptions.CastsShadows) != 0).OrderBy(s => s.LayerDepth).ToList();
-
-            for (int objectIndex = 0; objectIndex < objectList.Count; objectIndex++)
-            {
-                result.AddRange(this.GetShadowPrimitives(objectList[objectIndex], lightDrawBounds));
-            }
-
-            return result;
+            return this.GetShadowEligibleSprites(lightDrawBounds)
+                .SelectMany(sprite => this.GetShadowPrimitives(sprite, lightDrawBounds)).ToList();
         }
         #endregion
 
@@ -200,9 +193,9 @@ namespace CelestialEngine.Core.PostProcess
             // Only render the shadows if we are to cast them
             if (this.CastsShadows)
             {
-                RectangleF lightDrawBounds = this.GetWorldDrawBounds();
                 // Render the shadow caused by each object within the lights range
-                List<SpriteBase> objectList = this.World.GetSpriteObjectsInArea(lightDrawBounds).Where(currObj => (currObj.RenderOptions & SpriteRenderOptions.CastsShadows) != 0).OrderBy(s => s.LayerDepth).ToList();
+                RectangleF lightDrawBounds = this.GetWorldDrawBounds();
+                List<SpriteBase> objectList = this.GetShadowEligibleSprites(lightDrawBounds).ToList();
                 
                 for (int objectIndex = 0; objectIndex < objectList.Count; objectIndex++)
                 {
@@ -292,6 +285,18 @@ namespace CelestialEngine.Core.PostProcess
             }
 
             return result;
+        }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// Gets the <see cref="SpriteBase"/> objects that are within the provided draw bounds and eligible to cast shadows.
+        /// </summary>
+        /// <param name="lightDrawBounds">Draw bounds used when searching for sprites.</param>
+        /// <returns>Enumerable of sprites eligible for shadow casting.</returns>
+        private IEnumerable<SpriteBase> GetShadowEligibleSprites(RectangleF lightDrawBounds)
+        {
+            return this.World.GetSpriteObjectsInArea(lightDrawBounds).Where(currObj => (currObj.RenderOptions & SpriteRenderOptions.CastsShadows) != 0).OrderBy(s => s.LayerDepth);
         }
         #endregion
     }
