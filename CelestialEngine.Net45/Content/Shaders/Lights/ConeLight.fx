@@ -112,7 +112,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
         // Do specular calculations
         float amount = max(dot(normal, lightDirNorm), 0);
-        float3 reflect = normalize(2 * amount * normal - lightDirNorm);
+        float3 reflect = normalize(2 * amount * normal);
         float specular = min(pow(saturate(dot(reflect, halfVec)), 10), amount);
 
         return float4(saturate(lightColorAndAttenuation * lightPower + specular * lightColorAndAttenuation * specularStrength * specularReflectivity).rgb, 0);

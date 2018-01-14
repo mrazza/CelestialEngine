@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------
-// <copyright file="MergeTargets.fx" company="">
+// <copyright file="AmbientLight.fx" company="">
 // Copyright (C) 2011 Matthew Razza
 // </copyright>
 // -----------------------------------------------------------------------

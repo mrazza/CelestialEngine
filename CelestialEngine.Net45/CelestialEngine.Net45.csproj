@@ -65,6 +65,7 @@
     <Content Include="Content\Shaders\Lights\AmbientLight.fx" />
     <Content Include="Content\Shaders\Lights\ConeLight.fx" />
     <Content Include="Content\Shaders\Lights\PointLight.fx" />
+    <Content Include="Content\Shaders\Lights\RectangularLight.fx" />
     <Content Include="Content\Shaders\Simple\InvertColors.fx" />
   </ItemGroup>
   <Import Project="..\CelestialEngine.Shared\CelestialEngine.Shared.projitems" Label="Shared" />

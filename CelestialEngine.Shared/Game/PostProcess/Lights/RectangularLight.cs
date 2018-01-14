@@ -1,61 +1,51 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="ConeLight.cs" company="">
-// Copyright (C) 2012 Matthew Razza
+// <copyright file="RectangularLight.cs" company="">
+// Copyright (C) Matthew Razza
 // </copyright>
 // -----------------------------------------------------------------------
 
 namespace CelestialEngine.Game.PostProcess.Lights
 {
-    using System;
     using CelestialEngine.Core;
     using CelestialEngine.Core.Shaders;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
+    using System;
 
     /// <summary>
-    /// A cone light that exists in 3D space and applies the specified lighting within the
-    /// given angular constaints with specular effects.
+    /// A rectangle of light that exists as a plane 3D space and applies the specified lighting
+    /// completely within the rectangle with light fading away from the bounds of the rectangle.
     /// </summary>
-    public class ConeLight : PointLight
+    /// <remarks>
+    /// For a beam of light, set the height (or width) of the rectangle to 0 (or near-0) making
+    /// the fully lit portion of the light source infintely thin. An example use of this light
+    /// type is laser weapons.
+    /// 
+    /// A <see cref="RectangularLight"/> with dimensions of {0, 0} is functionally the same as a
+    /// <see cref="PointLight"/>. However, there is additional computational overhead.
+    /// </remarks>
+    public class RectangularLight : PointLight
     {
-        #region Members
-        /// <summary>
-        /// The angle (breath) that the light will affect (in radians).
-        /// </summary>
-        private float lightAngle;
-        #endregion
-
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConeLight"/> class.
+        /// Initializes a new instance of the <see cref="RectangularLight"/> class.
         /// </summary>
         /// <param name="world">The <see cref="World" /> in which the instance lives.</param>
-        public ConeLight(World world)
-            : base(world, new Shader(Content.Shaders.Lights.ConeLight))
+        public RectangularLight(World world)
+            : base(world, new Shader(Content.Shaders.Lights.RectangularLight))
         {
-            this.lightAngle = MathHelper.PiOver4;
+            this.Dimensions = Vector2.Zero;
         }
         #endregion
 
         #region Properties
         /// <summary>
-        /// Gets or sets the angle (breath) that the light will affect (in radians) on either side of its directional vector.
-        /// A value of 45 degrees will result in 90 degrees of light (45 per side).
+        /// The dimensions of the rectangle that is the source of the light.
         /// </summary>
-        /// <value>
-        /// The angle (breath) that the light will affect (in radians).
-        /// </value>
-        public float LightAngle
+        public Vector2 Dimensions
         {
-            get
-            {
-                return this.lightAngle;
-            }
-
-            set
-            {
-                this.lightAngle = MathHelper.Clamp(value, 0.0f, MathHelper.Pi);
-            }
+            get;
+            set;
         }
         #endregion
 
@@ -69,12 +59,9 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// </returns>
         public override RectangleF GetWorldDrawBounds()
         {
+            Vector2 halfDimensions = this.Dimensions / 2.0f;
             float rangeFactor = this.Range / (float)Math.Sqrt(this.Decay);
-            float halfMaxWidth = MathHelper.Min(rangeFactor, rangeFactor * (float)Math.Tan(this.lightAngle / 2.0f));
-            RectangleF result = new RectangleF(this.Position.X - halfMaxWidth, this.Position.Y - rangeFactor, 2.0f * halfMaxWidth, rangeFactor);
-            result = result.RotateAbout(new Vector2(this.Position.X, this.Position.Y), this.Rotation);
-
-            return result;
+            return new RectangleF(this.Position.X - rangeFactor - halfDimensions.X, this.Position.Y - rangeFactor - halfDimensions.Y, 2.0f * rangeFactor + this.Dimensions.X, 2.0f * rangeFactor + this.Dimensions.Y).RotateAbout(this.Position.ToVector2(), this.Rotation);
         }
 
         /// <summary>
@@ -94,7 +81,10 @@ namespace CelestialEngine.Game.PostProcess.Lights
             // Set parameters
             this.PostProcessEffect.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
             this.PostProcessEffect.GetParameter("cameraPosition").SetValue(renderSystem.GameCamera.PixelPosition);
-            this.PostProcessEffect.GetParameter("lightPosition").SetValue(this.PixelPosition);
+            this.PostProcessEffect.GetParameter("lightRotationMatrix").SetValue(Matrix.CreateRotationZ(-this.Rotation));
+            this.PostProcessEffect.GetParameter("inverseLightRotationMatrix").SetValue(Matrix.CreateRotationZ(this.Rotation));
+            this.PostProcessEffect.GetParameter("lightCenterPosition").SetValue(this.PixelPosition);
+            this.PostProcessEffect.GetParameter("lightRectangleHalfDimensions").SetValue(this.World.GetPixelFromWorld(this.Dimensions / 2.0f));
             this.PostProcessEffect.GetParameter("lightPower").SetValue(this.Power);
             this.PostProcessEffect.GetParameter("lightRange").SetValue(this.World.GetPixelFromWorld(this.Range));
             this.PostProcessEffect.GetParameter("lightDecay").SetValue(this.Decay);
@@ -103,8 +93,6 @@ namespace CelestialEngine.Game.PostProcess.Lights
             this.PostProcessEffect.GetParameter("normalMap").SetValue(renderSystem.RenderTargets.NormalMap);
             this.PostProcessEffect.GetParameter("optionsMap").SetValue(renderSystem.RenderTargets.OptionsMap);
             this.PostProcessEffect.GetParameter("shadowMap").SetValue(shadowMap);
-            this.PostProcessEffect.GetParameter("lightAngle").SetValue(this.LightAngle / 2.0f);
-            this.PostProcessEffect.GetParameter("lightFacingDirection").SetValue(this.RotationVector);
             this.PostProcessEffect.GetParameter("layerDepth").SetValue(this.LayerDepth / 255.0f);
 
             // Render
@@ -112,6 +100,7 @@ namespace CelestialEngine.Game.PostProcess.Lights
             renderSystem.DirectScreenPaint(this.GetWorldDrawBounds());
 
             renderSystem.SetRenderTargets(RenderTargetTypes.None, 0); // Resolve the render target
+
             renderSystem.RenderTargets.ReleaseTemporaryRenderTarget(shadowMap);
         }
         #endregion
