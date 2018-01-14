@@ -95,7 +95,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
         float specularReflectivity = options.g;
         float3 normal = 2.0f * tex2D(normalMapSampler, input.TexCoord).rgb - 1.0f; // Get within [-1, 1]
 
-        float3 lightDirection = input.WorldPos - lightPosition; // Get light direction vector
+        float3 lightDirection = lightPosition - input.WorldPos; // Get light direction vector
         float3 lightDirNorm = normalize(lightDirection); // Normalize the vector
         float3 halfVec = float3(0, 0, 1); // Found on google
         float3 lightColorAndAttenuation = 0;
