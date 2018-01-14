@@ -1,17 +1,20 @@
-// -----------------------------------------------------------------------
-// <copyright file="PointLight.fx" company="">
+﻿// -----------------------------------------------------------------------
+// <copyright file="RectangularLight.fx" company="">
 // Copyright (C) 2011 Matthew Razza
 // </copyright>
 // -----------------------------------------------------------------------
 
 /// <summary>
-/// This shader renders a point light with specular effects.
+/// This shader renders a rectangular light with specular effects.
 /// </summary>
+
 float4x4 viewProjection;
 float lightPower;
 float lightDecay;
 float lightRange;
-float3 lightPosition;
+float3x3 lightRotationMatrix;
+float3 lightCenterPosition;
+float2 lightRectangleHalfDimensions;
 float2 cameraPosition;
 float4 lightColor;
 float specularStrength;
@@ -95,13 +98,19 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
         float specularReflectivity = options.g;
         float3 normal = 2.0f * tex2D(normalMapSampler, input.TexCoord).rgb - 1.0f; // Get within [-1, 1]
 
-        float3 lightDirection = lightPosition - input.WorldPos; // Get light direction vector
+        float3 lightDirection = lightCenterPosition - input.WorldPos; // Get light direction vector
+
+        // Calculate the distance from the nearest part of the rectangle
+        float3 rectangleSpaceLightDirection = mul(lightDirection, lightRotationMatrix);
+        float distanceX = max(0, max(-lightRectangleHalfDimensions.x - rectangleSpaceLightDirection.x, rectangleSpaceLightDirection.x - lightRectangleHalfDimensions.x));
+        float distanceY = max(0, max(-lightRectangleHalfDimensions.y - rectangleSpaceLightDirection.y, rectangleSpaceLightDirection.y - lightRectangleHalfDimensions.y));
+        float lightDistance = length(float3(distanceX, distanceY, lightDirection.z));
+
         float3 lightDirNorm = normalize(lightDirection); // Normalize the vector
         float3 halfVec = float3(0, 0, 1); // Found on google
         float3 lightColorAndAttenuation = 0;
 
         // If we're going to render light here calculate the color and attenuation
-        float lightDistance = length(lightDirection);
         if (lightDistance < lightRange)
         {
             lightColorAndAttenuation = (lightColor * pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay)).rgb;
@@ -116,7 +125,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     }
 }
 
-technique SpecularPointLight
+technique SpecularRectangularLight
 {
     pass MainPass
     {
@@ -126,6 +135,6 @@ technique SpecularPointLight
         DestBlend = One;
 
         VertexShader = compile vs_4_0_level_9_1 VertexShaderFunction();
-        PixelShader = compile ps_4_0_level_9_1 PixelShaderFunction();
+        PixelShader = compile ps_4_0_level_9_3 PixelShaderFunction();
     }
 }

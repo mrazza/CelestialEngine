@@ -47,6 +47,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\SpriteBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\SpriteRenderOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Vector2Helper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Vector3Helper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\VertexPrimitive.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\VerticesHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\World.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\AmbientLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\ConeLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\PointLight.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\RectangularLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\SimBaseAnchor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\SimpleShadedSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\SimpleSprite.cs" />

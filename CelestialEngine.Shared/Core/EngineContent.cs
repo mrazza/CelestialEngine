@@ -58,6 +58,11 @@ namespace CelestialEngine.Content
             /// The content path for the point light shader.
             /// </summary>
             public const string PointLight = @"Content\Shaders\Lights\PointLight";
+
+            /// <summary>
+            /// The content path for the rectangular light shader.
+            /// </summary>
+            public const string RectangularLight = @"Content\Shaders\Lights\RectangularLight";
         }
         
         /// <summary>

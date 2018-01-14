@@ -25,7 +25,7 @@ namespace CelestialEngine.TechDemo
         private Random prng;
         private TiledSprite background;
         private AmbientLight amLight;
-        private SimulatedLight mouseLight;
+        private RectangularLight mouseLight;
         private float secFrames;
         private double elapsed;
         private double lastFramesPerSec;
@@ -54,6 +54,10 @@ namespace CelestialEngine.TechDemo
             this.InputManager.AddConditionalBinding((s) => { return s.IsLeftMouseClick() && !s.IsKeyDown(Keys.LeftShift); }, SpawnNewLight); 
             this.InputManager.AddConditionalBinding((s) => { return s.IsRightMouseClick(); }, SpawnNewRotatingLight);
             this.InputManager.AddConditionalBinding((s) => { return s.IsScrollWheelChanged(); }, PerformZoom);
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Up), (s) => mouseLight.Rotation += 0.2f);
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Down), (s) => mouseLight.Rotation -= 0.2f);
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Right), (s) => mouseLight.Dimensions += new Vector2(0.5f, 0.5f));
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Left), (s) => mouseLight.Dimensions -= new Vector2(0.5f, 0.5f));
 
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F1), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.Disabled);
             //this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F2), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.All);
@@ -163,11 +167,12 @@ namespace CelestialEngine.TechDemo
             this.amLight = new AmbientLight(Color.White, 0.2f, true, 1);
             this.RenderSystem.AddPostProcessEffect(this.amLight);
 
-            mouseLight = new PointLight(this.GameWorld)
+            mouseLight = new RectangularLight(this.GameWorld)
             {
                 Color = Color.White,
                 Power = 1f,
                 Range = 8,
+                Decay = 2,
                 SpecularStrength = 4.75f,
                 CastsShadows = true,
                 LayerDepth = 1

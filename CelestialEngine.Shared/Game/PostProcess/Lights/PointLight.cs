@@ -11,39 +11,13 @@ namespace CelestialEngine.Game.PostProcess.Lights
     using CelestialEngine.Core.Shaders;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
+    using System;
 
     /// <summary>
     /// A point light that exists in 3D space and applies the specified lighting with specular effects.
     /// </summary>
     public class PointLight : SimulatedLight
     {
-        #region Members
-        /// <summary>
-        /// The power of the light (intensity)
-        /// </summary>
-        private float power;
-
-        /// <summary>
-        /// The range, in world units, of the light (how far from the center should the light extend).
-        /// </summary>
-        private float range;
-
-        /// <summary>
-        /// The decay/spread factor of the light
-        /// </summary>
-        private float decay;
-
-        /// <summary>
-        /// The color of the light
-        /// </summary>
-        private Color color;
-
-        /// <summary>
-        /// The strength of the specular effects
-        /// </summary>
-        private float specularStrength;
-        #endregion
-
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="PointLight"/> class.
@@ -62,7 +36,7 @@ namespace CelestialEngine.Game.PostProcess.Lights
         protected PointLight(World world, Shader shader)
             : base(world, shader)
         {
-            this.decay = 1.0f;
+            this.Decay = 1.0f;
         }
         #endregion
 
@@ -75,15 +49,8 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// </value>
         public float Power
         {
-            get
-            {
-                return this.power;
-            }
-
-            set
-            {
-                this.power = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -92,15 +59,8 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// <value>The range of the light.</value>
         public float Range
         {
-            get
-            {
-                return this.range;
-            }
-
-            set
-            {
-                this.range = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -111,15 +71,8 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// </value>
         public float Decay
         {
-            get
-            {
-                return this.decay;
-            }
-
-            set
-            {
-                this.decay = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -130,15 +83,8 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// </value>
         public Color Color
         {
-            get
-            {
-                return this.color;
-            }
-
-            set
-            {
-                this.color = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -149,15 +95,8 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// </value>
         public float SpecularStrength
         {
-            get
-            {
-                return this.specularStrength;
-            }
-
-            set
-            {
-                this.specularStrength = value;
-            }
+            get;
+            set;
         }
         #endregion
 
@@ -171,7 +110,8 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// </returns>
         public override RectangleF GetWorldDrawBounds()
         {
-            return new RectangleF(this.Position.X - this.range, this.Position.Y - this.range, 2.0f * this.range, 2.0f * this.range);
+            float rangeFactor = this.Range / (float)Math.Sqrt(this.Decay);
+            return new RectangleF(this.Position.X - rangeFactor, this.Position.Y - rangeFactor, 2.0f * this.Range, 2.0f * rangeFactor);
         }
 
         /// <summary>

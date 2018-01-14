@@ -56,6 +56,17 @@ namespace CelestialEngine.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="RectangleF"/> struct.
         /// </summary>
+        /// <param name="position">The Y X coords of the rectangle.</param>
+        /// <param name="width">The Width of the rectangle.</param>
+        /// <param name="height">The Height of the rectangle.</param>
+        public RectangleF(Vector2 position, float width, float height)
+            : this(position.X, position.Y, width, height)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RectangleF"/> struct.
+        /// </summary>
         /// <param name="x">The x-coordinate of the Y X of the rectangle.</param>
         /// <param name="y">The y-coordinate of the Y X of the rectangle.</param>
         /// <param name="width">The Width of the rectangle.</param>
@@ -630,7 +641,7 @@ namespace CelestialEngine.Core
         }
 
         /// <summary>
-        /// Builds an array of <see cref="Vector2"/> containing the normals used for the SAT algorithm for this <see cref="RectangleF"/> instance.
+        /// Builds a <see cref="IEnumerable{T}"/> of <see cref="Vector2"/> containing the normals used for the SAT algorithm for this <see cref="RectangleF"/> instance.
         /// </summary>
         /// <remarks>
         /// The array only contains the top and right normals as the bottom and left normals are the same (just rotated 180 degrees).

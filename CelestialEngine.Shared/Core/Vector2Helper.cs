@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="Vector2Extensions.cs" company="">
+// <copyright file="Vector2Helper.cs" company="">
 // Copyright (C) Matthew Razza
 // </copyright>
 // -----------------------------------------------------------------------
