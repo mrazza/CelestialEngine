@@ -13,6 +13,7 @@ float lightPower;
 float lightDecay;
 float lightRange;
 float3x3 lightRotationMatrix;
+float3x3 inverseLightRotationMatrix;
 float3 lightCenterPosition;
 float2 lightRectangleHalfDimensions;
 float2 cameraPosition;
@@ -100,17 +101,24 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
         float3 lightDirection = lightCenterPosition - input.WorldPos; // Get light direction vector
 
-        // Calculate the distance from the nearest part of the rectangle
+        // Calculate the vector from the nearest part of the rectangle. To do this, we transform into
+        // rectangle space. Calculate the distance from the closest edge in both axis, and transform
+        // back to world space.
         float3 rectangleSpaceLightDirection = mul(lightDirection, lightRotationMatrix);
-        float distanceX = max(0, max(-lightRectangleHalfDimensions.x - rectangleSpaceLightDirection.x, rectangleSpaceLightDirection.x - lightRectangleHalfDimensions.x));
-        float distanceY = max(0, max(-lightRectangleHalfDimensions.y - rectangleSpaceLightDirection.y, rectangleSpaceLightDirection.y - lightRectangleHalfDimensions.y));
-        float lightDistance = length(float3(distanceX, distanceY, lightDirection.z));
+        float x1 = lightRectangleHalfDimensions.x + rectangleSpaceLightDirection.x;
+        float x2 = rectangleSpaceLightDirection.x - lightRectangleHalfDimensions.x;
+        float distanceX = x1 < 0 ? x1 : x2 > 0 ? x2 : 0;
+        float y1 = lightRectangleHalfDimensions.y + rectangleSpaceLightDirection.y;
+        float y2 = rectangleSpaceLightDirection.y - lightRectangleHalfDimensions.y;
+        float distanceY = y1 < 0 ?  y1 : y2 > 0 ? y2 : 0;
+        lightDirection = mul(float3(distanceX, distanceY, lightDirection.z), inverseLightRotationMatrix);
 
         float3 lightDirNorm = normalize(lightDirection); // Normalize the vector
         float3 halfVec = float3(0, 0, 1); // Found on google
         float3 lightColorAndAttenuation = 0;
 
         // If we're going to render light here calculate the color and attenuation
+        float lightDistance = length(lightDirection);
         if (lightDistance < lightRange)
         {
             lightColorAndAttenuation = (lightColor * pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay)).rgb;
@@ -118,7 +126,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
         // Do specular calculations
         float amount = max(dot(normal, lightDirNorm), 0);
-        float3 reflect = normalize(2 * amount * normal - lightDirNorm);
+        float3 reflect = normalize(2 * amount * normal);
         float specular = min(pow(saturate(dot(reflect, halfVec)), 10), amount);
 
         return float4(saturate(lightColorAndAttenuation * lightPower + specular * lightColorAndAttenuation * specularStrength * specularReflectivity).rgb, 0);

@@ -56,8 +56,8 @@ namespace CelestialEngine.TechDemo
             this.InputManager.AddConditionalBinding((s) => { return s.IsScrollWheelChanged(); }, PerformZoom);
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Left), (s) => mouseLight.Rotation -= 0.2f);
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Right), (s) => mouseLight.Rotation += 0.2f);
-            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Up), (s) => mouseLight.Dimensions += new Vector2(0.5f, 0.5f));
-            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Down), (s) => mouseLight.Dimensions -= new Vector2(0.5f, 0.5f));
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Up), (s) => mouseLight.Dimensions += new Vector2(0.5f, 0.25f));
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Down), (s) => mouseLight.Dimensions -= new Vector2(0.5f, 0.25f));
 
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F1), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.Disabled);
             //this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F2), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.All);
@@ -173,7 +173,7 @@ namespace CelestialEngine.TechDemo
                 Power = 1f,
                 Range = 8,
                 Decay = 2,
-                SpecularStrength = 4.75f,
+                SpecularStrength = 7.00f,
                 CastsShadows = true,
                 LayerDepth = 1
             };

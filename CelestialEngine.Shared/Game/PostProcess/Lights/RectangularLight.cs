@@ -34,6 +34,7 @@ namespace CelestialEngine.Game.PostProcess.Lights
         public RectangularLight(World world)
             : base(world, new Shader(Content.Shaders.Lights.RectangularLight))
         {
+            this.Dimensions = Vector2.Zero;
         }
         #endregion
 
@@ -81,6 +82,7 @@ namespace CelestialEngine.Game.PostProcess.Lights
             this.PostProcessEffect.GetParameter("viewProjection").SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
             this.PostProcessEffect.GetParameter("cameraPosition").SetValue(renderSystem.GameCamera.PixelPosition);
             this.PostProcessEffect.GetParameter("lightRotationMatrix").SetValue(Matrix.CreateRotationZ(-this.Rotation));
+            this.PostProcessEffect.GetParameter("inverseLightRotationMatrix").SetValue(Matrix.CreateRotationZ(this.Rotation));
             this.PostProcessEffect.GetParameter("lightCenterPosition").SetValue(this.PixelPosition);
             this.PostProcessEffect.GetParameter("lightRectangleHalfDimensions").SetValue(this.World.GetPixelFromWorld(this.Dimensions / 2.0f));
             this.PostProcessEffect.GetParameter("lightPower").SetValue(this.Power);
