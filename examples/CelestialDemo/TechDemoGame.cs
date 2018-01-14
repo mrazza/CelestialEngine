@@ -51,13 +51,13 @@ namespace CelestialEngine.TechDemo
 
             this.InputManager.AddConditionalBinding((s) => { return s.IsKeyDown(Keys.Escape); }, (s) => this.Exit());
             this.InputManager.AddConditionalBinding((s) => { return s.IsLeftMouseClick() && s.IsKeyDown(Keys.LeftShift); }, SpawnNewStaticLight);
-            this.InputManager.AddConditionalBinding((s) => { return s.IsLeftMouseClick() && !s.IsKeyDown(Keys.LeftShift); }, SpawnNewLight); 
+            //this.InputManager.AddConditionalBinding((s) => { return s.IsLeftMouseClick() && !s.IsKeyDown(Keys.LeftShift); }, SpawnNewLight); 
             this.InputManager.AddConditionalBinding((s) => { return s.IsRightMouseClick(); }, SpawnNewRotatingLight);
             this.InputManager.AddConditionalBinding((s) => { return s.IsScrollWheelChanged(); }, PerformZoom);
-            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Up), (s) => mouseLight.Rotation += 0.2f);
-            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Down), (s) => mouseLight.Rotation -= 0.2f);
-            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Right), (s) => mouseLight.Dimensions += new Vector2(0.5f, 0.5f));
-            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Left), (s) => mouseLight.Dimensions -= new Vector2(0.5f, 0.5f));
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Left), (s) => mouseLight.Rotation -= 0.2f);
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Right), (s) => mouseLight.Rotation += 0.2f);
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Up), (s) => mouseLight.Dimensions += new Vector2(0.5f, 0.5f));
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Down), (s) => mouseLight.Dimensions -= new Vector2(0.5f, 0.5f));
 
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F1), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.Disabled);
             //this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F2), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.All);
