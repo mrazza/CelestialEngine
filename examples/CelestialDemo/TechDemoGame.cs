@@ -112,6 +112,25 @@ namespace CelestialEngine.TechDemo
                 var x = new DebugSprite(this.GameWorld, test);
             }
 
+            SimpleSprite ship = new SimpleSprite(this.GameWorld, "Content/ship", "Content/shipnormal", true)
+            {
+                Position = new Vector2(15, 10),
+                RenderScale = new Vector2(0.4f, 0.4f),
+                RenderOptions = SpriteRenderOptions.CastsShadows | SpriteRenderOptions.IsLit,
+                SpecularReflectivity = 1.0f,
+                LayerDepth = 1,
+                SpriteMirroring = SpriteEffects.FlipHorizontally
+            };
+            ship.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
+            ship.Body.CollisionCategories = FarseerPhysics.Dynamics.Category.Cat1;
+            ship.Body.Friction = 0;
+            ship.Body.Restitution = 1.0f;
+
+            if (this.IsDebug)
+            {
+                var x = new DebugSprite(this.GameWorld, ship);
+            }
+
             SimpleSprite test2 = new SimpleSprite(this.GameWorld, "Content/box", null, false)
             {
                 Position = new Vector2(10, 8),
@@ -175,8 +194,8 @@ namespace CelestialEngine.TechDemo
             mouseLight = new RectangularLight(this.GameWorld)
             {
                 Color = Color.White,
-                Power = 4f,
-                Range = 8,
+                Power = 5f,
+                Range = 10,
                 Decay = 2f,
                 SpecularStrength = 7.00f,
                 CastsShadows = true,
