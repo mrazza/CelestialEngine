@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="PointLight.cs" company="">
+// <copyright file="RectangularLight.cs" company="">
 // Copyright (C) Matthew Razza
 // </copyright>
 // -----------------------------------------------------------------------
