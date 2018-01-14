@@ -88,11 +88,11 @@ namespace PhysicsDemo
             // Create the point light
             var spotLight = new PointLight(this.GameWorld)
             {
-                Position = new Vector3(35, 5, 2f),
+                Position = new Vector3(35, 0, 10f),
                 LayerDepth = 2,
                 Color = Color.White,
                 Power = 10f,
-                Range = 45,
+                Range = 55,
                 CastsShadows = true,
                 SpecularStrength = 4.00f
             };

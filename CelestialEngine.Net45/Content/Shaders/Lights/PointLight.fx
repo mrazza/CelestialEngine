@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------
 // <copyright file="PointLight.fx" company="">
-// Copyright (C) 2011 Matthew Razza
+// Copyright (C) Matthew Razza
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -102,13 +102,13 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 
         // If we're going to render light here calculate the color and attenuation
         float lightDistance = length(lightDirection);
+        float amount = max(dot(normal, lightDirNorm), 0);
         if (lightDistance < lightRange)
         {
-            lightColorAndAttenuation = (lightColor * pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay)).rgb;
+            lightColorAndAttenuation = (lightColor * pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay) * amount).rgb;
         }
 
         // Do specular calculations
-        float amount = max(dot(normal, lightDirNorm), 0);
         float3 reflect = normalize(2 * amount * normal);
         float specular = min(pow(saturate(dot(reflect, halfVec)), 10), amount);
 

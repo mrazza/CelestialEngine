@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------
 // <copyright file="ConeLight.fx" company="">
-// Copyright (C) 2011 Matthew Razza
+// Copyright (C) Matthew Razza
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -101,17 +101,17 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
         float lightDistance = length(lightDirection); // Distance from the light to the current pixel
         float3 halfVec = float3(0, 0, 1); // Found on google
 
-        float angleFromLight = acos(dot(lightDirNorm.xy, lightFacingDirection)); // Created between the light and the current pixel and the direction the light is facing
+        float angleFromLight = acos(dot(normalize(-lightDirection.xy), lightFacingDirection)); // Created between the light and the current pixel and the direction the light is facing
         float3 lightColorAndAttenuation = 0;
 
         // If we're going to render light here, calculate the colo and attenuation
+        float amount = max(dot(normal, lightDirNorm), 0);
         if (lightDistance < lightRange)
         {
-            lightColorAndAttenuation = (lightColor * min(pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay), 1.0f - angleFromLight / lightAngle)).rgb;
+            lightColorAndAttenuation = (lightColor * min(pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay), 1 - angleFromLight / lightAngle) * amount).rgb;
         }
 
         // Do specular calculations
-        float amount = max(dot(normal, lightDirNorm), 0);
         float3 reflect = normalize(2 * amount * normal);
         float specular = min(pow(saturate(dot(reflect, halfVec)), 10), amount);
 

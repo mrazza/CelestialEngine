@@ -282,10 +282,10 @@ namespace CelestialEngine.Game
                     this.spriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
                 }
 
-                // Convert the image to black (saving Alpha channel)
+                // Convert the image to a normal map with all vectors pointing UP (saving Alpha channel)
                 for (int i = 0; i < pixelData.Length; i++)
                 {
-                    pixelData[i] = 255U << 24 & pixelData[i];
+                    pixelData[i] = (255U << 24 & pixelData[i]) + (255U << 16) + (128U << 8) + 128U;
                 }
 
                 this.spriteNormalTexture.SetData(pixelData);

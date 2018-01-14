@@ -58,6 +58,10 @@ namespace CelestialEngine.TechDemo
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Right), (s) => mouseLight.Rotation += 0.2f);
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Up), (s) => mouseLight.Dimensions += new Vector2(0.5f, 0.25f));
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Down), (s) => mouseLight.Dimensions -= new Vector2(0.5f, 0.25f));
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.NumPad0), (s) => {
+                    mouseLight.SpecularStrength = mouseLight.SpecularStrength > 0 ? 0 : 7.0f;
+                    mouseLight.Power = mouseLight.Power == 4f ? 6f : 4f;
+                });
 
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F1), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.Disabled);
             //this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F2), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.All);
@@ -85,7 +89,8 @@ namespace CelestialEngine.TechDemo
             this.background = new TiledSprite(this.GameWorld, "Content/floortile", "Content/floortilenormal", null, bounds.Position, Vector2.Zero, bounds.AreaBounds)
             {
                 RenderScale = new Vector2(0.4f, 0.4f),
-                RenderOptions = SpriteRenderOptions.IsLit
+                RenderOptions = SpriteRenderOptions.IsLit,
+                SpecularReflectivity = 2
             };
 
             SimpleSprite test = new SimpleSprite(this.GameWorld, "Content/box", null, false)
@@ -164,15 +169,15 @@ namespace CelestialEngine.TechDemo
                 var x = new DebugSprite(this.GameWorld, test4);
             }
 
-            this.amLight = new AmbientLight(Color.White, 0.2f, true, 1);
+            this.amLight = new AmbientLight(Color.White, 0.1f, true, 1);
             this.RenderSystem.AddPostProcessEffect(this.amLight);
 
             mouseLight = new RectangularLight(this.GameWorld)
             {
                 Color = Color.White,
-                Power = 1f,
+                Power = 4f,
                 Range = 8,
-                Decay = 2,
+                Decay = 2f,
                 SpecularStrength = 7.00f,
                 CastsShadows = true,
                 LayerDepth = 1
@@ -251,7 +256,7 @@ namespace CelestialEngine.TechDemo
         private void UpdateCursorPosition(InputState state)
         {
             if (mouseLight != null)
-                mouseLight.Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 0.15f);
+                mouseLight.Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 3.00f);
         }
 
         /// <summary>
@@ -262,10 +267,10 @@ namespace CelestialEngine.TechDemo
         {
             BouncyConeLight newLight = new BouncyConeLight(this.GameWorld)
             {
-                Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 0.15f),
+                Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 3f),
                 Velocity = this.GetRandomVelocity(),
                 Color = this.GetRandomColor(),
-                Power = 0.8f,
+                Power = 1.25f,
                 Range = this.prng.Next(400, 600) / 100.0f,
                 SpecularStrength = 4.75f,
                 AngularVelocity = this.prng.Next(40, 90) / 100.0f,
@@ -290,11 +295,11 @@ namespace CelestialEngine.TechDemo
         {
             PointLight newLight = new PointLight(this.GameWorld)
             {
-                Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 0.15f),
+                Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 3.00f),
                 Velocity = this.GetRandomVelocity(),
                 Color = this.GetRandomColor(),
                 Range = 8,
-                Power = .5f,
+                Power = .75f,
                 SpecularStrength = 4.75f,
                 CastsShadows = true,
             };
@@ -321,12 +326,13 @@ namespace CelestialEngine.TechDemo
         {
             PointLight newLight = new PointLight(this.GameWorld)
             {
-                Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 0.15f),
+                Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 3.00f),
                 Color = this.GetRandomColor(),
                 Range = 8,
-                Power = .5f,
+                Power = .75f,
                 SpecularStrength = 4.75f,
-                CastsShadows = true
+                CastsShadows = true,
+                LayerDepth = 1
             };
             lightCount++;
             newLight.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
