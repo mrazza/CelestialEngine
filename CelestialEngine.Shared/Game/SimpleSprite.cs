@@ -25,22 +25,12 @@ namespace CelestialEngine.Game
         /// <summary>
         /// Path to the sprite texture to render
         /// </summary>
-        private string spriteTexturePath;
+        private readonly string spriteTexturePath;
 
         /// <summary>
         /// Path to the normal texture to render
         /// </summary>
-        private string spriteNormalTexturePath;
-
-        /// <summary>
-        /// Sprite texture asset
-        /// </summary>
-        private Texture2D spriteTexture;
-
-        /// <summary>
-        /// Sprite normal texture asset
-        /// </summary>
-        private Texture2D spriteNormalTexture;
+        private readonly string spriteNormalTexturePath;
 
         /// <summary>
         /// Represents an area within the texture that contains the sprite; used for sprites that are within a sprite map.
@@ -53,19 +43,9 @@ namespace CelestialEngine.Game
         private Vector2 spriteTextureWorldDimensions;
 
         /// <summary>
-        /// The shader used to apply pixel options to the option map.
-        /// </summary>
-        private OptionsMapFlagsShader optionMapFlagsShader;
-
-        /// <summary>
-        /// The color to use when rendering this sprite (default is White).
-        /// </summary>
-        private Color renderColor;
-
-        /// <summary>
         /// If true, the sprite's shape is computed from its image data
         /// </summary>
-        private bool computeSpriteShape;
+        private readonly bool computeSpriteShape;
 
         /// <summary>
         /// Vertices of the sprite in world units.
@@ -107,29 +87,14 @@ namespace CelestialEngine.Game
             this.spriteTexturePath = spriteTexturePath ?? throw new ArgumentNullException("spriteTexturePath", "You must specify the texture to render.");
             this.spriteNormalTexturePath = spriteNormalTexturePath;
             this.spriteTextureBoundingBox = spriteTextureBoundingBox;
-            this.optionMapFlagsShader = new OptionsMapFlagsShader();
+            this.OptionMapFlagsShader = new OptionsMapFlagsShader();
             this.NormalMapShader = new NormalMapShader();
-            this.renderColor = Color.White;
+            this.RenderColor = Color.White;
             this.computeSpriteShape = computeSpriteShape;
         }
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Gets or sets the color to tint the sprite with when rendering.
-        /// </summary>
-        public Color RenderColor
-        {
-            get
-            {
-                return this.renderColor;
-            }
-
-            set
-            {
-                this.renderColor = value;
-            }
-        }
 
         /// <summary>
         /// Gets the sprite's image bounds (where the image appears when rendered) in world units.
@@ -169,24 +134,12 @@ namespace CelestialEngine.Game
         /// <summary>
         /// Gets the sprite texture asset
         /// </summary>
-        protected Texture2D SpriteTexture
-        {
-            get
-            {
-                return this.spriteTexture;
-            }
-        }
+        protected Texture2D SpriteTexture { get; private set; }
 
         /// <summary>
         /// Gets the sprite normal-map texture asset.
         /// </summary>
-        protected Texture2D SpriteNormalTexture
-        {
-            get
-            {
-                return this.spriteNormalTexture;
-            }
-        }
+        protected Texture2D SpriteNormalTexture { get; private set; }
 
         /// <summary>
         /// Gets the sprite texture bounding box (box that represents where in the sprite to grab data for rendering).
@@ -202,18 +155,21 @@ namespace CelestialEngine.Game
         /// <summary>
         /// Gets the option map flags shader.
         /// </summary>
-        protected OptionsMapFlagsShader OptionMapFlagsShader
-        {
-            get
-            {
-                return this.optionMapFlagsShader;
-            }
-        }
+        protected OptionsMapFlagsShader OptionMapFlagsShader { get; }
 
         /// <summary>
         /// Gets the normal map shader.
         /// </summary>
         protected NormalMapShader NormalMapShader
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the color to use when rendering this sprite (default is White).
+        /// </summary>
+        public Color RenderColor
         {
             get;
             set;
@@ -244,11 +200,11 @@ namespace CelestialEngine.Game
         /// </summary>
         public override void LoadContent(ExtendedContentManager contentManager)
         {
-            this.spriteTexture = contentManager.Load<Texture2D>(this.spriteTexturePath);
+            this.SpriteTexture = contentManager.Load<Texture2D>(this.spriteTexturePath);
 
             if (this.spriteTextureBoundingBox == null)
             {
-                this.spriteTextureBoundingBox = this.spriteTexture.Bounds;
+                this.spriteTextureBoundingBox = this.SpriteTexture.Bounds;
             }
 
             this.spriteTextureWorldDimensions = new Vector2(this.World.GetWorldFromPixel(this.spriteTextureBoundingBox.Value.Width), this.World.GetWorldFromPixel(this.spriteTextureBoundingBox.Value.Height));
@@ -258,28 +214,28 @@ namespace CelestialEngine.Game
             if (this.computeSpriteShape)
             {
                 pixelData = new uint[this.spriteTextureBoundingBox.Value.Width * this.spriteTextureBoundingBox.Value.Height];
-                this.spriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
+                this.SpriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
                 this.spriteVertices = PolygonTools.CreatePolygon(pixelData, this.spriteTextureBoundingBox.Value.Width);
                 this.SpriteWorldVertices = this.spriteVertices;
                 this.spriteShapes = Triangulate.ConvexPartition(this.SpriteWorldVertices, TriangulationAlgorithm.Bayazit);
                 this.SpriteWorldShapes = this.spriteShapes;
             }
 
-            this.optionMapFlagsShader.LoadContent(contentManager);
+            this.OptionMapFlagsShader.LoadContent(contentManager);
             this.NormalMapShader.LoadContent(contentManager);
 
             if (this.spriteNormalTexturePath != null)
             {
-                this.spriteNormalTexture = contentManager.Load<Texture2D>(this.spriteNormalTexturePath);
+                this.SpriteNormalTexture = contentManager.Load<Texture2D>(this.spriteNormalTexturePath);
             }
             else
             {
-                this.spriteNormalTexture = new Texture2D(contentManager.Game.GraphicsDevice, this.spriteTextureBoundingBox.Value.Width, this.spriteTextureBoundingBox.Value.Height);
+                this.SpriteNormalTexture = new Texture2D(contentManager.Game.GraphicsDevice, this.spriteTextureBoundingBox.Value.Width, this.spriteTextureBoundingBox.Value.Height);
 
                 if (pixelData == null)
                 {
                     pixelData = new uint[this.spriteTextureBoundingBox.Value.Width * this.spriteTextureBoundingBox.Value.Height];
-                    this.spriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
+                    this.SpriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
                 }
 
                 // Convert the image to a normal map with all vectors pointing UP (saving Alpha channel)
@@ -288,7 +244,7 @@ namespace CelestialEngine.Game
                     pixelData[i] = (255U << 24 & pixelData[i]) + (255U << 16) + (128U << 8) + 128U;
                 }
 
-                this.spriteNormalTexture.SetData(pixelData);
+                this.SpriteNormalTexture.SetData(pixelData);
             }
         }
 
@@ -335,7 +291,7 @@ namespace CelestialEngine.Game
         protected void DrawColorMap(GameTime gameTime, DeferredRenderSystem renderSystem, Rectangle drawBoundingBox)
         {
             renderSystem.BeginRender();
-            renderSystem.DrawSprite(this.spriteTexture, this.Position, drawBoundingBox, this.renderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
+            renderSystem.DrawSprite(this.SpriteTexture, this.Position, drawBoundingBox, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
 
@@ -350,7 +306,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender(this.NormalMapShader);
             this.NormalMapShader.ConfigureShaderAndApplyPass(renderSystem, this);
-            renderSystem.DrawSprite(this.spriteNormalTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
+            renderSystem.DrawSprite(this.SpriteNormalTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
 
@@ -363,9 +319,9 @@ namespace CelestialEngine.Game
         /// <param name="drawBoundingBox">The bounding box of the sprite within the texture.</param>
         protected void DrawOptionsMap(GameTime gameTime, DeferredRenderSystem renderSystem, Rectangle drawBoundingBox)
         {
-            renderSystem.BeginRender(this.optionMapFlagsShader);
-            this.optionMapFlagsShader.ConfigureShaderAndApplyPass(renderSystem, this);
-            renderSystem.DrawSprite(this.spriteTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
+            renderSystem.BeginRender(this.OptionMapFlagsShader);
+            this.OptionMapFlagsShader.ConfigureShaderAndApplyPass(renderSystem, this);
+            renderSystem.DrawSprite(this.SpriteTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
         #endregion

@@ -139,6 +139,66 @@ namespace CelestialEngine.Core.PostProcess
         }
         #endregion
 
+        #region Public Methods
+        /// <summary>
+        /// Gets a collection of <see cref="VertexPrimitive"/>s that make up the shadow mask from the light to the specified casting sprite.
+        /// </summary>
+        /// <param name="castingSprite">The sprite casting the shadow.</param>
+        /// <param name="lightDrawBounds">The draw bounds of the light.</param>
+        /// <returns>A collection of <see cref="VertexPrimitive"/>s that make up the shadow mask.</returns>
+        public List<VertexPrimitive> GetAllShadowPrimitives()
+        {
+            RectangleF lightDrawBounds = this.GetWorldDrawBounds();
+            return this.GetShadowEligibleSprites(lightDrawBounds)
+                .SelectMany(sprite => this.CalculateShadowPrimitives(sprite, lightDrawBounds)).ToList();
+        }
+
+        /// <summary>
+        /// Determines whether or not the specified point is lit by this light source.
+        /// </summary>
+        /// <remarks>
+        /// Note that a point is considered lit if it is within the draw bounds of this light and
+        /// is not obscured by a shadow cast by this light.
+        /// </remarks>
+        /// <param name="point">The point (in world space) to check.</param>
+        /// <returns>True if this point is lit by this light; otherwise false.</returns>
+        public bool IsPointLit(Vector2 point)
+        {
+            return this.GetShadowEligibleSprites(this.GetWorldDrawBounds())
+                .SelectMany(sprite => this.CalculateShapePartsRelativeExtrema(sprite))
+                .All(extrema => !extrema.IsPointBeyond(point) || !extrema.IsPointBetween(point));
+
+        }
+
+        /// <summary>
+        /// Determines whether or not the specified sprite is lit by this light source.
+        /// </summary>
+        /// <remarks>
+        /// Note that a sprite is considered lit if it is within the draw bounds of this light and
+        /// is not fully obscured by a shadow cast by this light.
+        /// </remarks>
+        /// <param name="sprite">The sprite to check.</param>
+        /// <returns>True if this sprite is lit by this light; otherwise false.</returns>
+        public bool IsSpriteLit(SpriteBase sprite)
+        {
+            IEnumerable<Vector2> spriteVerts;
+            if (sprite.SpriteWorldVertices != null)
+            {
+                spriteVerts = sprite.SpriteWorldVertices;
+            }
+            else
+            {
+                spriteVerts = sprite.SpriteWorldBounds.Vertices;
+            }
+
+            var extremas = this.GetShadowEligibleSprites(this.GetWorldDrawBounds())
+                .Where(eligibleSprite => eligibleSprite != sprite)
+                .SelectMany(eligibleSprite => this.CalculateShapePartsRelativeExtrema(eligibleSprite)).ToArray();
+            return spriteVerts.Any(vertex => !extremas.Any(extrema => extrema.IsPointBeyond(vertex) && extrema.IsPointBetween(vertex)));
+
+        }
+        #endregion
+
         #region SimulatedPostProcess Overrides
         /// <summary>
         /// Called when graphics resources need to be loaded. Override this method to load any component-specific graphics resources.
@@ -163,19 +223,6 @@ namespace CelestialEngine.Core.PostProcess
             this.lightPosition.Y = base.Position.Y;
             this.lightPosition.Z += this.lightHeightVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
-
-        /// <summary>
-        /// Gets a collection of <see cref="VertexPrimitive"/>s that make up the shadow mask from the light to the specified casting sprite.
-        /// </summary>
-        /// <param name="castingSprite">The sprite casting the shadow.</param>
-        /// <param name="lightDrawBounds">The draw bounds of the light.</param>
-        /// <returns>A collection of <see cref="VertexPrimitive"/>s that make up the shadow mask.</returns>
-        public List<VertexPrimitive> GetAllShadowPrimitives()
-        {
-            RectangleF lightDrawBounds = this.GetWorldDrawBounds();
-            return this.GetShadowEligibleSprites(lightDrawBounds)
-                .SelectMany(sprite => this.GetShadowPrimitives(sprite, lightDrawBounds)).ToList();
-        }
         #endregion
 
         #region Protected Methods
@@ -199,7 +246,7 @@ namespace CelestialEngine.Core.PostProcess
                 
                 for (int objectIndex = 0; objectIndex < objectList.Count; objectIndex++)
                 {
-                    foreach (var primitives in this.GetShadowPrimitives(objectList[objectIndex], lightDrawBounds))
+                    foreach (var primitives in this.CalculateShadowPrimitives(objectList[objectIndex], lightDrawBounds))
                     {
                         this.RenderShadow(renderSystem, primitives, objectList[objectIndex].LayerDepth);
                     }
@@ -234,18 +281,18 @@ namespace CelestialEngine.Core.PostProcess
         /// <param name="extrema">The extrema of the shape casting the shadow.</param>
         /// <param name="lightDrawBounds">The draw bounds of the light.</param>
         /// <returns>A <see cref="VertexPrimitive"/> for the shadow.</returns>
-        protected VertexPrimitive MakeShadowShape(Vector2[] extrema, RectangleF lightDrawBounds)
+        protected VertexPrimitive MakeShadowShape(RelativeExtrema extrema, RectangleF lightDrawBounds)
         {
-            Vector2 widthVector = Vector2.Normalize(extrema[0] - base.Position); // Get the vector to the first extrema
-            Vector2 heightVector = Vector2.Normalize(extrema[1] - base.Position); // Get the vector to the second extrema
+            Vector2 widthVector = Vector2.Normalize(extrema.Min - base.Position); // Get the vector to the first extrema
+            Vector2 heightVector = Vector2.Normalize(extrema.Max - base.Position); // Get the vector to the second extrema
 
             VertexPrimitive shadowArea = new VertexPrimitive(PrimitiveType.TriangleStrip, 4);
-            shadowArea.Add(extrema[0]);
-            shadowArea.Add(extrema[1]);
+            shadowArea.Add(extrema.Min);
+            shadowArea.Add(extrema.Max);
 
             // Let's extend the shadow vector until it hits the edge of the draw bounds
-            shadowArea.Add(lightDrawBounds.CastInternalRay(extrema[0], widthVector));
-            shadowArea.Add(lightDrawBounds.CastInternalRay(extrema[1], heightVector));
+            shadowArea.Add(lightDrawBounds.CastInternalRay(extrema.Min, widthVector));
+            shadowArea.Add(lightDrawBounds.CastInternalRay(extrema.Max, heightVector));
 
             // Let's get the remaining verts that might exist to finish up the rect
             List<Vector2> interiorVerts = lightDrawBounds.GetInteriorVertices(base.Position, widthVector, heightVector);
@@ -260,31 +307,37 @@ namespace CelestialEngine.Core.PostProcess
         /// <param name="castingSprite">The sprite casting the shadow.</param>
         /// <param name="lightDrawBounds">The draw bounds of the light.</param>
         /// <returns>A collection of <see cref="VertexPrimitive"/>s that make up the shadow mask.</returns>
-        protected List<VertexPrimitive> GetShadowPrimitives(SpriteBase castingSprite, RectangleF lightDrawBounds)
+        protected List<VertexPrimitive> CalculateShadowPrimitives(SpriteBase castingSprite, RectangleF lightDrawBounds)
         {
-            List<VertexPrimitive> result = new List<VertexPrimitive>();
+            return this.CalculateShapePartsRelativeExtrema(castingSprite).Select(extrema => this.MakeShadowShape(extrema, lightDrawBounds)).ToList();
+        }
 
+        /// <summary>
+        /// Gets the relative extrema for each concave part of a given sprite.
+        /// </summary>
+        /// <remarks>
+        /// For concave shapes there is a single set of relative extrema. For convex shapes there will be multiple.
+        /// </remarks>
+        /// <param name="castingSprite">The sprite to resolve extrema for.</param>
+        /// <returns>Enumerable of sets of relative extrema.</returns>
+        protected IEnumerable<RelativeExtrema> CalculateShapePartsRelativeExtrema(SpriteBase castingSprite)
+        {
             if (castingSprite.SpriteWorldVertices != null)
             {
                 if (castingSprite.SpriteWorldVertices.IsConvex())
                 {
-                    result.Add(this.MakeShadowShape(castingSprite.SpriteWorldVertices.GetRelativeExtrema(base.Position), lightDrawBounds));
+                    return new[] { castingSprite.SpriteWorldVertices.GetRelativeExtrema(base.Position) };
                 }
                 else
                 {
                     // For concave shapes, we need to render a shadow for each convex part.
-                    foreach (var curr in castingSprite.SpriteWorldShapes)
-                    {
-                        result.Add(this.MakeShadowShape(curr.GetRelativeExtrema(base.Position), lightDrawBounds));
-                    }
+                    return castingSprite.SpriteWorldShapes.Select(shape => shape.GetRelativeExtrema(base.Position));
                 }
             }
             else
             {
-                result.Add(this.MakeShadowShape(castingSprite.SpriteWorldBounds.GetRelativeExtrema(base.Position), lightDrawBounds));
+                return new[] { castingSprite.SpriteWorldBounds.GetRelativeExtrema(base.Position) };
             }
-
-            return result;
         }
         #endregion
 

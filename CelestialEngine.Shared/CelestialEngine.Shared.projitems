@@ -34,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\PostProcess\SimulatedPostProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\PostProcess\StaticPostProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\RectangleF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\RelativeExtrema.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\RenderTargetManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\RenderTargetTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ScreenDrawableComponent.cs" />

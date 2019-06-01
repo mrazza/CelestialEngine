@@ -477,11 +477,6 @@ namespace CelestialEngine.Core
             float minAngle = 0;
             float maxAngle = firstVector.AngleBetween(secondVector);
 
-            if (maxAngle > MathHelper.Pi)
-            {
-                throw new ArgumentException("Angle created by the two vectors must be acute.", nameof(secondVector));
-            }
-
             // Init the collection
             List<Vector2> vectorCollection = new List<Vector2>(4); // There can not be more than 4
 
@@ -522,21 +517,11 @@ namespace CelestialEngine.Core
         /// <remarks>This only works if the relative point is OUTSIDE this rectangle instance.</remarks>
         /// <param name="relativePoint">The point in 2D world space to use as the perspective source.</param>
         /// <returns>The two relative extrema points.</returns>
-        public Vector2[] GetRelativeExtrema(Vector2 relativePoint)
+        public RelativeExtrema GetRelativeExtrema(Vector2 relativePoint)
         {
             // Calculate the initial values
             Vector2 centerVector = relativePoint - this.Center;
             float angle = centerVector.AngleBetween(relativePoint - this.Vertices[0]);
-
-            // Because AngleBetween(), place within -Pi -> Pi
-            if (angle > MathHelper.Pi)
-            {
-                angle = (-MathHelper.Pi * 2.0f) + angle;
-            }
-            else if (angle < -MathHelper.Pi)
-            {
-                angle = (MathHelper.Pi * 2.0f) + angle;
-            }
 
             float minAngle = angle;
             float maxAngle = minAngle;
@@ -547,17 +532,6 @@ namespace CelestialEngine.Core
             for (int currVertIndex = 1; currVertIndex < this.Vertices.Length; currVertIndex++)
             {
                 angle = centerVector.AngleBetween(relativePoint - this.Vertices[currVertIndex]);
-
-                // Because AngleBetween(), place within -Pi -> Pi
-                if (angle > MathHelper.Pi)
-                {
-                    angle = (-MathHelper.Pi * 2.0f) + angle;
-                }
-                else if (angle < -MathHelper.Pi)
-                {
-                    angle = (MathHelper.Pi * 2.0f) + angle;
-                }
-
                 if (angle < minAngle)
                 {
                     minAngle = angle;
@@ -570,7 +544,7 @@ namespace CelestialEngine.Core
                 }
             }
 
-            return new Vector2[] { minVert, maxVert }; // Return the array
+            return new RelativeExtrema(minVert, maxVert, relativePoint);
         }
 
         /// <summary>
@@ -582,9 +556,7 @@ namespace CelestialEngine.Core
         /// </returns>
         public override bool Equals(object obj)
         {
-            RectangleF rect = obj as RectangleF;
-
-            if (rect != null)
+            if (obj is RectangleF rect)
             {
                 return rect.X == this.X && rect.Y == this.Y && rect.Width == this.Width && rect.Height == this.Height && rect.Rotation == this.Rotation;
             }

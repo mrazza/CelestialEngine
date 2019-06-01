@@ -21,32 +21,22 @@ namespace CelestialEngine.Core
         /// <summary>
         /// A List of all simulated objects in the world.
         /// </summary>
-        private ThrottledCollection<SortedSet<SimBase>, SimBase> worldSimObjects;
+        private readonly ThrottledCollection<SortedSet<SimBase>, SimBase> worldSimObjects;
 
         /// <summary>
         /// A QuadTree of all sprite objects in the world.
         /// </summary>
-        private ThrottledCollection<QuadTree<SpriteBase, List<SpriteBase>>, SpriteBase> worldSpriteObjects;
+        private readonly ThrottledCollection<QuadTree<SpriteBase, List<SpriteBase>>, SpriteBase> worldSpriteObjects;
 
         /// <summary>
         /// A SortedSet of all screen drawable components in the world.
         /// </summary>
-        private ThrottledCollection<SortedSet<ScreenDrawableComponent>, ScreenDrawableComponent> screenDrawableComponents;
-
-        /// <summary>
-        /// The Farseer Physics World instance used to simulate all physics objects.
-        /// </summary>
-        private FarseerPhysics.Dynamics.World physicsWorld;
-
-        /// <summary>
-        /// The ratio of world-units to pixel-space. The number of world units for each pixel.
-        /// </summary>
-        private float worldPerPixelRatio;
+        private readonly ThrottledCollection<SortedSet<ScreenDrawableComponent>, ScreenDrawableComponent> screenDrawableComponents;
 
         /// <summary>
         /// Parent <see cref="BaseGame"/> instance.
         /// </summary>
-        private BaseGame parentGame;
+        private readonly BaseGame parentGame;
         #endregion
 
         #region Constructors
@@ -75,8 +65,8 @@ namespace CelestialEngine.Core
             this.worldSpriteObjects = new ThrottledCollection<QuadTree<SpriteBase, List<SpriteBase>>, SpriteBase>(new QuadTree<SpriteBase, List<SpriteBase>>(bounds, 32));
             this.worldSimObjects = new ThrottledCollection<SortedSet<SimBase>, SimBase>(new SortedSet<SimBase>());
             this.screenDrawableComponents = new ThrottledCollection<SortedSet<ScreenDrawableComponent>, ScreenDrawableComponent>(new SortedSet<ScreenDrawableComponent>());
-            this.physicsWorld = new FarseerPhysics.Dynamics.World(gravity);
-            this.worldPerPixelRatio = worldPerPixelRatio;
+            this.PhysicsWorld = new FarseerPhysics.Dynamics.World(gravity);
+            this.WorldPerPixelRatio = worldPerPixelRatio;
             this.parentGame = parentGame;
         }
         #endregion
@@ -97,13 +87,7 @@ namespace CelestialEngine.Core
         /// <summary>
         /// Gets the physics simulator world associated with this world
         /// </summary>
-        public FarseerPhysics.Dynamics.World PhysicsWorld
-        {
-            get
-            {
-                return this.physicsWorld;
-            }
-        }
+        public FarseerPhysics.Dynamics.World PhysicsWorld { get; }
 
         /// <summary>
         /// Gets or sets the number of pixels per world unit.
@@ -113,12 +97,12 @@ namespace CelestialEngine.Core
         {
             get
             {
-                return 1 / this.worldPerPixelRatio;
+                return 1 / this.WorldPerPixelRatio;
             }
 
             set
             {
-                this.worldPerPixelRatio = 1 / value;
+                this.WorldPerPixelRatio = 1 / value;
             }
         }
 
@@ -126,18 +110,7 @@ namespace CelestialEngine.Core
         /// Gets or sets the number of world units per pixel.
         /// </summary>
         /// <value>The ratio of world units to pixels.</value>
-        public float WorldPerPixelRatio
-        {
-            get
-            {
-                return this.worldPerPixelRatio;
-            }
-
-            set
-            {
-                this.worldPerPixelRatio = value;
-            }
-        }
+        public float WorldPerPixelRatio { get; set; }
 
         /// <summary>
         /// Gets the total number of <see cref="SimBase"/>s in the world.
@@ -375,7 +348,7 @@ namespace CelestialEngine.Core
             this.screenDrawableComponents.ProcessUpdates();
 
             // Update all physics objects
-            this.physicsWorld.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
+            this.PhysicsWorld.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             // Update all the simulated objects
             foreach (SimBase curr in this.worldSimObjects)

@@ -20,7 +20,7 @@ namespace CelestialEngine.Core
         /// <remarks>This only works if the relative point is OUTSIDE this shape.</remarks>
         /// <param name="relativePoint">The point in 2D world space to use as the perspective source.</param>
         /// <returns>The two relative extrema points.</returns>
-        public static Vector2[] GetRelativeExtrema(this Vertices verts, Vector2 relativePoint)
+        public static RelativeExtrema GetRelativeExtrema(this Vertices verts, Vector2 relativePoint)
         {
             // Calculate the initial values
             Vector2 centerVector = relativePoint - verts.GetCentroid();
@@ -47,7 +47,7 @@ namespace CelestialEngine.Core
                 }
             }
 
-            return new Vector2[] { minVert, maxVert }; // Return the array
+            return new RelativeExtrema(minVert, maxVert, relativePoint);
         }
     }
 }
