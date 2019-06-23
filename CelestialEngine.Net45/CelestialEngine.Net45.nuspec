@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata minClientVersion="3.3">
-    <id>$id$</id>
+    <id>CelestialEngine.Net45</id>
     <version>$version$</version>
     <description>A 2D deferred-rendered .NET game engine designed for programmers with advanced lighting, shadows, and physics.</description>
     <authors>mrazza,wgraham17</authors>
