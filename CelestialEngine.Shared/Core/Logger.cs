@@ -161,7 +161,7 @@ namespace CelestialEngine.Core
         public static void AddReceiver(LogReceiver receiver)
         {
             logReceivers.Add(receiver);
-            Log(Level.Debug, "Added log receiver: {0} in {1}.", receiver.Method.Name, receiver.Method.DeclaringType.FullName);
+            Log(Level.Debug, $"Added log receiver: {receiver.Method.Name} in {receiver.Method.DeclaringType.FullName}.");
         }
 
         /// <summary>
