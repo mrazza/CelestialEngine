@@ -34,7 +34,7 @@ steps:
   displayName: 'NuGet pack'
   inputs:
     command: pack
-    packagesToPack: CelestialEngine.Net45/CelestialEngine.Net45.nuspec
+    packagesToPack: CelestialEngine.Net45/CelestialEngine.Net45.csproj
     versioningScheme: byBuildNumber
 
 - task: PublishBuildArtifacts@1
