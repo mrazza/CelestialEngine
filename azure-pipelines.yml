@@ -1,3 +1,5 @@
+trigger: master
+
 pool:
   name: MonoGame
   demands:
@@ -13,7 +15,7 @@ steps:
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
   inputs:
-    restoreSolution: '$(Parameters.solution)'
+    restoreSolution: CelestialEngine.sln
 
 - task: gittools.gitversion.gitversion-task.GitVersion@4
   displayName: GitVersion
@@ -24,9 +26,9 @@ steps:
 - task: VSBuild@1
   displayName: 'Build solution CelestialEngine.sln'
   inputs:
-    solution: '$(Parameters.solution)'
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+    solution: CelestialEngine.sln
+    platform: AnyCPU
+    configuration: Release
 
 - task: NuGetCommand@2
   displayName: 'NuGet pack'
