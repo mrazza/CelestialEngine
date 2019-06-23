@@ -27,7 +27,7 @@ steps:
   displayName: 'Build solution CelestialEngine.sln'
   inputs:
     solution: CelestialEngine.sln
-    platform: AnyCPU
+    platform: Any CPU
     configuration: Release
 
 - task: NuGetCommand@2
