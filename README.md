@@ -1,5 +1,5 @@
 # Celestial Engine
-[![Build status](https://dev.azure.com/celestialengine/CelestialEngine/_apis/build/status/CelestialEngine-CI)](https://dev.azure.com/celestialengine/CelestialEngine/_build/latest?definitionId=1)
+[![Build Status](https://dev.azure.com/celestialengine/CelestialEngine/_apis/build/status/mrazza.CelestialEngine?branchName=master)](https://dev.azure.com/celestialengine/CelestialEngine/_build/latest?definitionId=3&branchName=master)
 
 A 2D deferred-rendered .NET game engine designed for programmers with advanced lighting, shadows, and physics.
 
