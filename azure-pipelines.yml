@@ -27,8 +27,8 @@ steps:
   displayName: 'Build solution CelestialEngine.sln'
   inputs:
     solution: CelestialEngine.sln
-    platform: Any CPU
-    configuration: Release
+    platform: any cpu
+    configuration: release
 
 - task: NuGetCommand@2
   displayName: 'NuGet pack'
@@ -36,6 +36,7 @@ steps:
     command: pack
     packagesToPack: CelestialEngine.Net45/CelestialEngine.Net45.csproj
     versioningScheme: byBuildNumber
+    configuration: release
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
