@@ -10,8 +10,17 @@
     <licenseUrl>https://raw.githubusercontent.com/mrazza/CelestialEngine/master/LICENSE</licenseUrl>
     <tags>monogame game engine xna 2d deferred rendering</tags>
     <dependencies>
-        <dependency id="MonoGame.Framework.WindowsDX" version="3.6.0.1625" />
         <dependency id="FarseerPhysics.MonoGame.Unofficial" version="3.5.0" />
+        <dependency id="MonoGame.Framework.WindowsDX" version="3.7.1.189" />
+        <dependency id="SharpDX" version="4.2.0" />
+        <dependency id="SharpDX.Direct2D1" version="4.2.0" />
+        <dependency id="SharpDX.Direct3D11" version="4.2.0" />
+        <dependency id="SharpDX.Direct3D9" version="4.2.0" />
+        <dependency id="SharpDX.DXGI" version="4.2.0" />
+        <dependency id="SharpDX.Mathematics" version="4.2.0" />
+        <dependency id="SharpDX.MediaFoundation" version="4.2.0" />
+        <dependency id="SharpDX.XAudio2" version="4.2.0" />
+        <dependency id="SharpDX.XInput" version="4.2.0" />
     </dependencies>
     <contentFiles>
       <files include="Content\CelestialEngineContent.mgcb" buildAction="MonoGameContentReference" />
