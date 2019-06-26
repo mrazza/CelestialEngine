@@ -33,11 +33,6 @@ namespace CelestialEngine.Game
         private readonly string spriteNormalTexturePath;
 
         /// <summary>
-        /// Represents an area within the texture that contains the sprite; used for sprites that are within a sprite map.
-        /// </summary>
-        private Rectangle? spriteTextureBoundingBox;
-
-        /// <summary>
         /// The dimensions, in world space, of the sprite's texture bound box.
         /// </summary>
         private Vector2 spriteTextureWorldDimensions;
@@ -86,15 +81,40 @@ namespace CelestialEngine.Game
         {
             this.spriteTexturePath = spriteTexturePath ?? throw new ArgumentNullException("spriteTexturePath", "You must specify the texture to render.");
             this.spriteNormalTexturePath = spriteNormalTexturePath;
-            this.spriteTextureBoundingBox = spriteTextureBoundingBox;
+            this.SpriteTextureBoundingBox = spriteTextureBoundingBox;
             this.OptionMapFlagsShader = new OptionsMapFlagsShader();
             this.NormalMapShader = new NormalMapShader();
             this.RenderColor = Color.White;
             this.computeSpriteShape = computeSpriteShape;
+            this.SpriteOriginOffset = Vector2.Zero;
         }
         #endregion
 
         #region Properties
+        /// <summary>
+        /// The offset, in pixel units, from the top left of the sprite to the location to treat as the origin of the sprite.
+        /// </summary>
+        public Vector2 SpritePixelOriginOffset
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The offset, in world units, from the top left of the sprite to the location to treat as the origin of the sprite.
+        /// </summary>
+        public Vector2 SpriteOriginOffset
+        {
+            get
+            {
+                return this.World.GetWorldFromPixel(this.SpritePixelOriginOffset) * this.RenderScale;
+            }
+
+            set
+            {
+                this.SpritePixelOriginOffset = this.World.GetPixelFromWorld(value / this.RenderScale);
+            }
+        }
 
         /// <summary>
         /// Gets the sprite's image bounds (where the image appears when rendered) in world units.
@@ -108,25 +128,28 @@ namespace CelestialEngine.Game
         {
             get
             {
+                // Using the transform here let's us save some allocations.
                 Transform spriteTransform;
                 this.Body.GetTransform(out spriteTransform);
-                if (this.spriteTextureBoundingBox == null)
+                float rotation = spriteTransform.q.GetAngle();
+                var offset = this.SpriteOriginOffset.Rotate(rotation);
+                if (this.SpriteTextureBoundingBox == null)
                 {
                     return new RectangleF(
-                        spriteTransform.p.X,
-                        spriteTransform.p.Y,
+                        spriteTransform.p.X - offset.X,
+                        spriteTransform.p.Y - offset.Y,
                         0,
                         0,
-                        this.Rotation);
+                        rotation);
                 }
                 else
                 {
                     return new RectangleF(
-                        spriteTransform.p.X,
-                        spriteTransform.p.Y,
+                        spriteTransform.p.X - offset.X,
+                        spriteTransform.p.Y - offset.Y,
                         this.spriteTextureWorldDimensions.X * this.RenderScale.X,
                         this.spriteTextureWorldDimensions.Y * this.RenderScale.Y,
-                        this.Rotation);
+                        rotation);
                 }
             }
         }
@@ -146,10 +169,8 @@ namespace CelestialEngine.Game
         /// </summary>
         protected Rectangle? SpriteTextureBoundingBox
         {
-            get
-            {
-                return this.spriteTextureBoundingBox;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -182,14 +203,20 @@ namespace CelestialEngine.Game
             base.Update(gameTime);
 
             // TODO: Optimize this.
+            RectangleF worldDrawBounds = null;
+            if (this.spriteVertices != null || this.spriteShapes != null)
+            {
+                worldDrawBounds = this.SpriteWorldBounds;
+            }
+
             if (this.spriteVertices != null)
             {
-                this.SpriteWorldVertices = new Vertices(this.spriteVertices.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position));
+                this.SpriteWorldVertices = new Vertices(this.spriteVertices.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + worldDrawBounds.Position));
             }
 
             if (this.spriteShapes != null)
             {
-                this.SpriteWorldShapes = this.spriteShapes.Select(shape => new Vertices(shape.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + this.Position)));
+                this.SpriteWorldShapes = this.spriteShapes.Select(shape => new Vertices(shape.Select(v => (v * this.RenderScale * this.World.WorldPerPixelRatio).Rotate(this.Rotation) + worldDrawBounds.Position)));
             }
         }
         #endregion
@@ -202,20 +229,20 @@ namespace CelestialEngine.Game
         {
             this.SpriteTexture = contentManager.Load<Texture2D>(this.spriteTexturePath);
 
-            if (this.spriteTextureBoundingBox == null)
+            if (this.SpriteTextureBoundingBox == null)
             {
-                this.spriteTextureBoundingBox = this.SpriteTexture.Bounds;
+                this.SpriteTextureBoundingBox = this.SpriteTexture.Bounds;
             }
 
-            this.spriteTextureWorldDimensions = new Vector2(this.World.GetWorldFromPixel(this.spriteTextureBoundingBox.Value.Width), this.World.GetWorldFromPixel(this.spriteTextureBoundingBox.Value.Height));
+            this.spriteTextureWorldDimensions = new Vector2(this.World.GetWorldFromPixel(this.SpriteTextureBoundingBox.Value.Width), this.World.GetWorldFromPixel(this.SpriteTextureBoundingBox.Value.Height));
 
             uint[] pixelData = null;
 
             if (this.computeSpriteShape)
             {
-                pixelData = new uint[this.spriteTextureBoundingBox.Value.Width * this.spriteTextureBoundingBox.Value.Height];
-                this.SpriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
-                this.spriteVertices = PolygonTools.CreatePolygon(pixelData, this.spriteTextureBoundingBox.Value.Width);
+                pixelData = new uint[this.SpriteTextureBoundingBox.Value.Width * this.SpriteTextureBoundingBox.Value.Height];
+                this.SpriteTexture.GetData(0, this.SpriteTextureBoundingBox, pixelData, 0, pixelData.Length);
+                this.spriteVertices = PolygonTools.CreatePolygon(pixelData, this.SpriteTextureBoundingBox.Value.Width);
                 this.SpriteWorldVertices = this.spriteVertices;
                 this.spriteShapes = Triangulate.ConvexPartition(this.SpriteWorldVertices, TriangulationAlgorithm.Bayazit);
                 this.SpriteWorldShapes = this.spriteShapes;
@@ -230,12 +257,12 @@ namespace CelestialEngine.Game
             }
             else
             {
-                this.SpriteNormalTexture = new Texture2D(contentManager.Game.GraphicsDevice, this.spriteTextureBoundingBox.Value.Width, this.spriteTextureBoundingBox.Value.Height);
+                this.SpriteNormalTexture = new Texture2D(contentManager.Game.GraphicsDevice, this.SpriteTextureBoundingBox.Value.Width, this.SpriteTextureBoundingBox.Value.Height);
 
                 if (pixelData == null)
                 {
-                    pixelData = new uint[this.spriteTextureBoundingBox.Value.Width * this.spriteTextureBoundingBox.Value.Height];
-                    this.SpriteTexture.GetData(0, spriteTextureBoundingBox, pixelData, 0, pixelData.Length);
+                    pixelData = new uint[this.SpriteTextureBoundingBox.Value.Width * this.SpriteTextureBoundingBox.Value.Height];
+                    this.SpriteTexture.GetData(0, this.SpriteTextureBoundingBox, pixelData, 0, pixelData.Length);
                 }
 
                 // Convert the image to a normal map with all vectors pointing UP (saving Alpha channel)
@@ -256,7 +283,7 @@ namespace CelestialEngine.Game
         /// <param name="renderSystem"><see cref="DeferredRenderSystem"/> to render with.</param>
         public override void DrawColorMap(GameTime gameTime, DeferredRenderSystem renderSystem)
         {
-            this.DrawColorMap(gameTime, renderSystem, this.spriteTextureBoundingBox.Value);
+            this.DrawColorMap(gameTime, renderSystem, this.SpriteTextureBoundingBox.Value);
         }
 
         /// <summary>
@@ -267,7 +294,7 @@ namespace CelestialEngine.Game
         /// <param name="renderSystem"><see cref="DeferredRenderSystem"/> to render with.</param>
         public override void DrawNormalMap(GameTime gameTime, DeferredRenderSystem renderSystem)
         {
-            this.DrawNormalMap(gameTime, renderSystem, this.spriteTextureBoundingBox.Value);
+            this.DrawNormalMap(gameTime, renderSystem, this.SpriteTextureBoundingBox.Value);
         }
 
         /// <summary>
@@ -278,7 +305,7 @@ namespace CelestialEngine.Game
         /// <param name="renderSystem"><see cref="DeferredRenderSystem"/> to render with.</param>
         public override void DrawOptionsMap(GameTime gameTime, DeferredRenderSystem renderSystem)
         {
-            this.DrawOptionsMap(gameTime, renderSystem, this.spriteTextureBoundingBox.Value);
+            this.DrawOptionsMap(gameTime, renderSystem, this.SpriteTextureBoundingBox.Value);
         }
 
         /// <summary>
@@ -291,7 +318,7 @@ namespace CelestialEngine.Game
         protected void DrawColorMap(GameTime gameTime, DeferredRenderSystem renderSystem, Rectangle drawBoundingBox)
         {
             renderSystem.BeginRender();
-            renderSystem.DrawSprite(this.SpriteTexture, this.Position, drawBoundingBox, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
+            renderSystem.DrawSprite(this.SpriteTexture, this.SpriteWorldBounds.Position, drawBoundingBox, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
 
@@ -306,7 +333,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender(this.NormalMapShader);
             this.NormalMapShader.ConfigureShaderAndApplyPass(renderSystem, this);
-            renderSystem.DrawSprite(this.SpriteNormalTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
+            renderSystem.DrawSprite(this.SpriteNormalTexture, this.SpriteWorldBounds.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
 
@@ -321,7 +348,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender(this.OptionMapFlagsShader);
             this.OptionMapFlagsShader.ConfigureShaderAndApplyPass(renderSystem, this);
-            renderSystem.DrawSprite(this.SpriteTexture, this.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
+            renderSystem.DrawSprite(this.SpriteTexture, this.SpriteWorldBounds.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
         #endregion

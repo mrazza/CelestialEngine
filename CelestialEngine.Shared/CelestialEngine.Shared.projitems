@@ -61,6 +61,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\ConeLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\PointLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\RectangularLight.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\ShaderGeneratedSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\SimBaseAnchor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\SimpleShadedSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\SimpleSprite.cs" />

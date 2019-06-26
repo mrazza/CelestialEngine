@@ -105,15 +105,13 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
         float3 lightColorAndAttenuation = 0;
 
         // If we're going to render light here, calculate the colo and attenuation
-        float amount = max(dot(normal, lightDirNorm), 0);
-        if (lightDistance < lightRange)
-        {
-            lightColorAndAttenuation = (lightColor * min(pow(abs(1.0f / pow(lightRange, 2) * pow(lightDistance - lightRange, 2)), lightDecay), 1 - angleFromLight / lightAngle) * amount).rgb;
-        }
+        float normalOcclusion = max(dot(normal, lightDirNorm), 0);
+        float decayImpact = saturate(lightDecay + (pow(1 - lightDistance / lightRange, 2) * (1 - lightDecay)) + (pow(lightDistance / lightRange, 2) * (0 - lightDecay))); // Simple Bézier curve.
+        lightColorAndAttenuation = (lightColor * min(saturate((lightRange - lightDistance) / lightDistance) * decayImpact, 1 - angleFromLight / lightAngle) * normalOcclusion).rgb;
 
         // Do specular calculations
-        float3 reflect = normalize(2 * amount * normal);
-        float specular = min(pow(saturate(dot(reflect, halfVec)), 10), amount);
+        float3 reflect = normalize(2 * normalOcclusion * normal);
+        float specular = min(pow(saturate(dot(reflect, halfVec)), 10), normalOcclusion);
 
         return float4(saturate(lightColorAndAttenuation * lightPower + specular * lightColorAndAttenuation * specularStrength * specularReflectivity).rgb, 0);
     }

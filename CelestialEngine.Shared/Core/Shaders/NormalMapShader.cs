@@ -60,7 +60,7 @@ namespace CelestialEngine.Core.Shaders
         /// </summary>
         /// <param name="renderSystem">Instance of the <see cref="DeferredRenderSystem"/> we are using to render</param>
         /// <param name="technique">Technique to use (can be null)</param>
-        protected override void ConfigureShader(DeferredRenderSystem renderSystem, EffectTechnique technique)
+        protected override void ConfigureShaderInternal(DeferredRenderSystem renderSystem, EffectTechnique technique)
         {
             if (!technique.Name.Equals("RenderNormalMap"))
             {
@@ -70,7 +70,7 @@ namespace CelestialEngine.Core.Shaders
             this.ShaderAsset.Parameters["viewProjection"].SetValue(renderSystem.GameCamera.GetViewProjectionMatrix(renderSystem));
             this.ShaderAsset.Parameters["cameraPosition"].SetValue(renderSystem.GameCamera.PixelPosition);
 
-            base.ConfigureShader(renderSystem, technique);
+            base.ConfigureShaderInternal(renderSystem, technique);
         }
         #endregion
     }

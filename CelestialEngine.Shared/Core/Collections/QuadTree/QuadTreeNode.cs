@@ -340,7 +340,7 @@ namespace CelestialEngine.Core.Collections.QuadTree
         {
             if (!this.Contains(itemBounds))
             {
-                return null;
+                throw new ArgumentException(nameof(itemBounds), "Requested item bounds is not within this node.");
             }
 
             QuadTreeNode<T, C> node = null;

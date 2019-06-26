@@ -52,48 +52,6 @@ namespace CelestialEngine.Game
         }
 
         /// <summary>
-        /// Called by the <see cref="DeferredRenderSystem"/> when this <see cref="SpriteBase"/> component needs to be drawn.
-        /// Override this method with component-specific drawing code.
-        /// </summary>
-        /// <param name="gameTime">Time passed since the last call to DrawColorMap.</param>
-        /// <param name="renderSystem"><see cref="DeferredRenderSystem"/> to render with.</param>
-        public override void DrawColorMap(GameTime gameTime, DeferredRenderSystem renderSystem)
-        {
-            if (this.currentAnimation != null && !this.currentAnimation.IsStopped)
-            {
-                base.DrawColorMap(gameTime, renderSystem, this.currentAnimation.GetCurrentFrameBounds());
-            }
-        }
-
-        /// <summary>
-        /// Called by the <see cref="DeferredRenderSystem"/> when this <see cref="SpriteBase"/> component needs to draw its normal map.
-        /// Override this method with component-specific drawing code.
-        /// </summary>
-        /// <param name="gameTime">Time passed since the last call to DrawColorMap.</param>
-        /// <param name="renderSystem"><see cref="DeferredRenderSystem"/> to render with.</param>
-        public override void DrawNormalMap(GameTime gameTime, DeferredRenderSystem renderSystem)
-        {
-            if (this.currentAnimation != null && !this.currentAnimation.IsStopped)
-            {
-                base.DrawNormalMap(gameTime, renderSystem, this.currentAnimation.GetCurrentFrameBounds());
-            }
-        }
-
-        /// <summary>
-        /// Called by the <see cref="DeferredRenderSystem"/> when this <see cref="SpriteBase"/> component needs to draw its options map.
-        /// Override this method with component-specific drawing code.
-        /// </summary>
-        /// <param name="gameTime">Time passed since the last call to DrawOptionsMap.</param>
-        /// <param name="renderSystem"><see cref="DeferredRenderSystem"/> to render with.</param>
-        public override void DrawOptionsMap(GameTime gameTime, DeferredRenderSystem renderSystem)
-        {
-            if (this.currentAnimation != null && !this.currentAnimation.IsStopped)
-            {
-                base.DrawOptionsMap(gameTime, renderSystem, this.currentAnimation.GetCurrentFrameBounds());
-            }
-        }
-
-        /// <summary>
         /// Called when the GameComponent needs to be updated. Override this method with component-specific update code.
         /// </summary>
         /// <param name="gameTime">Time elapsed since the last call to Update.</param>
@@ -102,6 +60,7 @@ namespace CelestialEngine.Game
             if (this.currentAnimation != null)
             {
                 this.currentAnimation.Update(gameTime);
+                this.SpriteTextureBoundingBox = this.currentAnimation.GetCurrentFrameBounds();
             }
 
             base.Update(gameTime);

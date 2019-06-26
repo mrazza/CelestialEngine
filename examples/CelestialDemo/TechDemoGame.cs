@@ -32,6 +32,7 @@ namespace CelestialEngine.TechDemo
         private SpriteFont consoleFont;
         private int lightCount;
         private Song song;
+        private SimpleSprite ship;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TechDemoGame"/> class.
@@ -59,9 +60,31 @@ namespace CelestialEngine.TechDemo
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Up), (s) => mouseLight.Dimensions += new Vector2(0.5f, 0.25f));
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Down), (s) => mouseLight.Dimensions -= new Vector2(0.5f, 0.25f));
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.NumPad0), (s) => {
-                    mouseLight.SpecularStrength = mouseLight.SpecularStrength > 0 ? 0 : 7.0f;
-                    mouseLight.Power = mouseLight.Power == 4f ? 6f : 4f;
-                });
+                mouseLight.SpecularStrength = mouseLight.SpecularStrength > 0 ? 0 : 7.0f;
+                mouseLight.Power = mouseLight.Power == 4f ? 6f : 4f;
+            });
+
+
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.W), (s) =>
+            {
+                this.GameCamera.Position = this.GameCamera.Position + Vector2Helper.Up;
+                this.UpdateTimeBounds();
+            });
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.A), (s) =>
+            {
+                this.GameCamera.Position = this.GameCamera.Position + Vector2Helper.Left;
+                this.UpdateTimeBounds();
+            });
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.S), (s) =>
+            {
+                this.GameCamera.Position = this.GameCamera.Position + Vector2Helper.Down;
+                this.UpdateTimeBounds();
+            }) ;
+            this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.D), (s) =>
+            {
+                this.GameCamera.Position = this.GameCamera.Position + Vector2Helper.Right;
+                this.UpdateTimeBounds();
+            });
 
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F1), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.Disabled);
             //this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F2), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.All);
@@ -112,7 +135,7 @@ namespace CelestialEngine.TechDemo
                 var x = new DebugSprite(this.GameWorld, test);
             }
 
-            SimpleSprite ship = new SimpleSprite(this.GameWorld, "Content/ship", "Content/shipnormal", true)
+            ship = new SimpleSprite(this.GameWorld, "Content/ship", "Content/shipnormal", true)
             {
                 Position = new Vector2(15, 10),
                 RenderScale = new Vector2(0.4f, 0.4f),
@@ -194,9 +217,8 @@ namespace CelestialEngine.TechDemo
             mouseLight = new RectangularLight(this.GameWorld)
             {
                 Color = Color.White,
-                Power = 5f,
+                Power = 1f,
                 Range = 10,
-                Decay = 2f,
                 SpecularStrength = 7.00f,
                 CastsShadows = true,
                 LayerDepth = 1
@@ -263,6 +285,11 @@ namespace CelestialEngine.TechDemo
             }
 
             this.GameCamera.CameraZoom = zoom;
+            this.UpdateTimeBounds();
+        }
+
+        private void UpdateTimeBounds()
+        {
             RectangleF bounds = this.RenderSystem.GetCameraRenderBounds();
             this.background.Position = bounds.Position;
             this.background.TileArea = bounds.AreaBounds;
@@ -275,7 +302,7 @@ namespace CelestialEngine.TechDemo
         private void UpdateCursorPosition(InputState state)
         {
             if (mouseLight != null)
-                mouseLight.Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 3.00f);
+                mouseLight.Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 4.00f);
         }
 
         /// <summary>
@@ -294,6 +321,7 @@ namespace CelestialEngine.TechDemo
                 SpecularStrength = 4.75f,
                 AngularVelocity = this.prng.Next(40, 90) / 100.0f,
                 LightAngle = MathHelper.PiOver2,
+                Decay = float.MaxValue,
                 CastsShadows = true
             };
             lightCount++;

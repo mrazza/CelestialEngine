@@ -28,17 +28,12 @@ namespace CelestialEngine.Core.PostProcess
         /// <summary>
         /// The position of the light
         /// </summary>
-        private Vector3 lightPosition;
+        private float lightHeightPosition;
 
         /// <summary>
         /// The shader used when generating the shadow map.
         /// </summary>
-        private Shader shadowMapShader;
-
-        /// <summary>
-        /// If true this light will cast shadows; otherwise the light will ignore shadow casting sprites
-        /// </summary>
-        private bool castsShadows;
+        private readonly Shader shadowMapShader;
         #endregion
 
         #region Constructors
@@ -50,7 +45,6 @@ namespace CelestialEngine.Core.PostProcess
         public SimulatedLight(World world, Shader shader)
             : base(world, shader)
         {
-            this.lightPosition = Vector3.Zero;
             this.shadowMapShader = new Shader(Content.Shaders.Core.ShadowMap);
         }
         #endregion
@@ -66,12 +60,12 @@ namespace CelestialEngine.Core.PostProcess
         {
             get
             {
-                return this.lightPosition;
+                return new Vector3(base.Position, this.lightHeightPosition);
             }
 
             set
             {
-                this.lightPosition = value;
+                this.lightHeightPosition = value.Z;
                 base.Position = new Vector2(value.X, value.Y);
             }
         }
@@ -84,7 +78,7 @@ namespace CelestialEngine.Core.PostProcess
         {
             get
             {
-                return this.World.GetPixelFromWorld(this.lightPosition);
+                return this.World.GetPixelFromWorld(this.Position);
             }
         }
 
@@ -113,18 +107,7 @@ namespace CelestialEngine.Core.PostProcess
         /// Gets or sets a value indicating whether or not this light should casts shadows.
         /// </summary>
         /// <value><c>true</c> if this light will casts shadows; otherwise, <c>false</c>.</value>
-        public bool CastsShadows
-        {
-            get
-            {
-                return this.castsShadows;
-            }
-
-            set
-            {
-                this.castsShadows = value;
-            }
-        }
+        public bool CastsShadows { get; set; }
 
         /// <summary>
         /// Gets or sets the layer depth for this light (used when calculating which objects are in shadow).
@@ -171,10 +154,10 @@ namespace CelestialEngine.Core.PostProcess
         }
 
         /// <summary>
-        /// Determines whether or not the specified sprite is lit by this light source.
+        /// Determines whether or not any part of the specified sprite is lit by this light source.
         /// </summary>
         /// <remarks>
-        /// Note that a sprite is considered lit if it is within the draw bounds of this light and
+        /// Note that a sprite is considered lit if any part of it is within the draw bounds of this light and
         /// is not fully obscured by a shadow cast by this light.
         /// </remarks>
         /// <param name="sprite">The sprite to check.</param>
@@ -194,8 +177,19 @@ namespace CelestialEngine.Core.PostProcess
             var extremas = this.GetShadowEligibleSprites(this.GetWorldDrawBounds())
                 .Where(eligibleSprite => eligibleSprite != sprite)
                 .SelectMany(eligibleSprite => this.CalculateShapePartsRelativeExtrema(eligibleSprite)).ToArray();
-            return spriteVerts.Any(vertex => !extremas.Any(extrema => extrema.IsPointBeyond(vertex) && extrema.IsPointBetween(vertex)));
+            return spriteVerts.Any(vertex => this.PointWithinLightRange(vertex) && !extremas.Any(extrema => extrema.IsPointBeyond(vertex) && extrema.IsPointBetween(vertex)));
 
+        }
+
+        /// <summary>
+        /// Determines if the specified point is within the range of this light. This does not check whether or not it is in shadow.
+        /// </summary>
+        /// <remarks>By default this just checks whether the point is within the light's draw bounds. Specific light implementations can implement more accurate logic.</remarks>
+        /// <param name="point">The point to check.</param>
+        /// <returns>True if within the radius; otherwise, false.</returns>
+        public virtual bool PointWithinLightRange(Vector2 point)
+        {
+            return this.GetWorldDrawBounds().Contains(point);
         }
         #endregion
 
@@ -219,9 +213,7 @@ namespace CelestialEngine.Core.PostProcess
             base.Update(gameTime);
 
             // Update position
-            this.lightPosition.X = base.Position.X;
-            this.lightPosition.Y = base.Position.Y;
-            this.lightPosition.Z += this.lightHeightVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            this.lightHeightPosition += this.lightHeightVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
         #endregion
 

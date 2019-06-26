@@ -8,6 +8,7 @@ namespace CelestialEngine.Core
 {
     using CelestialEngine.Game;
     using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
 
     /// <summary>
     /// Represents the core of the Celestial Engine; it provides
@@ -59,6 +60,7 @@ namespace CelestialEngine.Core
                 worldBounds = new RectangleF(-1000, -1000, 2000, 2000);
 
             this.graphicsDeviceManager = new GraphicsDeviceManager(this);
+            graphicsDeviceManager.GraphicsProfile = GraphicsProfile.HiDef;
             this.gameWorld = new World(this, worldBounds);
             this.gameCamera = new Camera(this.gameWorld);
             this.renderSystem = new DeferredRenderSystem(this, this.gameWorld, this.gameCamera);

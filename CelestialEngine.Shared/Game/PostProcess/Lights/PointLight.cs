@@ -36,7 +36,7 @@ namespace CelestialEngine.Game.PostProcess.Lights
         protected PointLight(World world, Shader shader)
             : base(world, shader)
         {
-            this.Decay = 1.0f;
+            this.Decay = 0.5f;
         }
         #endregion
 
@@ -66,14 +66,17 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// <summary>
         /// Gets or sets the decay of the light (spread factor).
         /// </summary>
+        /// <remarks>
+        /// A value of .5 results in a linear decay of the light brightness.
+        /// Values greater than .5 decay slower than linear (gets darker further from the light's center).
+        /// Values less than .5 decay faster than linear (get darker closer to the light's center).
+        /// Values less than 0 will black out the light earlier and so provide little value (as this is usually
+        /// controlled via the Range property).
+        /// </remarks>
         /// <value>
         /// The decay of the light.
         /// </value>
-        public float Decay
-        {
-            get;
-            set;
-        }
+        public float Decay { get; set; }
 
         /// <summary>
         /// Gets or sets the color of the light.
@@ -100,6 +103,18 @@ namespace CelestialEngine.Game.PostProcess.Lights
         }
         #endregion
 
+        #region SimulatedLight Overrides
+        /// <summary>
+        /// Determines if the specified point is within the range of this light. This does not check whether or not it is in shadow.
+        /// </summary>
+        /// <param name="point">The point to check.</param>
+        /// <returns>True if within the radius; otherwise, false.</returns>
+        public override bool PointWithinLightRange(Vector2 point)
+        {
+            return (this.Position - new Vector3(point, 0)).Length() <= this.Range;
+        }
+        #endregion
+
         #region SimulatedPostProcess Overrides
         /// <summary>
         /// Gets a <see cref="RectangleF"/> containing information related to the dimensions of the bounding box in which the post process
@@ -110,8 +125,8 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// </returns>
         public override RectangleF GetWorldDrawBounds()
         {
-            float rangeFactor = this.Range / (float)Math.Sqrt(this.Decay);
-            return new RectangleF(this.Position.X - rangeFactor, this.Position.Y - rangeFactor, 2.0f * this.Range, 2.0f * rangeFactor);
+            float rangeOnRenderPlane = (float)Math.Sqrt(Math.Pow(this.Range, 2) - Math.Pow(this.Position.Z, 2));
+            return new RectangleF(this.Position.X - rangeOnRenderPlane, this.Position.Y - rangeOnRenderPlane, 2.0f * rangeOnRenderPlane, 2.0f * rangeOnRenderPlane);
         }
 
         /// <summary>

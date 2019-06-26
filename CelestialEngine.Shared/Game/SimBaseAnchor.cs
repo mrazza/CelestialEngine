@@ -7,6 +7,7 @@
 namespace CelestialEngine.Game
 {
     using CelestialEngine.Core;
+    using FarseerPhysics.Dynamics;
     using Microsoft.Xna.Framework;
 
     /// <summary>
@@ -43,7 +44,7 @@ namespace CelestialEngine.Game
         /// <param name="world">The <see cref="World" /> in which the instance lives.</param>
         /// <param name="masterObject">The <see cref="SimBase"/> object we are attached to.</param>
         /// <param name="slaveObject">The slave object.</param>
-        public SimBaseAnchor(World world, SimBase masterObject, SimBase slaveObject)
+        public SimBaseAnchor(CelestialEngine.Core.World world, SimBase masterObject, SimBase slaveObject)
             : this(world, masterObject, slaveObject, Vector2.Zero, 0.0f)
         {
         }
@@ -56,13 +57,15 @@ namespace CelestialEngine.Game
         /// <param name="slaveObject">The slave object.</param>
         /// <param name="attachmentPositionalOffset">The attachment offset for the position.</param>
         /// <param name="attachmentRotationalOffset">The attachment offset for the rotation.</param>
-        public SimBaseAnchor(World world, SimBase masterObject, SimBase slaveObject, Vector2 attachmentPositionalOffset, float attachmentRotationalOffset)
+        public SimBaseAnchor(CelestialEngine.Core.World world, SimBase masterObject, SimBase slaveObject, Vector2 attachmentPositionalOffset, float attachmentRotationalOffset)
             : base(world)
         {
             this.masterObject = masterObject;
             this.slaveObject = slaveObject;
             this.attachmentPositionalOffset = attachmentPositionalOffset;
             this.attachmentRotationalOffset = attachmentRotationalOffset;
+            this.Body.IsStatic = true;
+            this.Body.BodyType = BodyType.Static;
         }
         #endregion
 

@@ -61,6 +61,17 @@ namespace CelestialEngine.Game.PostProcess.Lights
 
         #region SimulatedPostProcess Overrides
         /// <summary>
+        /// Determines if the specified point is within the range of this light. This does not check whether or not it is in shadow.
+        /// </summary>
+        /// <param name="point">The point to check.</param>
+        /// <returns>True if within the radius; otherwise, false.</returns>
+        public override bool PointWithinLightRange(Vector2 point)
+        {
+            // TODO: Improve this.
+            return this.GetWorldDrawBounds().Contains(point);
+        }
+
+        /// <summary>
         /// Gets a <see cref="RectangleF"/> containing information related to the dimensions of the bounding box in which the post process
         /// affects in world units. Used by the <see cref="DeferredRenderSystem"/> to determine whether the post process is drawn.
         /// </summary>
@@ -69,11 +80,10 @@ namespace CelestialEngine.Game.PostProcess.Lights
         /// </returns>
         public override RectangleF GetWorldDrawBounds()
         {
-            float rangeFactor = this.Range / (float)Math.Sqrt(this.Decay);
-            float halfMaxWidth = MathHelper.Min(rangeFactor, rangeFactor * (float)Math.Tan(this.lightAngle / 2.0f));
-            RectangleF result = new RectangleF(this.Position.X - halfMaxWidth, this.Position.Y - rangeFactor, 2.0f * halfMaxWidth, rangeFactor);
+            var rangeOnRenderPlane = (float)Math.Sqrt(Math.Pow(this.Range, 2) - Math.Pow(this.Position.Z, 2));
+            var halfMaxWidth = (float)Math.Sin(this.lightAngle / 2.0f) * rangeOnRenderPlane;
+            var result = new RectangleF(this.Position.X - halfMaxWidth, this.Position.Y - rangeOnRenderPlane, 2.0f * halfMaxWidth, rangeOnRenderPlane);
             result = result.RotateAbout(new Vector2(this.Position.X, this.Position.Y), this.Rotation);
-
             return result;
         }
 

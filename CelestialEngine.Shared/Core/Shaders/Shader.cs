@@ -115,7 +115,7 @@ namespace CelestialEngine.Core.Shaders
         /// <param name="technique">Technique to use</param>
         public void ConfigureShader(DeferredRenderSystem renderSystem, string technique)
         {
-            this.ConfigureShader(renderSystem, this.shaderAsset.Techniques[technique]);
+            this.ConfigureShaderInternal(renderSystem, this.shaderAsset.Techniques[technique]);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace CelestialEngine.Core.Shaders
         /// <param name="techniqueIndex">Index of the technique to use</param>
         public void ConfigureShader(DeferredRenderSystem renderSystem, int techniqueIndex)
         {
-            this.ConfigureShader(renderSystem, this.shaderAsset.Techniques[techniqueIndex]);
+            this.ConfigureShaderInternal(renderSystem, this.shaderAsset.Techniques[techniqueIndex]);
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace CelestialEngine.Core.Shaders
         /// </summary>
         /// <param name="renderSystem">Instance of the <see cref="DeferredRenderSystem"/> we are using to render</param>
         /// <param name="technique">Technique to use</param>
-        protected virtual void ConfigureShader(DeferredRenderSystem renderSystem, EffectTechnique technique)
+        protected virtual void ConfigureShaderInternal(DeferredRenderSystem renderSystem, EffectTechnique technique)
         {
             if (!this.isConfigured)
             {
