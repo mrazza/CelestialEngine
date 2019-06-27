@@ -33,13 +33,6 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FarseerPhysics MonoGame, Version=3.5.0.40766, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FarseerPhysics.MonoGame.Unofficial.3.5.0\lib\FarseerPhysics MonoGame.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -54,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\CelestialEngineContent.mgcb" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Shaders\Core\DebugTargets.fx" />
@@ -67,6 +59,14 @@
     <Content Include="Content\Shaders\Lights\PointLight.fx" />
     <Content Include="Content\Shaders\Lights\RectangularLight.fx" />
     <Content Include="Content\Shaders\Simple\InvertColors.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FarseerPhysics.MonoGame.Unofficial">
+      <Version>3.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="MonoGame.Framework.WindowsDX">
+      <Version>3.6.0.1625</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="..\CelestialEngine.Shared\CelestialEngine.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
