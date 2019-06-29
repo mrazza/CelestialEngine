@@ -141,7 +141,7 @@ namespace CelestialEngine.Core
         /// be smaller than this bounding rectangle and must NEVER be greater. For more percise bounding shapes, use the
         /// <see cref="SpriteWorldVertices"/> property.
         /// </remarks>
-        public abstract RectangleF SpriteWorldBounds
+        public abstract RectangleF SpriteWorldRenderBounds
         {
             get;
         }
@@ -174,7 +174,7 @@ namespace CelestialEngine.Core
         {
             get
             {
-                return this.SpriteWorldBounds;
+                return this.SpriteWorldRenderBounds;
             }
         }
 

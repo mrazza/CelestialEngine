@@ -30,7 +30,7 @@ namespace CelestialEngine.Game
         }
 
         /// <inheritdoc />
-        public sealed override RectangleF SpriteWorldBounds => new RectangleF(this.Position, this.dimensions.X, this.dimensions.Y);
+        public sealed override RectangleF SpriteWorldRenderBounds => new RectangleF(this.Position, this.dimensions.X, this.dimensions.Y);
 
         /// <summary>
         /// Gets the shader used to render the sprite.
@@ -48,7 +48,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender(this.Shader);
             this.ConfigureAndApplyColorShader(gameTime, renderSystem);
-            renderSystem.DrawFilledRectangle(this.SpriteWorldBounds, Color.White, this.Rotation);
+            renderSystem.DrawFilledRectangle(this.SpriteWorldRenderBounds, Color.White, this.Rotation);
             renderSystem.EndRender();
         }
 
@@ -57,7 +57,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender(this.Shader);
             this.ConfigureAndApplyNormalShader(gameTime, renderSystem);
-            renderSystem.DrawFilledRectangle(this.SpriteWorldBounds, Color.White, this.Rotation);
+            renderSystem.DrawFilledRectangle(this.SpriteWorldRenderBounds, Color.White, this.Rotation);
             renderSystem.EndRender();
         }
 

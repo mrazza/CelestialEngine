@@ -123,8 +123,9 @@ namespace CelestialEngine.Game
         /// This is an approximate bounding rectangle for the area impacted by this sprite. The actual area impacted may
         /// be smaller than this bounding rectangle and must NEVER be greater. For more percise bounding shapes, use the
         /// <see cref="SpriteWorldShape"/> property.
+        /// More specifically, this is the bounds of the render area.
         /// </remarks>
-        public override RectangleF SpriteWorldBounds
+        public override RectangleF SpriteWorldRenderBounds
         {
             get
             {
@@ -206,7 +207,7 @@ namespace CelestialEngine.Game
             RectangleF worldDrawBounds = null;
             if (this.spriteVertices != null || this.spriteShapes != null)
             {
-                worldDrawBounds = this.SpriteWorldBounds;
+                worldDrawBounds = this.SpriteWorldRenderBounds;
             }
 
             if (this.spriteVertices != null)
@@ -318,7 +319,7 @@ namespace CelestialEngine.Game
         protected void DrawColorMap(GameTime gameTime, DeferredRenderSystem renderSystem, Rectangle drawBoundingBox)
         {
             renderSystem.BeginRender();
-            renderSystem.DrawSprite(this.SpriteTexture, this.SpriteWorldBounds.Position, drawBoundingBox, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
+            renderSystem.DrawSprite(this.SpriteTexture, this.SpriteWorldRenderBounds.Position, drawBoundingBox, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
 
@@ -333,7 +334,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender(this.NormalMapShader);
             this.NormalMapShader.ConfigureShaderAndApplyPass(renderSystem, this);
-            renderSystem.DrawSprite(this.SpriteNormalTexture, this.SpriteWorldBounds.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
+            renderSystem.DrawSprite(this.SpriteNormalTexture, this.SpriteWorldRenderBounds.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
 
@@ -348,7 +349,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender(this.OptionMapFlagsShader);
             this.OptionMapFlagsShader.ConfigureShaderAndApplyPass(renderSystem, this);
-            renderSystem.DrawSprite(this.SpriteTexture, this.SpriteWorldBounds.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
+            renderSystem.DrawSprite(this.SpriteTexture, this.SpriteWorldRenderBounds.Position, drawBoundingBox, Color.White, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring);
             renderSystem.EndRender();
         }
         #endregion

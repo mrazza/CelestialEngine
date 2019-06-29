@@ -86,11 +86,11 @@ namespace CelestialEngine.Game
         /// <summary>
         /// Gets the sprite's image bounds in world units.
         /// </summary>
-        public override RectangleF SpriteWorldBounds
+        public override RectangleF SpriteWorldRenderBounds
         {
             get
             {
-                return this.targetSprite.SpriteWorldBounds;
+                return this.targetSprite.SpriteWorldRenderBounds;
             }
         }
         #endregion
@@ -136,7 +136,7 @@ namespace CelestialEngine.Game
                 }
             }
 
-            renderSystem.DrawRectangleBorder(this.targetSprite.SpriteWorldBounds, Color.Green, this.lineWidth, 0.0f); // Draw bounding rectangle
+            renderSystem.DrawRectangleBorder(this.targetSprite.SpriteWorldRenderBounds, Color.Green, this.lineWidth, 0.0f); // Draw bounding rectangle
             renderSystem.DrawLine(this.targetSprite.Position, this.targetSprite.Position + this.targetSprite.Velocity, Color.Blue, this.lineWidth); // Draw velocity line
 
             renderSystem.EndRender();
@@ -167,7 +167,7 @@ namespace CelestialEngine.Game
             RectangleF posRect = new RectangleF(this.targetSprite.Position.X - this.lineWidth * 2.0f, this.targetSprite.Position.Y - this.lineWidth * 2.0f, this.lineWidth * 4.0f, this.lineWidth * 4.0f);
 
             renderSystem.DrawFilledRectangle(posRect, Color.Black, this.Rotation); // Draw position
-            renderSystem.DrawRectangleBorder(this.targetSprite.SpriteWorldBounds, Color.Black, this.lineWidth, 0.0f); // Draw bounding rectangle
+            renderSystem.DrawRectangleBorder(this.targetSprite.SpriteWorldRenderBounds, Color.Black, this.lineWidth, 0.0f); // Draw bounding rectangle
             renderSystem.DrawLine(this.targetSprite.Position, this.targetSprite.Position + this.targetSprite.Velocity, Color.Black, this.lineWidth); // Draw velocity line
 
             renderSystem.EndRender();

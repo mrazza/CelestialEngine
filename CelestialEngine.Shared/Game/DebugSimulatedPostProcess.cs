@@ -88,7 +88,7 @@ namespace CelestialEngine.Game
         /// <summary>
         /// Gets the sprite's image bounds in world units.
         /// </summary>
-        public override RectangleF SpriteWorldBounds
+        public override RectangleF SpriteWorldRenderBounds
         {
             get
             {

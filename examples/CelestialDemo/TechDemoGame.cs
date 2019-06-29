@@ -109,11 +109,12 @@ namespace CelestialEngine.TechDemo
 
             // Create Tiled Sprites
             RectangleF bounds = this.RenderSystem.GetCameraRenderBounds();
-            this.background = new TiledSprite(this.GameWorld, "Content/floortile", "Content/floortilenormal", null, bounds.Position, Vector2.Zero, bounds.AreaBounds)
+            this.background = new TiledSprite(this.GameWorld, "Content/floortile", "Content/floortilenormal", null, bounds.Position + bounds.AreaBounds / 2.0f, Vector2.Zero, bounds.AreaBounds)
             {
                 RenderScale = new Vector2(0.4f, 0.4f),
                 RenderOptions = SpriteRenderOptions.IsLit,
-                SpecularReflectivity = 2
+                SpecularReflectivity = 2,
+                SpriteOriginOffset = bounds.AreaBounds / 2.0f
             };
 
             SimpleSprite test = new SimpleSprite(this.GameWorld, "Content/box", null, false)

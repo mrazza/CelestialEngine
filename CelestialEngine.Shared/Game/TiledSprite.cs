@@ -8,6 +8,7 @@ namespace CelestialEngine.Game
 {
     using System;
     using CelestialEngine.Core;
+    using FarseerPhysics.Common;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
 
@@ -77,11 +78,20 @@ namespace CelestialEngine.Game
         /// <summary>
         /// Gets the sprite's image bounds (where the image appears when rendered) in world units.
         /// </summary>
-        public override RectangleF SpriteWorldBounds
+        public override RectangleF SpriteWorldRenderBounds
         {
             get
             {
-                return new RectangleF(this.Position.X, this.Position.Y, this.TileArea.X, this.TileArea.Y, this.Rotation);
+                // Using the transform here let's us save some allocations.
+                Transform spriteTransform;
+                this.Body.GetTransform(out spriteTransform);
+                float rotation = spriteTransform.q.GetAngle();
+                var offset = this.SpriteOriginOffset.Rotate(rotation);
+                return new RectangleF(
+                    spriteTransform.p.X - offset.X,
+                    spriteTransform.p.Y - offset.Y,
+                    this.TileArea.X, this.TileArea.Y,
+                    rotation);
             }
         }
         #endregion
@@ -97,6 +107,7 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender();
 
+            // return top left pos
             this.ForEachTile((pos, rect) => renderSystem.DrawSprite(this.SpriteTexture, pos, rect, this.RenderColor, this.Rotation, Vector2.Zero, this.RenderScale, this.SpriteMirroring));
             
             renderSystem.EndRender();
@@ -142,21 +153,27 @@ namespace CelestialEngine.Game
         /// <param name="drawCall">The draw call to exectute.</param>
         protected void ForEachTile(Action<Vector2, Rectangle> drawCall)
         {
-            var widthStep = this.World.GetWorldFromPixel(this.SpriteTextureBoundingBox.Value.Width * this.RenderScale.X);
-            var heightStep = this.World.GetWorldFromPixel(this.SpriteTextureBoundingBox.Value.Height * this.RenderScale.Y);
+            var topLeft = this.SpriteWorldRenderBounds.TopLeft;
+            var widthOffsetVector = this.RotationVector.Rotate(MathHelper.PiOver2);
+            var heightOffsetVector = widthOffsetVector.Rotate(MathHelper.PiOver2);
+
+            var tileWidth = this.World.GetWorldFromPixel(this.SpriteTextureBoundingBox.Value.Width * this.RenderScale.X);
+            var tileHeight = this.World.GetWorldFromPixel(this.SpriteTextureBoundingBox.Value.Height * this.RenderScale.Y);
             // Loop across each column and down each row (in world space)
-            for (float widthCount = 0; widthCount < this.tileArea.X; widthCount += widthStep)
+            for (float widthDrawn = 0; widthDrawn < this.tileArea.X; widthDrawn += tileWidth)
             {
-                for (float heightCount = 0; heightCount < this.tileArea.Y; heightCount += heightStep)
+                var tileX = widthDrawn * widthOffsetVector;
+                for (float heightDrawn = 0; heightDrawn < this.tileArea.Y; heightDrawn += tileHeight)
                 {
-                    Vector2 pos = new Vector2(widthCount + this.Position.X, heightCount + this.Position.Y); // Get the position of the next tile (world space)
+                    var tileY = heightDrawn * heightOffsetVector;
+                    var pos = tileX + tileY + topLeft;
                     
                     // Construct the bounding rectangle
                     Rectangle boundingRect = new Rectangle(
                                                         this.SpriteTextureBoundingBox.Value.X, // Pixel space starting point (X) for the tile in the texture
                                                         this.SpriteTextureBoundingBox.Value.Y, // Pixel space starting point (Y) for the tile in the texture
-                                                        (int)MathHelper.Min(this.SpriteTextureBoundingBox.Value.Width, this.World.GetPixelFromWorld(this.tileArea.X - widthCount) / this.RenderScale.X), // Make sure we don't render outside the bounds of the tile area
-                                                        (int)MathHelper.Min(this.SpriteTextureBoundingBox.Value.Height, this.World.GetPixelFromWorld(this.tileArea.Y - heightCount) / this.RenderScale.Y)); // Make sure we don't render outside the bounds of the tile area
+                                                        (int)MathHelper.Min(this.SpriteTextureBoundingBox.Value.Width, this.World.GetPixelFromWorld(this.tileArea.X - widthDrawn) / this.RenderScale.X), // Make sure we don't render outside the bounds of the tile area
+                                                        (int)MathHelper.Min(this.SpriteTextureBoundingBox.Value.Height, this.World.GetPixelFromWorld(this.tileArea.Y - heightDrawn) / this.RenderScale.Y)); // Make sure we don't render outside the bounds of the tile area
                     
                     drawCall(pos, boundingRect); // Render it
                 }

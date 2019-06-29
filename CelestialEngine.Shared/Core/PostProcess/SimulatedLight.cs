@@ -171,7 +171,7 @@ namespace CelestialEngine.Core.PostProcess
             }
             else
             {
-                spriteVerts = sprite.SpriteWorldBounds.Vertices;
+                spriteVerts = sprite.SpriteWorldRenderBounds.Vertices;
             }
 
             var extremas = this.GetShadowEligibleSprites(this.GetWorldDrawBounds())
@@ -328,7 +328,7 @@ namespace CelestialEngine.Core.PostProcess
             }
             else
             {
-                return new[] { castingSprite.SpriteWorldBounds.GetRelativeExtrema(base.Position) };
+                return new[] { castingSprite.SpriteWorldRenderBounds.GetRelativeExtrema(base.Position) };
             }
         }
         #endregion
