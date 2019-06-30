@@ -60,6 +60,7 @@ namespace CelestialEngine.Game
         /// A <see cref="ParallaxRatio"/> of (0.5, 0.5) results in the tiled sprite moving slower than the <see cref="RelativeObject"/>.
         /// A <see cref="ParallaxRatio"/> of (1, 1) results in the tiled sprite following the movement of the <see cref="RelativeObject"/>.
         /// A <see cref="ParallaxRatio"/> larger than (1, 1) results in the tiled sprite moving faster than the <see cref="RelativeObject"/>.
+        /// A <see cref="ParallaxRatio"/> smaller than (0, 0) results in the tiled sprite moving in the opposite direction of the <see cref="RelativeObject"/>.
         /// </remarks>
         public Vector2 ParallaxRatio
         {
