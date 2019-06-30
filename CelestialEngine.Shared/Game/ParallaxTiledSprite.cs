@@ -16,7 +16,7 @@ namespace CelestialEngine.Game
     public class ParallaxTiledSprite : TiledSprite
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TiledSprite"/> class.
+        /// Initializes a new instance of the <see cref="ParallaxTiledSprite"/> class.
         /// </summary>
         /// <param name="world">The <see cref="World" /> in which the instance lives.</param>
         /// <param name="spriteTexturePath">The path to the sprite texture.</param>
@@ -30,7 +30,7 @@ namespace CelestialEngine.Game
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TiledSprite"/> class.
+        /// Initializes a new instance of the <see cref="ParallaxTiledSprite"/> class.
         /// </summary>
         /// <param name="world">The <see cref="World" /> in which the instance lives.</param>
         /// <param name="spriteTexturePath">The path to the sprite texture.</param>
