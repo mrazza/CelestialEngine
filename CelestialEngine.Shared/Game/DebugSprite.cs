@@ -17,11 +17,6 @@ namespace CelestialEngine.Game
     {
         #region Members
         /// <summary>
-        /// The sprite that we're drawing debug information for.
-        /// </summary>
-        private SpriteBase targetSprite;
-
-        /// <summary>
         /// The width of the line (in world units) to use when rendering.
         /// </summary>
         private float lineWidth;
@@ -29,7 +24,7 @@ namespace CelestialEngine.Game
         /// <summary>
         /// The shader used to apply pixel options to the option map.
         /// </summary>
-        private OptionsMapFlagsShader optionMapFlagsShader;
+        private readonly OptionsMapFlagsShader optionMapFlagsShader;
         #endregion
 
         #region Constructors
@@ -41,7 +36,7 @@ namespace CelestialEngine.Game
         public DebugSprite(World world, SpriteBase targetSprite)
             : base(world)
         {
-            this.targetSprite = targetSprite;
+            this.TargetSprite = targetSprite;
             this.lineWidth = this.World.GetWorldFromPixel(1.0f); // Default to 1 pixel in width
             this.optionMapFlagsShader = new OptionsMapFlagsShader();
         }
@@ -63,25 +58,14 @@ namespace CelestialEngine.Game
                 this.lineWidth = MathHelper.Max(0, value);
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the sprite instance that we're drawing debug information for.
         /// </summary>
         /// <value>
         /// The sprite instance that we're drawing debug information for.
         /// </value>
-        public SpriteBase TargetSprite
-        {
-            get
-            {
-                return this.targetSprite;
-            }
-
-            set
-            {
-                this.targetSprite = value;
-            }
-        }
+        public SpriteBase TargetSprite { get; set; }
 
         /// <summary>
         /// Gets the sprite's image bounds in world units.
@@ -90,7 +74,7 @@ namespace CelestialEngine.Game
         {
             get
             {
-                return this.targetSprite.SpriteWorldRenderBounds;
+                return this.TargetSprite.SpriteWorldRenderBounds;
             }
         }
         #endregion
@@ -110,7 +94,7 @@ namespace CelestialEngine.Game
         /// <param name="gameTime">Time elapsed since the last call to Update.</param>
         public override void Update(GameTime gameTime)
         {
-            this.LayerDepth = (byte)(this.targetSprite.LayerDepth + 1);
+            this.LayerDepth = (byte)(this.TargetSprite.LayerDepth + 1);
         }
 
         /// <summary>
@@ -123,21 +107,21 @@ namespace CelestialEngine.Game
         {
             renderSystem.BeginRender();
 
-            RectangleF posRect = new RectangleF(this.targetSprite.Position.X - this.lineWidth * 2.0f, this.targetSprite.Position.Y - this.lineWidth * 2.0f, this.lineWidth * 4.0f, this.lineWidth * 4.0f);
+            RectangleF posRect = new RectangleF(this.TargetSprite.Position.X - this.lineWidth * 2.0f, this.TargetSprite.Position.Y - this.lineWidth * 2.0f, this.lineWidth * 4.0f, this.lineWidth * 4.0f);
 
             renderSystem.DrawFilledRectangle(posRect, Color.White, this.Rotation); // Draw position
 
             // Draw shape outline if it exists
-            if (this.targetSprite.SpriteWorldVertices != null)
+            if (this.TargetSprite.SpriteWorldVertices != null)
             {
-                for (int index = 0; index < this.targetSprite.SpriteWorldVertices.Count - 1; index++)
+                for (int index = 0; index < this.TargetSprite.SpriteWorldVertices.Count - 1; index++)
                 {
-                    renderSystem.DrawLine(this.targetSprite.SpriteWorldVertices[index], this.targetSprite.SpriteWorldVertices[index + 1], Color.Red, this.lineWidth);
+                    renderSystem.DrawLine(this.TargetSprite.SpriteWorldVertices[index], this.TargetSprite.SpriteWorldVertices[index + 1], Color.Red, this.lineWidth);
                 }
             }
 
-            renderSystem.DrawRectangleBorder(this.targetSprite.SpriteWorldRenderBounds, Color.Green, this.lineWidth, 0.0f); // Draw bounding rectangle
-            renderSystem.DrawLine(this.targetSprite.Position, this.targetSprite.Position + this.targetSprite.Velocity, Color.Blue, this.lineWidth); // Draw velocity line
+            renderSystem.DrawRectangleBorder(this.TargetSprite.SpriteWorldRenderBounds, Color.Green, this.lineWidth, 0.0f); // Draw bounding rectangle
+            renderSystem.DrawLine(this.TargetSprite.Position, this.TargetSprite.Position + this.TargetSprite.Velocity, Color.Blue, this.lineWidth); // Draw velocity line
 
             renderSystem.EndRender();
         }
@@ -164,11 +148,11 @@ namespace CelestialEngine.Game
             renderSystem.BeginRender(this.optionMapFlagsShader);
             this.optionMapFlagsShader.ConfigureShaderAndApplyPass(renderSystem, this);
 
-            RectangleF posRect = new RectangleF(this.targetSprite.Position.X - this.lineWidth * 2.0f, this.targetSprite.Position.Y - this.lineWidth * 2.0f, this.lineWidth * 4.0f, this.lineWidth * 4.0f);
+            RectangleF posRect = new RectangleF(this.TargetSprite.Position.X - this.lineWidth * 2.0f, this.TargetSprite.Position.Y - this.lineWidth * 2.0f, this.lineWidth * 4.0f, this.lineWidth * 4.0f);
 
             renderSystem.DrawFilledRectangle(posRect, Color.Black, this.Rotation); // Draw position
-            renderSystem.DrawRectangleBorder(this.targetSprite.SpriteWorldRenderBounds, Color.Black, this.lineWidth, 0.0f); // Draw bounding rectangle
-            renderSystem.DrawLine(this.targetSprite.Position, this.targetSprite.Position + this.targetSprite.Velocity, Color.Black, this.lineWidth); // Draw velocity line
+            renderSystem.DrawRectangleBorder(this.TargetSprite.SpriteWorldRenderBounds, Color.Black, this.lineWidth, 0.0f); // Draw bounding rectangle
+            renderSystem.DrawLine(this.TargetSprite.Position, this.TargetSprite.Position + this.TargetSprite.Velocity, Color.Black, this.lineWidth); // Draw velocity line
 
             renderSystem.EndRender();
         }

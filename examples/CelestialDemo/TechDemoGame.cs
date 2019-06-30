@@ -39,7 +39,7 @@ namespace CelestialEngine.TechDemo
         /// </summary>
         public TechDemoGame()
         {
-            Window.Title = "Celestial Engine Tech Demo";
+            this.Window.Title = "Celestial Engine Tech Demo";
         }
 
         /// <summary>
@@ -51,17 +51,18 @@ namespace CelestialEngine.TechDemo
             this.GameCamera.Position = this.GameWorld.GetWorldFromPixel(new Vector2(this.GraphicsDevice.Viewport.Width / 2.0f, this.GraphicsDevice.Viewport.Height / 2.0f) / this.GameCamera.CameraZoom);
 
             this.InputManager.AddConditionalBinding((s) => { return s.IsKeyDown(Keys.Escape); }, (s) => this.Exit());
-            this.InputManager.AddConditionalBinding((s) => { return s.IsLeftMouseClick() && s.IsKeyDown(Keys.LeftShift); }, SpawnNewStaticLight);
+            this.InputManager.AddConditionalBinding((s) => { return s.IsLeftMouseClick() && s.IsKeyDown(Keys.LeftShift); }, this.SpawnNewStaticLight);
             //this.InputManager.AddConditionalBinding((s) => { return s.IsLeftMouseClick() && !s.IsKeyDown(Keys.LeftShift); }, SpawnNewLight); 
-            this.InputManager.AddConditionalBinding((s) => { return s.IsRightMouseClick(); }, SpawnNewRotatingLight);
-            this.InputManager.AddConditionalBinding((s) => { return s.IsScrollWheelChanged(); }, PerformZoom);
+            this.InputManager.AddConditionalBinding((s) => { return s.IsRightMouseClick(); }, this.SpawnNewRotatingLight);
+            this.InputManager.AddConditionalBinding((s) => { return s.IsScrollWheelChanged(); }, this.PerformZoom);
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Left), (s) => mouseLight.Rotation -= 0.2f);
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Right), (s) => mouseLight.Rotation += 0.2f);
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Up), (s) => mouseLight.Dimensions += new Vector2(0.5f, 0.25f));
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.Down), (s) => mouseLight.Dimensions -= new Vector2(0.5f, 0.25f));
+
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.NumPad0), (s) => {
-                mouseLight.SpecularStrength = mouseLight.SpecularStrength > 0 ? 0 : 7.0f;
-                mouseLight.Power = mouseLight.Power == 4f ? 6f : 4f;
+                this.mouseLight.SpecularStrength = this.mouseLight.SpecularStrength > 0 ? 0 : 7.0f;
+                this.mouseLight.Power = this.mouseLight.Power == 4f ? 6f : 4f;
             });
 
 
@@ -93,8 +94,8 @@ namespace CelestialEngine.TechDemo
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F5), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.LightMap);
             this.InputManager.AddConditionalBinding((s) => s.IsFirstKeyPress(Keys.F6), (s) => this.RenderSystem.DebugDrawMode = DeferredRenderSystemDebugDrawMode.NormalMap);
 
-            this.InputManager.AddBinding(UpdateCursorPosition);
-            this.InputManager.AddConditionalBinding((s) => { return (s.IsKeyDown(Keys.LeftControl) || s.IsKeyDown(Keys.RightControl)) && s.IsLeftMouseDown(); }, SpawnNewSmallLight);
+            this.InputManager.AddBinding(this.UpdateCursorPosition);
+            this.InputManager.AddConditionalBinding((s) => { return (s.IsKeyDown(Keys.LeftControl) || s.IsKeyDown(Keys.RightControl)) && s.IsLeftMouseDown(); }, this.SpawnNewSmallLight);
             this.IsMouseVisible = true;
 
             base.Initialize();
@@ -116,6 +117,7 @@ namespace CelestialEngine.TechDemo
                 SpecularReflectivity = 2,
                 SpriteOriginOffset = bounds.AreaBounds / 2.0f
             };
+            this.background.TilingOffset = this.background.Position;
 
             SimpleSprite test = new SimpleSprite(this.GameWorld, "Content/box", null, false)
             {
@@ -136,7 +138,7 @@ namespace CelestialEngine.TechDemo
                 var x = new DebugSprite(this.GameWorld, test);
             }
 
-            ship = new SimpleSprite(this.GameWorld, "Content/ship", "Content/shipnormal", true)
+            this.ship = new SimpleSprite(this.GameWorld, "Content/ship", "Content/shipnormal", true)
             {
                 Position = new Vector2(15, 10),
                 RenderScale = new Vector2(0.4f, 0.4f),
@@ -145,14 +147,14 @@ namespace CelestialEngine.TechDemo
                 LayerDepth = 1,
                 SpriteMirroring = SpriteEffects.FlipHorizontally
             };
-            ship.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
-            ship.Body.CollisionCategories = FarseerPhysics.Dynamics.Category.Cat1;
-            ship.Body.Friction = 0;
-            ship.Body.Restitution = 1.0f;
+            this.ship.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
+            this.ship.Body.CollisionCategories = FarseerPhysics.Dynamics.Category.Cat1;
+            this.ship.Body.Friction = 0;
+            this.ship.Body.Restitution = 1.0f;
 
             if (this.IsDebug)
             {
-                var x = new DebugSprite(this.GameWorld, ship);
+                var x = new DebugSprite(this.GameWorld, this.ship);
             }
 
             SimpleSprite test2 = new SimpleSprite(this.GameWorld, "Content/box", null, false)
@@ -215,7 +217,7 @@ namespace CelestialEngine.TechDemo
             this.amLight = new AmbientLight(Color.White, 0.1f, true, 1);
             this.RenderSystem.AddPostProcessEffect(this.amLight);
 
-            mouseLight = new RectangularLight(this.GameWorld)
+            this.mouseLight = new RectangularLight(this.GameWorld)
             {
                 Color = Color.White,
                 Power = 1f,
@@ -224,19 +226,19 @@ namespace CelestialEngine.TechDemo
                 CastsShadows = true,
                 LayerDepth = 1
             };
-            lightCount++;
+            this.lightCount++;
 
             if (this.IsDebug)
             {
-                DebugSimulatedLight y = new DebugSimulatedLight(this.GameWorld, mouseLight);
+                DebugSimulatedLight y = new DebugSimulatedLight(this.GameWorld, this.mouseLight);
             }
 
-            this.RenderSystem.AddPostProcessEffect(mouseLight);
+            this.RenderSystem.AddPostProcessEffect(this.mouseLight);
 
             // https://www.youtube.com/watch?v=BExTagcymo0
             // George Ellinas - Pulse (George Ellinas Remix) (Free - Creative Commons MP3)
             // http://creativecommons.org/licenses/by/3.0/
-            this.song = Content.Load<Song>("Content/George_Ellinas_-_Pulse_(George_Ellinas_remix)_LoopEdit");
+            this.song = this.Content.Load<Song>("Content/George_Ellinas_-_Pulse_(George_Ellinas_remix)_LoopEdit");
             MediaPlayer.Volume = 0.1f;
             //MediaPlayer.Play(song);
 
@@ -250,18 +252,18 @@ namespace CelestialEngine.TechDemo
         /// <param name="gameTime">The game time.</param>
         protected override void Draw(GameTime gameTime)
         {
-            Window.Title = String.Format("Celestial Engine Tech Demo [{0} lights @ {1} FPS(real), {2} FPS(avg)]", lightCount, Math.Round(1000.0f / gameTime.ElapsedGameTime.TotalMilliseconds), lastFramesPerSec);
+            this.Window.Title = String.Format("Celestial Engine Tech Demo [{0} lights @ {1} FPS(real), {2} FPS(avg)]", this.lightCount, Math.Round(1000.0f / gameTime.ElapsedGameTime.TotalMilliseconds), this.lastFramesPerSec);
 
             base.Draw(gameTime);
 
-            secFrames++;
-            elapsed += gameTime.ElapsedGameTime.TotalSeconds;
+            this.secFrames++;
+            this.elapsed += gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (elapsed > 1.0)
+            if (this.elapsed > 1.0)
             {
-                lastFramesPerSec = Math.Round(secFrames / elapsed);
-                elapsed = 0;
-                secFrames = 0;
+                this.lastFramesPerSec = Math.Round(this.secFrames / this.elapsed);
+                this.elapsed = 0;
+                this.secFrames = 0;
             }
         }
 
@@ -292,8 +294,10 @@ namespace CelestialEngine.TechDemo
         private void UpdateTimeBounds()
         {
             RectangleF bounds = this.RenderSystem.GetCameraRenderBounds();
-            this.background.Position = bounds.Position;
+            this.background.Position = bounds.Position + bounds.AreaBounds / 2f;
             this.background.TileArea = bounds.AreaBounds;
+            this.background.SpriteOriginOffset = bounds.AreaBounds / 2.0f;
+            this.background.TilingOffset = this.background.Position;
         }
 
         /// <summary>
@@ -302,8 +306,10 @@ namespace CelestialEngine.TechDemo
         /// <param name="state">The state.</param>
         private void UpdateCursorPosition(InputState state)
         {
-            if (mouseLight != null)
-                mouseLight.Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 4.00f);
+            if (this.mouseLight != null)
+            {
+                this.mouseLight.Position = new Vector3(this.RenderSystem.GetWorldFromScreen(new Vector2(state.CurrentMouseState.X, state.CurrentMouseState.Y)), 4.00f);
+            }
         }
 
         /// <summary>
@@ -325,7 +331,7 @@ namespace CelestialEngine.TechDemo
                 Decay = float.MaxValue,
                 CastsShadows = true
             };
-            lightCount++;
+            this.lightCount++;
 
             if (this.IsDebug)
             {
@@ -351,7 +357,7 @@ namespace CelestialEngine.TechDemo
                 SpecularStrength = 4.75f,
                 CastsShadows = true,
             };
-            lightCount++;
+            this.lightCount++;
             newLight.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
             newLight.Body.CollidesWith = FarseerPhysics.Dynamics.Category.Cat1;
             newLight.Body.CollisionCategories = FarseerPhysics.Dynamics.Category.Cat2;
@@ -382,7 +388,7 @@ namespace CelestialEngine.TechDemo
                 CastsShadows = true,
                 LayerDepth = 1
             };
-            lightCount++;
+            this.lightCount++;
             newLight.Body.BodyType = FarseerPhysics.Dynamics.BodyType.Dynamic;
             newLight.Body.CollidesWith = FarseerPhysics.Dynamics.Category.Cat1;
             newLight.Body.CollisionCategories = FarseerPhysics.Dynamics.Category.Cat2;
@@ -413,7 +419,7 @@ namespace CelestialEngine.TechDemo
                 SpecularStrength = 2.75f,
                 CastsShadows = true
             };
-            lightCount++;
+            this.lightCount++;
 
             if (this.IsDebug)
             {

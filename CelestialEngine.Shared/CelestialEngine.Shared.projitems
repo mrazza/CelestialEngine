@@ -57,6 +57,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Game\DebugSimulatedLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\DebugSimulatedPostProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\DebugSprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game\ParallaxTiledSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\AmbientLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\ConeLight.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game\PostProcess\Lights\PointLight.cs" />
